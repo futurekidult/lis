@@ -1,0 +1,27 @@
+@startuml
+
+package "Parent Component" {
+  [DailyStatistics]
+  [AverageStatistics]
+}
+
+package "Child Components" {
+  [BaseForm]
+  [BaseChart]
+  [BaseBreadcrumb]
+}
+
+package "Descendant Components" {
+  [NativeTable]
+}
+
+[DailyStatistics]            -->       [BaseForm]
+[DailyStatistics]            -->       [BaseBreadcrumb]
+[AverageStatistics]       -->       [BaseForm]
+[AverageStatistics]       -->       [BaseBreadcrumb]
+[AverageStatistics]       -->       [BaseChart]
+[BaseChart]                  -->       [NativeTable]
+
+
+
+@enduml

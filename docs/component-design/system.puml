@@ -1,0 +1,28 @@
+@startuml
+
+package "Parent Component" {
+  [SkuList]
+}
+
+package "Child Components" {
+  [BaseChoose]
+  [BaseOptionDialog]
+}
+
+package "Descendant Components" {
+  [BaseForm]
+  [BaseTable]
+}
+
+[SkuList]                     -->       [BaseChoose]
+[SkuList]                     -->       [BaseOptionDialog]
+[BaseOptionDialog]  -->        [BaseForm]
+[BaseChoose]            -->        [BaseTable]
+
+
+note right of  [SkuList] 
+    ShopList,LabelList,PlatFormList,OverseaLocationList,LogisticSupplierList,WarehouseAreaList,WarehouseList与SkuList类似
+end note
+
+
+@enduml

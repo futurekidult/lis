@@ -1,0 +1,30 @@
+@startuml
+
+package "Parent Coponent" {
+  [LogisticsList]
+}
+
+package "Child Components" {
+  [BaseChoose]
+  [BaseBreadcrumb]
+  [BaseOptionDialog]
+  [WayfillFormDialog]
+  [BaseConfirmDialog]
+}
+
+package "Descendant Coponents" {
+  [BaseForm]
+  [BaseTable]
+}
+
+[LogisticsList]             -->       [BaseChoose]
+[LogisticsList]             -->       [BaseBreadcrumb]
+[LogisticsList]             -->       [BaseOptionDialog]
+[LogisticsList]             -->       [WayfillFormDialog]
+[LogisticsList]             -->       [BaseConfirmDialog]
+[BaseChoose]            -->       [BaseForm]
+[BaseChoose]            -->       [BaseTable]
+[BaseOptionDialog]  -->       [BaseForm]
+[BaseOptionDialog]  -->       [BaseTable]
+
+@enduml
