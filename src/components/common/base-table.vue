@@ -27,7 +27,10 @@
                 <Menu />
               </el-icon>
               <span class="column"> {{ node.label }}</span>
-              <el-switch v-model="data.show" />
+              <el-switch
+                v-model="data.show"
+                @change="changeStatus(table.tableFields)"
+              />
             </template>
           </el-tree>
         </el-dropdown-menu>
@@ -91,6 +94,9 @@ export default {
     },
     dropOk() {
       this.tableKey++;
+    },
+    changeStatus(arr) {
+      localStorage.setItem('column', JSON.stringify(arr));
     }
   }
 };

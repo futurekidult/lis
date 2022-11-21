@@ -88,7 +88,7 @@ export default {
   },
   data() {
     return {
-      tableFields: this.$global.demoTableFields,
+      tableFields: [],
       listData: [],
       id: 0,
       total: 20,
@@ -103,6 +103,12 @@ export default {
     };
   },
   mounted() {
+    let column = JSON.parse(localStorage.getItem('column'));
+    if (column) {
+      this.tableFields = column;
+    } else {
+      this.tableFields = this.$global.demoTableFields;
+    }
     this.getListData(false, this.pagination);
   },
   methods: {
