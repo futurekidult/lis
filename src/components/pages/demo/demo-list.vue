@@ -32,7 +32,7 @@
         </el-button>
       </template>
     </base-choose>
-    
+
     <base-confirm
       v-if="deleteDialogVisible"
       :dialog-visible="deleteDialogVisible"

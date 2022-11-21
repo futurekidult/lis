@@ -25,6 +25,9 @@
       </base-form>
     </section>
     <section class="section-border">
+      <div class="select-title">
+        <el-divider direction="vertical" /> 列表详情
+      </div>
       <base-table>
         <template #default="slotProps">
           <slot :row="slotProps.row" />

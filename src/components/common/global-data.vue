@@ -35,11 +35,6 @@ const demoChooseOptions = [
     prop: 'id'
   },
   {
-    label: '姓名',
-    type: 'input',
-    prop: 'name'
-  },
-  {
     label: '状态',
     prop: 'state',
     type: 'select',
