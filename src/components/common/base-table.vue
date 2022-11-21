@@ -27,7 +27,10 @@
                 <Menu />
               </el-icon>
               <span class="column"> {{ node.label }}</span>
-              <el-switch v-model="data.show" />
+              <el-switch
+                v-model="data.show"
+                @change="changeStatus(table.tableFields)"
+              />
             </template>
           </el-tree>
         </el-dropdown-menu>
@@ -38,7 +41,12 @@
       :key="tableKey"
       border
       :data="table.tableData"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="55"
+      />
       <template v-for="item in table.tableFields">
         <el-table-column
           v-if="item.show"
@@ -91,6 +99,12 @@ export default {
     },
     dropOk() {
       this.tableKey++;
+    },
+    changeStatus(arr) {
+      localStorage.setItem('column', JSON.stringify(arr));
+    },
+    handleSelectionChange() {
+      //执行选中之后的操作
     }
   }
 };

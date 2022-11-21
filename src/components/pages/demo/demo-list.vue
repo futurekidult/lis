@@ -32,6 +32,7 @@
         </el-button>
       </template>
     </base-choose>
+
     <base-confirm
       v-if="deleteDialogVisible"
       :dialog-visible="deleteDialogVisible"
@@ -40,11 +41,12 @@
       @confirm-deletion="confirmDeletion"
     />
 
-    <el-dialog
-      v-model="editDialogVisible"
+    <option-dialog
+      v-if="editDialogVisible"
+      :dialog-visible="editDialogVisible"
       title="修改"
       width="30%"
-      :close-on-click-modal="false"
+      @close-dialog="closeEditItemDialog"
     >
       <base-form
         ref="editForm"
@@ -64,16 +66,18 @@
           提交
         </el-button>
       </base-form>
-    </el-dialog>
+    </option-dialog>
   </section>
 </template>
 
 <script>
 import BaseForm from '../../common/base-form.vue';
+import OptionDialog from '../../common/base-option-dialog.vue';
 
 export default {
   components: {
-    BaseForm
+    BaseForm,
+    OptionDialog
   },
   provide() {
     return {
@@ -88,7 +92,7 @@ export default {
   },
   data() {
     return {
-      tableFields: this.$global.demoTableFields,
+      tableFields: [],
       listData: [],
       id: 0,
       total: 20,
@@ -96,10 +100,19 @@ export default {
       editForm: {},
       deleteDialogVisible: false,
       editDialogVisible: false,
-      pagination: {}
+      pagination: {
+        current_page: 1,
+        page_size: 10
+      }
     };
   },
   mounted() {
+    let column = JSON.parse(localStorage.getItem('column'));
+    if (column) {
+      this.tableFields = column;
+    } else {
+      this.tableFields = this.$global.demoTableFields;
+    }
     this.getListData(false, this.pagination);
   },
   methods: {
@@ -140,6 +153,9 @@ export default {
         state
       };
       this.editDialogVisible = true;
+    },
+    closeEditItemDialog(val) {
+      this.editDialogVisible = val;
     },
     getChooseForm(val) {
       this.chooseForm = val;

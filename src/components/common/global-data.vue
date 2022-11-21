@@ -35,11 +35,6 @@ const demoChooseOptions = [
     prop: 'id'
   },
   {
-    label: '姓名',
-    type: 'input',
-    prop: 'name'
-  },
-  {
     label: '状态',
     prop: 'state',
     type: 'select',
@@ -57,6 +52,18 @@ const demoChooseOptions = [
         label: '离职'
       }
     ]
+  },
+  {
+    label: '创建时间',
+    type: 'date',
+    prop: 'time'
+  },
+  {
+    label: '范围',
+    type: 'input',
+    prop1: 'time1',
+    prop2: 'time2',
+    range: true
   }
 ];
 
