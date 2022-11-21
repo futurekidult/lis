@@ -96,7 +96,10 @@ export default {
       editForm: {},
       deleteDialogVisible: false,
       editDialogVisible: false,
-      pagination: {}
+      pagination: {
+        current_page: 1,
+        page_size: 10
+      }
     };
   },
   mounted() {
