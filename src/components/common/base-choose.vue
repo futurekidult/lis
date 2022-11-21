@@ -11,7 +11,7 @@
         :properties="$route.meta.chooseProperties"
         :base-form="chooseForm"
         :inline="true"
-        width="80px"
+        width="60px"
       >
         <el-button
           type="primary"
@@ -25,6 +25,9 @@
       </base-form>
     </section>
     <section class="section-border">
+      <div class="select-title">
+        <el-divider direction="vertical" /> 列表详情
+      </div>
       <base-table>
         <template #default="slotProps">
           <slot :row="slotProps.row" />

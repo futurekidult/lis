@@ -33,4 +33,12 @@ export default defineComponent({
   padding: 10px;
   margin-bottom: 5px;
 }
+
+.el-input__wrapper {
+  width: 150px !important;
+}
+
+.el-range-editor.el-input__wrapper {
+  width: 300px !important;
+}
 </style>
