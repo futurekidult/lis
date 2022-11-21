@@ -11,7 +11,7 @@
         :properties="$route.meta.chooseProperties"
         :base-form="chooseForm"
         :inline="true"
-        width="80px"
+        width="60px"
       >
         <el-button
           type="primary"

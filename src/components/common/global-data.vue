@@ -57,6 +57,18 @@ const demoChooseOptions = [
         label: '离职'
       }
     ]
+  },
+  {
+    label: '创建时间',
+    type: 'date',
+    prop: 'time'
+  },
+  {
+    label: '范围',
+    type: 'input',
+    prop1: 'time1',
+    prop2: 'time2',
+    range: true
   }
 ];
 
