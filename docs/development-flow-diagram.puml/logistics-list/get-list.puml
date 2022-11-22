@@ -1,0 +1,175 @@
+@startuml
+title 根据筛选条件获取不同运输状态下的运单数据
+
+start
+fork
+  if(创建时间 已重选?) then (yes) 
+    :创建时间为选定时间;
+  else (no)
+    :创建时间为近3个月;
+  endif
+  :将时间通过时间转化函数，转成时间戳;
+fork again  
+  :从 localStorage logistics option 中获取
+  物流商、海外仓、仓库分布、仓库名称、
+  平台、店铺、标签下拉选项;
+  :从下拉选项中选择要查询的选项(可多选);
+fork again
+  :输入 SKU;
+  :请求"/option/sku-list"接口;
+  if(请求  成功?) then (yes)
+    :实时展示包含输入字符串的选项;
+    :从下拉选项中选择要查询的选项(可多选);
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+fork again
+  :从代码里写死的下拉选项中
+  选择包裹类型、异常处理情况;
+fork again  
+  :将选定的发货时间通过时间转化函数，转成时间戳;
+fork again
+  :输入要查询的订单号、运单号、
+  最新轨迹停留时长;
+end fork
+:传递运单的运输状态字段，
+请求"/waybill/list"接口;
+if(请求 成功?) then (yes)
+  :循环遍历返回的数据列表;
+  fork
+    :将发货时间、最新轨迹时间、获取时间、
+    创建时间通过时间戳转化函数，转换成时间;
+  fork again
+    :获取当前时间;
+    :获取最新轨迹停留时长(当前时间 - 最新轨迹时间)，
+    同时给算出来的时间加上"天"字符串;
+    note right
+      伪代码
+      ====
+      let currentTime = new Date().getTime();
+      let eventTime = xxxxx;
+      let stayTime = (currentTime - eventTime)/1000/60/60/24 + '天';
+    end note
+  end fork
+else (no)
+  :提示出错信息;
+  stop
+endif
+:渲染数据到表格;
+fork
+  if(最新轨迹停留时长 > 5) then (yes)
+    note right
+      伪代码
+      ====
+      if(parseFloat(最新轨迹停留时长) > 5) {
+        return '#EA1D1D'
+      }
+    end note
+    :文字颜色变红;
+  else (no)
+    stop
+  endif
+fork again
+  if(异常处理情况 === "待处理") then (yes)
+    :文字颜色变红;
+  else (no)
+    stop
+  endif
+fork again
+  if(获取状态 === "失败") then (yes)
+    :文字颜色变红;
+  else (no)
+    stop
+  endif
+fork again
+  :循环遍历标签数组;
+  note right
+    伪代码
+    ====
+    <template #default="scope">
+      <el-tag 
+        v-for="tag in scope.row.tags"
+        :key="tag.id"
+        closable
+        type="info"
+        @close="handleClose(tag.id)"
+      </el-tag>
+    </template>
+  end note
+end fork
+end
+
+@enduml
+
+@startuml
+title 分页处理
+
+start
+if(运单总数 > 设置的 pageSize) then (yes)
+  :显示分页组件;
+  fork
+    :切换当前页 currentPage;
+    :设置currentPage为当前选定值;
+  fork again
+    :切换每页显示条数 pageSize;
+    :设置pageSize为当前选定值;
+    :设置currentPage =  1;
+  end fork
+  :带上之前选定的筛选条件，重新请求"/waybill/list"接口;
+    if(请求 成功?) then (yes)
+      :渲染当前页的数据;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+else (no)
+  :隐藏分页组件;
+  stop
+endif
+end
+
+@enduml
+
+@startuml
+title 自定义显示列
+
+start
+if(localStorage waybill column 已存在?) then (yes)
+  :从localStorage获取 waybill column;
+  :将 waybill column赋给显示列组件;
+  if(显示列组件中字段显示情况 有更新?) then (yes)
+    :更新本地存储的 waybill column;
+  else (no)
+    stop
+  endif
+else (no)
+  :从全局存储组件(global-data)中获取 waybill column;
+  note right 
+      global-data是存取全局变量的组件
+  end note
+  :本地存储 waybill column;
+endif
+end
+
+@enduml
+
+@startuml
+title 重置数据
+
+start
+fork
+  :创建时间重置为近三个月;
+fork again
+  :筛选表单除创建时间外其它置空;
+end fork
+:请求"/waybill/list/"接口;
+if(请求 成功?) then (yes)
+  :渲染数据;
+else (no)
+  :提示出错信息;
+  stop
+endif
+end
+
+@enduml

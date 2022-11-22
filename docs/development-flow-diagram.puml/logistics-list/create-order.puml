@@ -1,0 +1,29 @@
+@startuml
+
+start
+:新增订单信息按钮;
+:从localStorage中获取logistics option，
+并从中获取平台、店铺下拉选项;
+:弹出新增订单弹窗;
+repeat 
+fork
+  :输入订单号;
+fork again
+  :选择支付时间;
+  :将选定的时间通过时间转化函数，转化为时间戳;
+fork again
+  :从下拉列表中选择需要的平台和店铺选项;
+end fork 
+backward: 根据校验信息修改表单项;
+repeat while (表单必填项校验 通过?) is (no) not (yes)
+:请求"/order/create"接口;
+if(请求 成功?) then (yes)
+  :提示新增成功;
+  :关闭弹窗;
+else (no)
+  :提示新增失败;
+  stop
+endif
+end
+
+@enduml

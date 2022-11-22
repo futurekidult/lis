@@ -1,0 +1,21 @@
+@startuml
+
+start
+:勾选需要修改物流商的运单;
+:点击修改物流商按钮;
+:从localStorage中获取logistics option，
+并从中获取物流商下拉选项;
+:弹出修改物流商弹窗;
+:从下拉列表中选择新的物流商;
+:请求"/waybill/logistic-supplier-update"接口;
+if(请求 成功?) then (yes)
+  :提示修改成功;
+  :请求"/waybill/list"接口，更新运单列表;
+  :关闭弹窗;
+else (no)
+  :提示修改失败;
+  stop
+endif
+end
+
+@enduml

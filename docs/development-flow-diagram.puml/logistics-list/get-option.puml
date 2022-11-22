@@ -1,0 +1,17 @@
+@startuml
+
+start
+if(localStorage logistics option 已存在?) then (yes)
+  :从 localStorage 中获取 logistics option;
+else (no)
+  :请求"/option/system-parameter-list"接口;
+  if(请求  成功?) then (yes) 
+    :本地存储 logistics option;
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+endif
+end 
+
+@enduml

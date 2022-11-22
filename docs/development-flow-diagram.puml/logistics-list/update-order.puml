@@ -1,0 +1,36 @@
+@startuml
+
+start
+:点击修改订单信息按钮;
+:从localStorage中获取logistics option，
+并从中获取平台、店铺下拉选项;
+:弹出修改订单弹窗;
+:输入要修改的订单号，请求"option/order-list"接口;
+ if(请求 成功?) then (yes)
+    :实时展示包含输入的字符串的订单下拉列表;
+    :选定某一个订单号;
+    :请求"/order/detail"接口;
+    if(请求 成功?) then (yes)
+      :将返回的数据赋给对应的表单项;
+      repeat
+        :更改数据;
+      repeat while(表单必填项校验 通过?) is (no) not (yes)
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+:请求"/order/update"接口;
+if(请求 成功?) then (yes)
+  :提示更新成功;
+  :关闭弹窗;
+else (no)
+  :提示更新失败;
+  stop
+endif
+end
+
+@enduml
