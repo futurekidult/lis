@@ -1,0 +1,37 @@
+@startuml
+
+start
+:点击导入运单按钮;
+:弹出导入运单弹窗;
+:点击导入模板;
+:请求"/waybill/export-template"接口;
+if(请求 成功?) then (yes)
+  :提示下载成功;
+else (no)
+  :提示出错信息;
+  stop
+endif
+:上传根据模板填写好的Excel;
+:请求"/waybill/import"接口;
+if(请求 成功?) then (yes)
+  if(存在有不符合规则的数据?) then (yes)
+    fork
+      :将返回的错误数据渲染到表格内;
+      :对表格内含有不符合规则的单元格做如下处理：
+        1. 单元格边框变红
+        2. 添加icon
+        3. 点击icon展示对应的错误详情; 
+    fork again
+      :添加一个查看数据校验规则的入口;
+    end fork
+  else (no)
+    :提示数据导入成功;
+    :关闭弹窗;
+  endif
+else (no)
+  :提示出错信息;
+  stop
+endif
+end
+
+@enduml

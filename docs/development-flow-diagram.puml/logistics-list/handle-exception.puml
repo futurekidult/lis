@@ -3,14 +3,24 @@
 start
 :勾选需要修改异常处理情况的运单;
 :点击修改异常已处理按钮;
-:从下拉列表中选定某个选项;
+if(logisiticsSystemOption 已存在?) then(yes)
+  :从本地存储中获取异常处理情况(exceptionHandlingOption)下拉列表;
+else (no)
+  :请求"/option/system-parameter-list"接口;
+  if(请求 成功?) then (yes)
+    :本地存储logisiticsSystemOption;
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+endif
 :请求"/waybill/exception-handing-update"接口;
 if(请求 成功?) then (yes)
   :提示更新成功;
+  :设置current_page = 1;
   :请求"/waybill/list"接口，更新运单列表;
 else (no)
-  :提示更新失败;
-  stop
+  :提示出错信息;
 endif
 end
 

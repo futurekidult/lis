@@ -3,14 +3,20 @@
 start
 :选择某一个运单的某一个标签;
 :点击删除;
-:请求"/waybill/label-delete"接口;
-if(请求 成功?) then (yes)
-  :提示删除成功;
-  :请求"/waybill/list"接口，更新运单列表;
-else (no)
-  :提示删除失败;
-  stop
-endif
+:弹出确认删除弹窗;
+fork
+  :点击确定按钮;
+  :请求"/waybill/label-delete"接口;
+  if(请求 成功?) then (yes)
+    :提示删除成功;
+    :请求"/waybill/list"接口，更新运单列表;
+  else (no)
+    :提示出错信息;
+  endif
+fork again
+  :点击取消按钮;
+  :关闭弹窗;
+end fork
 end
 
 @enduml
