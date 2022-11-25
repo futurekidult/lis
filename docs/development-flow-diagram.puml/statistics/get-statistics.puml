@@ -1,0 +1,169 @@
+@startuml
+title 渲染数据
+
+start
+:选择统计维度;
+if(有选筛选条件?) then (yes)
+ if(对应的option 已存在?) then (yes)
+    :从 localStorage中获取物流商(logisiticSupplierOption)、海外仓(overseaLocationOption)、
+    仓库分布(warehouseAreaOption)、店铺(logisticsShopOption)下拉选项;
+  else (no)
+    :请求对应的接口;
+    if(请求 成功?) then (yes)
+      :本地存储上面的option;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  endif
+  fork
+    :选定海外仓/仓库分布(可多选);
+    :请求"/option/warehouse-list?oversea_location_id=&warehouse_area_id="接口;
+    if(请求 成功?) then (yes)
+      :将返回的数据赋给仓库名称下拉列表;
+      :选定仓库(可多选);
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  fork again
+    if(平均时效 ?) then (yes)
+      split 
+        :(周)循环遍历，获取周下拉选项;
+        :默认值为本周;
+      split again 
+        :(月)循环遍历，获取月份下拉选项;
+        :默认值为本月;
+      note right 
+        伪代码
+        ====
+        <el-select>
+          <el-option
+            v-for="i in 52"
+            :key="i"
+            :label="i"
+            :value="i"
+          />
+        </el-select>
+      end note
+      split again
+        :(年)获取当前年;
+        :将2018至明年赋值给年份下拉选项;
+        note right
+          伪代码
+          ====
+            let currentYear = new Date().getFullYear();
+            let option = [];
+            for (let year = 2018; year <= currentYear + 1; year++) {
+              option.push({
+                label: year,
+                value: year
+              });
+            }
+        end note
+        :默认值为当前年;
+      end split
+    else (no)
+      :将发货时间通过时间转换函数，转换成时间戳;
+    endif
+  end fork
+endif
+:点击查询;
+split
+  :请求"/statistics/daily"接口;
+  if(请求 成功?) then (yes)
+    :遍历返回的数据数组;
+    :将日期通过时间戳转化函数，转换成时间格式;
+    fork
+      :将返回数合格率数值拼接"%"字符串;
+      if(parseFloat(返回的合格率数值) 97<= x <= 98?) then (yes)
+        :合格率文本颜色变橙;
+      elseif(parseFloat(返回的合格率数值) <97 ?) then (yes)
+        :合格率文本颜色变红;
+      else (other)
+        :合格率文本颜色变绿;
+      endif
+    fork again  
+      :根据维度动态设置表格的最后一行显示的内容;
+      :设置最后一行文本为可点击文字按钮;
+      :点击里面的某一项;
+      :请求"/statistics/daily-detail"接口;
+      if(请求 成功?) then (yes)
+        :遍历返回的数据数组;
+        if(parseFloat(返回的合格率数值) 97<= x <= 98?) then (yes)
+          :合格率文本颜色变橙;
+        elseif(parseFloat(返回的合格率数值) <97 ?) then (yes)
+          :合格率文本颜色变红;
+        else (other)
+          :合格率文本颜色变绿;
+        endif
+        :将处理后的数据数组渲染到表格;
+      else (no)
+        :提示出错信息;
+        stop
+      endif
+    end fork
+    :将处理后的数据渲染到表格内;
+  else (no)
+    :提示出错信息;
+  endif
+split again
+  :请求"/statistics/average"接口;
+  if(请求 成功?) then (yes)
+    :遍历返回的数据数组;
+    :将日期通过时间戳转化函数，转换成时间格式;
+   split
+     fork
+      :将返回数合格率数值拼接"%"字符串;
+      if(parseFloat(返回的合格率数值) 97<= x <= 98?) then (yes)
+        :合格率文本颜色变橙;
+      elseif(parseFloat(返回的合格率数值) <97 ?) then (yes)
+        :合格率文本颜色变红;
+      else (other)
+        :合格率文本颜色变绿;
+      endif
+     fork again  
+      :根据维度动态设置表格的最后一行显示的内容;
+      :设置最后一行文本为可点击文字按钮;
+      :点击里面的某一项;
+      :请求"/statistics/daily-detail"接口;
+      if(请求 成功?) then (yes)
+        :遍历返回的数据数组;
+        if(parseFloat(返回的合格率数值) 97<= x <= 98?) then (yes)
+          :合格率文本颜色变橙;
+        elseif(parseFloat(返回的合格率数值) <97 ?) then (yes)
+          :合格率文本颜色变红;
+        else (other)
+          :合格率文本颜色变绿;
+        endif
+        :将处理后的数据数组渲染到表格;
+      else (no)
+        :提示出错信息;
+        stop
+      endif
+     end fork
+    split again
+      :根据返回的数据数组的长度初始化length个echarts实例;
+      :根据返回的数据动态设置每个实例的option;
+      :将设置好的option赋给echarts实例，渲染成折线图;
+  end split
+  :显示图表组件;
+  else (no)
+    :提示出错信息;
+  endif
+end split
+end 
+
+@enduml
+
+@startuml
+title 重置
+
+start
+:点击重置;
+:将筛选条件和统计维度全部置空;
+:将表格数组和折线图对象均置空;
+:将图表组件隐藏;
+end
+
+@enduml
