@@ -1,0 +1,99 @@
+@startuml
+
+start
+fork
+  if(创建时间 已重选?) then (yes) 
+    :创建时间为选定时间;
+  else (no)
+    :创建时间为近3个月;
+  endif
+  :将时间通过时间转化函数，转成时间戳;
+fork again  
+  if(对应的option 已存在?) then (yes)
+    :从 localStorage中获取物流商(logisiticSupplierOption)、海外仓(overseaLocationOption)、
+    仓库分布(warehouseAreaOption)、平台(logisiticsPlatformOption)、
+    店铺(logisticsShopOption)、标签(logisiticsLabelOption)下拉选项;
+  else (no)
+    :请求对应的接口;
+    if(请求 成功?) then (yes)
+      :本地存储上面的option;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  endif
+  :从下拉选项中选择要查询的选项(可多选);
+fork again  
+  :传入海外仓id(oversea_location_id)，仓库分布id(warehouse_area_id);
+  :请求"/option/warehouse-list?oversea_location_id=&warehouse_area_id="接口;
+  if(请求 成功?) then (yes)
+    :从下拉选项中选择要查询的选项(可多选);
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+fork again
+  :输入 SKU;
+  :请求"/option/sku-list?name="接口;
+  if(请求  成功?) then (yes)
+    :实时展示包含输入字符串的选项;
+    :从下拉选项中选择要查询的选项(可多选);
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+fork again
+  :输入订单号;
+  :请求"/option/order-list?"接口;
+  if(请求  成功?) then (yes)
+    :实时展示包含输入字符串的选项;
+    :从下拉选项中选择要查询的选项(可多选);
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+fork again
+  if(logisiticsSystemOption 已存在?) then(yes)
+    :从本地存储中获取异常处理情况(exceptionHandlingOption)、
+    包裹类型(parcelTypeOption)下拉列表;
+  else (no)
+    :请求"/option/system-parameter-list"接口;
+    if(请求 成功?) then (yes)
+      :本地存储logisiticsSystemOption;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  endif
+  :从下拉选项中选择要查询的选项(单选);
+fork again  
+  :将选定的发货时间通过时间转化函数，转成时间戳;
+fork again
+  :输入要查询的运单号、最新轨迹停留时长;
+end fork
+:传递运单的运输状态字段，
+请求"/waybill/export"接口;
+if(请求 成功?) then (yes)
+  if(返回的数据类型是json?) then (yes)
+    :提示超出下载限制的提示;
+  else (no)
+    :创建Blob对象，设置数据的MIMI类型(text/csv);
+    :将设置好的blob对象读取为一个URL;
+    :创建a标签，设置a标签的href和download属性;
+  endif
+  note right
+      伪代码
+      ====
+      let blob = new Blob([res], { type: "text/csv" });
+      let url = URL.createObjectURL(blob);
+      let filename = 'xxx' + '.csv';
+      let a = document.createElement("a");
+      a.setAttribute("href", url);
+      a.setAttribute("download", filename);
+      a.click();
+    end note
+else (no)
+  :提示出错信息;
+endif
+end
+@enduml

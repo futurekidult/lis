@@ -48,12 +48,32 @@ if(请求 成功?) then (yes)
       stop
       endif
     endif
-    :输入客户国家树;
+    :输入客户国家;
     :从下拉列表中选定一个国家;
-    :客户州和客户城市置空;
-    :遍历户国家下拉树列表，
-    找到与选定的国家 id 一致的州对象，
-    将它的 children 数组赋给客户州下拉列表;
+    note right
+      选定的国家为'US'时，客户州为必填项；
+      选定的国家为其他国家时，客户州为非必填项。
+    end note
+    fork
+      :客户州和客户城市置空;
+      :遍历客户国家下拉树列表，
+      找到与选定的国家 id 一致的州对象，
+      将它的 children 数组赋给客户州下拉列表;
+    fork again
+      :邮编校验;
+      :根据输入的国家和邮编调用getZipCode()方法;
+      if(回调函数中result.validPattern === true?) then (yes)
+        if(result.valid && result.validLookup?) then (yes)
+          :邮编输入正确;
+        else (no)
+          :提示邮编无效;
+          stop
+        endif
+      else (no)
+        :提示邮编格式不正确;
+        stop
+      endif
+    end fork
   elseif(修改的是客户州?) then (yes)
     :将客户城市置空;
     :从客户州的下拉列表中选定某一个选项;
@@ -69,6 +89,16 @@ if(请求 成功?) then (yes)
     :直接修改即可;
   endif
  repeat while(校验 通过?) is  (no) not (yes) 
+ note right 
+  校验伪代码
+  ====
+  //客户邮箱：
+    ^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$
+  //客户地址: 
+    ^[A-Za-z0-9- ]+$
+  //客户电话：
+    ^[A-Za-z0-9-.+ ]+$
+ end note
  :请求"/waybill/update"接口;
  if(请求 成功?) then (yes)
   :提示修改成功;
@@ -80,7 +110,6 @@ else (no)
 endif
 else (no)
   :提示出错信息;
-  stop
 endif
 end
 
