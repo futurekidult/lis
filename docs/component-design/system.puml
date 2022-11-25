@@ -1,28 +1,83 @@
 @startuml
+title 物流商列表
 
 package "Parent Component" {
-  [SkuList]
+  [LogisticSupplierList]
 }
 
 package "Child Components" {
+  [BaseForm]
+  [BaseTable]
   [BaseChoose]
   [BaseOptionDialog]
 }
 
 package "Descendant Components" {
+  [BaseTable]
+}
+
+[LogisticSupplierList]                     -->       [BaseForm]
+[LogisticSupplierList]                     -->       [BaseTable]
+[LogisticSupplierList]                     -->       [BaseChoose]
+[LogisticSupplierList]                     -->       [BaseOptionDialog]
+[BaseChoose]                                -->       [BaseTable]
+
+@enduml
+
+@startuml
+title 海外仓列表
+
+package "Parent Component" {
+  [overseaLocationList]
+}
+
+package "Child Components" {
+  [BaseForm]
+  [BaseChoose]
+  [BaseOptionDialog]
+}
+
+package "Descendant Components" {
+  [BaseTable]
+}
+
+[overseaLocationList]                     -->       [BaseChoose]
+[overseaLocationList]                     -->       [BaseOptionDialog]
+[overseaLocationList]                     -->       [BaseForm]
+[BaseChoose]                                 -->       [BaseTable]
+
+note right 
+  warehouseAreaList,warehouseList,platformList,labelList与海外仓列表类似
+end note
+
+@enduml
+
+@startuml
+title 店铺列表
+
+package "Parent Component" {
+  [shopList]
+}
+
+package "Child Components" {
+  [BaseChoose]
+  [BaseOptionDialog]
   [BaseForm]
   [BaseTable]
 }
 
-[SkuList]                     -->       [BaseChoose]
-[SkuList]                     -->       [BaseOptionDialog]
-[BaseOptionDialog]  -->        [BaseForm]
-[BaseChoose]            -->        [BaseTable]
+package "Descendant Components" {
+  [BaseTable]
+}
 
+[shopList]                     -->       [BaseChoose]
+[shopList]                     -->       [BaseOptionDialog]
+[shopList]                     -->       [BaseForm]
+[shopList]                     -->       [BaseTable]
+[BaseChoose]              -->       [BaseTable]
 
-note right of  [SkuList] 
-    ShopList,LabelList,PlatFormList,OverseaLocationList,LogisticSupplierList,WarehouseAreaList,WarehouseList与SkuList类似
+note right
+  skuList与shopList类似
 end note
-
 
 @enduml

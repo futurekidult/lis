@@ -5,10 +5,12 @@ package "Parent Coponent" {
 }
 
 package "Child Components" {
+  [BaseTable]
+  [BaseForm]
   [BaseChoose]
   [BaseBreadcrumb]
   [BaseOptionDialog]
-  [WayfillFormDialog]
+  [WaybillFormDialog]
   [BaseConfirmDialog]
 }
 
@@ -17,14 +19,14 @@ package "Descendant Coponents" {
   [BaseTable]
 }
 
+[LogisticsList]             -->       [BaseForm]
+[LogisticsList]             -->       [BaseTable]
 [LogisticsList]             -->       [BaseChoose]
 [LogisticsList]             -->       [BaseBreadcrumb]
 [LogisticsList]             -->       [BaseOptionDialog]
-[LogisticsList]             -->       [WayfillFormDialog]
+[LogisticsList]             -->       [WaybillFormDialog]
 [LogisticsList]             -->       [BaseConfirmDialog]
 [BaseChoose]            -->       [BaseForm]
 [BaseChoose]            -->       [BaseTable]
-[BaseOptionDialog]  -->       [BaseForm]
-[BaseOptionDialog]  -->       [BaseTable]
 
 @enduml
