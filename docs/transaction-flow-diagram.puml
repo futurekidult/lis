@@ -14,7 +14,7 @@ fork again
 end fork
 :查看运单信息;
 fork 
-  if(运单的物流状态是否为投递失败/异常) then (yes)
+  if(运单的运输状态是否为投递失败/异常) then (yes)
     :处理异常，完成后将运单的异常状态批量变更为已处理;
   endif
 fork again

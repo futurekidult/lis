@@ -52,8 +52,10 @@ split
   :请求"/system/base/oversea-location-update"接口;
   if(请求 成功?) then (yes)
     :设置current_page = 1;
-    :请求"/system/base/oversea-location-list?current_page=&page_size="接口;
-    :更新本地存储的overseaLocation;
+    :请求
+      - "/system/base/oversea-location-list?current_page=&page_size="接口
+      - "/option/oversea-location-list"接口;
+    :更新本地存储的overseaLocation和对应的overseaLocationOption;
     :关闭修改弹窗;
   else (no)
     :提示出错信息;
@@ -76,8 +78,10 @@ split again
   :请求"/system/base/oversea-location-create"接口;
   if(请求 成功?) then (yes)
     :设置current_page = 1;
-    :请求"/system/base/oversea-location-list?current_page=&page_size="接口;
-    :更新本地存储的overseaLocation;
+    :请求
+      - "/system/base/oversea-location-list?current_page=&page_size="接口
+      - "/option/oversea-location-list"接口;
+    :更新本地存储的overseaLocation和对应的overseaLocationOption;
     :关闭新增海外仓弹窗;
   else (no)
     :提示出错信息;

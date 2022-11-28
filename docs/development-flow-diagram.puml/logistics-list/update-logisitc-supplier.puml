@@ -3,16 +3,12 @@
 start
 :勾选需要修改物流商的运单;
 :点击修改物流商按钮;
-if(logisiticSupplierOption 已存在?) then (yes)
-  :从localStorage中获取物流商(logisiticSupplierOption)下拉选项;
-else (no)
-  :请求"/option/logistic-supplier-list"接口;
+:请求"/option/logistic-supplier-list"接口;
   if(请求 成功?) then (yes)
-    :本地存储logisiticSupplierOption;
+    :将返回的数据赋给下拉框对象;
   else (no)
     :提示出错信息;
     stop
-  endif
 endif
 :弹出修改物流商弹窗;
 repeat

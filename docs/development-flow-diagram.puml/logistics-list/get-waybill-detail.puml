@@ -8,8 +8,7 @@ split again
 end split
 fork
   if(对应的option 已存在?) then (yes)
-    :从 localStorage中获取物流商(logisiticSupplierOption)、
-    平台(logisiticsPlatformOption)、店铺(logisticsShopOption)下拉选项;
+    :从 localStorage中获取平台(logisiticsPlatformOption)、店铺(logisticsShopOption)下拉选项;
   else (no)
     :请求对应的接口;
     if(请求 成功?) then (yes)
@@ -84,6 +83,8 @@ fork again
 fork again
   :遍历物流轨迹数组，
   将北京时间通过时间戳转化函数，转成时间格式;
+fork again
+  :将首枪时效和送达时效添加字符串"天";
 end fork
 :将处理后的数据赋给表单的对应项;
 :弹出详情弹窗;

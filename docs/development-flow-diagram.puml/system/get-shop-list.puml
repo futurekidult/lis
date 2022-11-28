@@ -50,8 +50,10 @@ split
   :请求"/system/base/shop-update"接口;
   if(请求 成功?) then (yes)
     :设置current_page = 1;
-    :请求"/system/base/shop-list?current_page=&page_size="接口;
-    :更新本地存储的logisticsShop;
+    :请求
+      - "/system/base/shop-list?current_page=&page_size="接口
+      - "/option/shop-list"接口;
+    :更新本地存储的logisticsShop和logisticsShopOption;
     :关闭修改弹窗;
   else (no)
     :提示出错信息;
@@ -75,8 +77,10 @@ split again
     else (no)
       :提示新增成功;
       :设置current_page = 1;
-      :请求"/system/base/shop-list?current_page=&page_size="接口;
-      :更新本地存储的logisiticsShop;
+      :请求
+        - "/system/base/shop-list?current_page=&page_size="接口
+        - "/option/shop-list"接口;
+      :更新本地存储的logisticsShop和logisticsShopOption;
       :关闭新增店铺弹窗;
     endif
   else (no)

@@ -4,7 +4,7 @@ start
 :选择统计维度;
 if(有选筛选条件?) then (yes)
    if(对应的option 已存在?) then (yes)
-    :从 localStorage中获取物流商(logisiticSupplierOption)、海外仓(overseaLocationOption)、
+    :从 localStorage中获取海外仓(overseaLocationOption)、
     仓库分布(warehouseAreaOption)、店铺(logisticsShopOption)下拉选项;
   else (no)
     :请求对应的接口;
@@ -64,6 +64,14 @@ if(有选筛选条件?) then (yes)
       end split
     else (no)
       :将发货时间通过时间转换函数，转换成时间戳;
+    endif
+  fork again
+    :请求"/option/logistic-supplier-list"接口;
+    if(请求 成功?) then (yes) 
+      :将返回的数据赋给该下拉框对象;
+    else (no)
+      :提示出错信息;
+      stop
     endif
   end fork
 endif
