@@ -1,80 +1,7 @@
 @startuml
 
 start
-:选择统计维度;
-if(有选筛选条件?) then (yes)
-   if(对应的option 已存在?) then (yes)
-    :从 localStorage中获取海外仓(overseaLocationOption)、
-    仓库分布(warehouseAreaOption)、店铺(logisticsShopOption)下拉选项;
-  else (no)
-    :请求对应的接口;
-    if(请求 成功?) then (yes)
-      :本地存储上面的option;
-    else (no)
-      :提示出错信息;
-      stop
-    endif
-  endif
-  fork
-    :选定海外仓/仓库分布(可多选);
-    :请求"/option/warehouse-list?oversea_location_id=&warehouse_area_id="接口;
-    if(请求 成功?) then (yes)
-      :将返回的数据赋给仓库名称下拉列表;
-      :选定仓库(可多选);
-    else (no)
-      :提示出错信息;
-      stop
-    endif
-  fork again
-    if(平均时效 ?) then (yes)
-      split 
-        :(周)循环遍历，获取周下拉选项;
-        :默认值为本周;
-      split again 
-        :(月)循环遍历，获取月份下拉选项;
-        :默认值为本月;
-      note right 
-        伪代码
-        ====
-        <el-select>
-          <el-option
-            v-for="i in 52"
-            :key="i"
-            :label="i"
-            :value="i"
-          />
-        </el-select>
-      end note
-      split again
-        :(年)获取当前年;
-        :将2018至明年赋值给年份下拉选项;
-        note right
-          伪代码
-          ====
-            let currentYear = new Date().getFullYear();
-            let option = [];
-            for (let year = 2018; year <= currentYear + 1; year++) {
-              option.push({
-                label: year,
-                value: year
-              });
-            }
-        end note
-        :默认值为当前年;
-      end split
-    else (no)
-      :将发货时间通过时间转换函数，转换成时间戳;
-    endif
-  fork again
-    :请求"/option/logistic-supplier-list"接口;
-    if(请求 成功?) then (yes) 
-      :将返回的数据赋给该下拉框对象;
-    else (no)
-      :提示出错信息;
-      stop
-    endif
-  end fork
-endif
+:获取筛选条件;
 :点击导出;
  if(平均时效 ?) then (yes)
   :请求"/statistics/average-export"接口;
@@ -85,10 +12,16 @@ if(请求 成功?) then (yes)
   if(返回的数据类型是json?) then (yes)
     :提示超出下载限制的提示;
   else (no)
-    :创建Blob对象，设置数据的MIMI类型
+    :创建Blob对象，设置数据的MIME类型
     (application/vnd.openxmlformats-officedocument.spreadsheetml.sheet);
     :将设置好的blob对象读取为一个URL;
     :创建a标签，设置a标签的href和download属性;
+    note right
+        导出的文件名：
+          1. 每日统计：每日物流时效表
+          2. 平均统计：平均物流时效表
+          (具体实现可参考export-waybill)
+    end note
   endif
 else (no)
   :提示出错信息;
