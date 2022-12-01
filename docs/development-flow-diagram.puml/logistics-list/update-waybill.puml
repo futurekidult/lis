@@ -37,49 +37,18 @@ if(请求 成功?) then (yes)
       stop
     endif
   elseif(修改的是客户国家?) then (yes)
-    if(localStorage customer country 已存在?) then (yes)
-      :从localStorage中获取客户国家下拉树列表;
-    else (no)
-      :请求"/option/country-list"接口;
-      if(请求 成功?) then (yes)
-        :本地存储 customer country;
-      else (no)
-        :提示出错信息;
-      stop
-      endif
-    endif
-    :输入客户国家;
-    :从下拉列表中选定一个国家;
+    :获取国家、州和城市下拉列表;
+    :邮编校验;
+    :根据输入的国家和邮编调用checkZipCode()方法;
     note right
-      选定的国家为'US'时，客户州为必填项；
-      选定的国家为其他国家时，客户州为非必填项。
+      checkZipCode()方法是借鉴了
+      https://github.com/zipcodes/zipcodes.js
+      没匹配到的邮编直接通过校验
     end note
-    fork
-      :客户州和客户城市置空;
-      :遍历客户国家下拉树列表，
-      找到与选定的国家 id 一致的州对象，
-      将它的 children 数组赋给客户州下拉列表;
-    fork again
-      :邮编校验;
-      :根据输入的国家和邮编调用getZipCode()方法;
-      if(回调函数中result.validPattern === true?) then (yes)
-        if(result.valid && result.validLookup?) then (yes)
-          :邮编输入正确;
-        else (no)
-          :提示邮编无效;
-          stop
-        endif
-      else (no)
-        :提示邮编格式不正确;
-        stop
-      endif
-    end fork
   elseif(修改的是客户州?) then (yes)
     :将客户城市置空;
-    :从客户州的下拉列表中选定某一个选项;
-    :遍历刚找到的州对象，
-    找到与选定的州对象 id 一致的州对象，
-    将它的 children 数组赋给客户城市下拉列表;
+    :获取到客户州;
+    :获取选中州的下拉列表;
   elseif (修改的是客户城市?) then (yes)
     :从客户城市的下拉列表中选定某一个选项;
   elseif(修改的是发货时间?) then (yes)

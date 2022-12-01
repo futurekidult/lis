@@ -3,22 +3,11 @@
 start
 :勾选需要修改添加标签的运单;
 :点击标记为按钮;
-if(labelOption 已存在?) then(yes)
-  :从本地存储中获取标签(labelOption)下拉列表;
-else (no)
-  :请求"/option/label-list"接口;
-  if(请求 成功?) then (yes)
-    :本地存储labelOption;
-  else (no)
-    :提示出错信息;
-    stop
-  endif
-endif
+:获取标签(labelOption)下拉列表;
 :从下拉列表中选定某个选项;
 :请求"/waybill/label-update"接口;
 if(请求 成功?) then (yes)
   :提示更新成功;
-  :设置current_page = 1;
   :请求"/waybill/list"接口，更新运单列表;
 else (no)
   :提示出错信息;

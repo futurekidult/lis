@@ -2,14 +2,7 @@
 
 start
 :勾选需要修改物流商的运单;
-:点击修改物流商按钮;
-:请求"/option/logistic-supplier-list"接口;
-  if(请求 成功?) then (yes)
-    :将返回的数据赋给下拉框对象;
-  else (no)
-    :提示出错信息;
-    stop
-endif
+:获取物流商下拉列表;
 :弹出修改物流商弹窗;
 repeat
   :从下拉列表中选择物流商;

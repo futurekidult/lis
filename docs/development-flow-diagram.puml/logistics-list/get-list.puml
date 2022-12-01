@@ -2,93 +2,26 @@
 title 根据筛选条件获取不同运输状态下的运单数据
 
 start
-fork
-  if(创建时间 已重选?) then (yes) 
-    :创建时间为选定时间;
-  else (no)
-    :创建时间为近3个月;
-  endif
-  :将时间通过时间转化函数，转成时间戳;
-fork again  
-  if(对应的option 已存在?) then (yes)
-    :从 localStorage中获取海外仓(overseaLocationOption)、
-    仓库分布(warehouseAreaOption)、平台(logisiticsPlatformOption)、
-    店铺(logisticsShopOption)、标签(logisiticsLabelOption)下拉选项;
-  else (no)
-    :请求对应的接口;
-    if(请求 成功?) then (yes)
-      :本地存储上面的option;
-    else (no)
-      :提示出错信息;
-      stop
-    endif
-  endif
-  :从下拉选项中选择要查询的选项(可多选);
-fork again  
-  :传入海外仓id(oversea_location_id)，仓库分布id(warehouse_area_id);
-  :请求"/option/warehouse-list?oversea_location_id=&warehouse_area_id="接口;
-  if(请求 成功?) then (yes)
-    :从下拉选项中选择要查询的选项(可多选);
-  else (no)
-    :提示出错信息;
-    stop
-  endif
-fork again
-  :输入 SKU;
-  :请求"/option/sku-list?name="接口;
-  if(请求  成功?) then (yes)
-    :实时展示包含输入字符串的选项;
-    :从下拉选项中选择要查询的选项(可多选);
-  else (no)
-    :提示出错信息;
-    stop
-  endif
-fork again
-  :输入订单号;
-  :请求"/option/order-list?"接口;
-  if(请求  成功?) then (yes)
-    :实时展示包含输入字符串的选项;
-    :从下拉选项中选择要查询的选项(可多选);
-  else (no)
-    :提示出错信息;
-    stop
-  endif
-fork again
-  if(logisiticsSystemOption 已存在?) then(yes)
-    :从本地存储中获取异常处理情况(exceptionHandlingOption)、
-    包裹类型(parcelTypeOption)下拉列表;
-  else (no)
-    :请求"/option/system-parameter-list"接口;
-    if(请求 成功?) then (yes)
-      :本地存储logisiticsSystemOption;
-    else (no)
-      :提示出错信息;
-      stop
-    endif
-  endif
-  :从下拉选项中选择要查询的选项(单选);
-fork again
-  :请求"/option/logistic-supplier-list"接口;
-  if(请求 成功?) then (yes) 
-    :将返回的数据赋给该下拉框对象;
-  else (no)
-    :提示出错信息;
-    stop
-  endif
-fork again  
-  :将选定的发货时间通过时间转化函数，转成时间戳;
-fork again
-  :输入要查询的运单号、最新轨迹停留时长;
-end fork
+:获取筛选条件的下拉选项;
 :传递运单的运输状态字段，
 请求"/waybill/list"接口;
 if(请求 成功?) then (yes)
-  :循环遍历返回的数据列表;
-  fork
-    :将发货时间、最新轨迹时间、获取时间、
+  :循环处理返回的数据，并处理后的数据渲染到表格;
+else (no)
+  :提示出错信息;
+  stop
+endif
+end
+
+start
+note right
+  渲染前的数据处理
+end note
+fork
+  :将发货时间、最新轨迹时间、获取时间、
     创建时间通过时间戳转化函数，转换成时间;
-  fork again
-    :获取当前时间;
+fork again
+  if(运输状态为"已签收"或"已过期") then (no) 
     :获取最新轨迹停留时长(当前时间 - 最新轨迹时间)，
     同时给算出来的时间加上"天"字符串;
     note right
@@ -96,18 +29,12 @@ if(请求 成功?) then (yes)
       ====
       let currentTime = new Date().getTime();
       let eventTime = xxxxx;
-      let stayTime = (currentTime - eventTime)/1000/60/60/24 + '天';
+      let time = (currentTime - eventTime * 1000)/1000/60/60/24;
+      //保留小数点后一位，向上取整
+      let  stayTime = Math.ceil(time.toFixed(1)) + "天";
     end note
-  fork again
-    :将首枪时效，送达时效添加字符串"天";
-  end fork
-else (no)
-  :提示出错信息;
-  stop
-endif
-:渲染数据到表格;
-fork
-  if(最新轨迹停留时长 > 5) then (yes)
+     if(最新轨迹停留时长 > 5) then (yes)
+    :文字颜色变红;
     note right
       伪代码
       ====
@@ -115,10 +42,12 @@ fork
         return '#EA1D1D'
       }
     end note
-    :文字颜色变红;
   else (no)
     stop
   endif
+  endif
+fork again
+  :将首枪时效，送达时效添加字符串"天";
 fork again
   if(异常处理情况 === "待处理") then (yes)
     :文字颜色变红;

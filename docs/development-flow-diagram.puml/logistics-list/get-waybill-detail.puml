@@ -2,92 +2,20 @@
 
 start
 split
-  :点击详情按钮;
-split again
-  :点击同步按钮;
-end split
-fork
-  if(对应的option 已存在?) then (yes)
-    :从 localStorage中获取平台(logisiticsPlatformOption)、店铺(logisticsShopOption)下拉选项;
-  else (no)
-    :请求对应的接口;
-    if(请求 成功?) then (yes)
-      :本地存储上面的option;
-    else (no)
-      :提示出错信息;
-      stop
-    endif
-  endif
-fork again
-  :请求"/option/warehouse-list?oversea_location_id=&warehouse_area_id="接口;
-  if(请求 成功?) then (yes)
-    :将返回的数据列表赋给仓库的下拉列表;
-  else (no)
-    :提示出错信息;
-    stop
-  endif
-end fork
-split
+  :详情;
   :请求"/waybill/detail"接口;
 split again
+  :同步;
   :请求"/waybill/detail-synchronize"接口;
-end split
-if(请求  成功?) then (yes)
-  :对返回的数据作处理;
- fork
- if(localStorage customer country 已存在?) then (yes)
-  :本地获取客户国家的下拉列表;
-  :遍历国家下拉树,找到与返回的国家 id 一致的州对象，
-  并将该对象的 children 数组赋给客户州下拉列表;
-  :遍历客户州下拉列表,找到与返回的州 id 一致的对象，
-  并将该对象的 children 数组赋给客户城市下拉列表;
-else (no)
-  :请求"/option/country-list"接口;
   if(请求 成功?) then (yes)
-    :将返回的数据赋给客户国家的下拉列表;
-    :遍历国家下拉树,找到与返回的国家 id 一致的州对象，
-    并将该对象的 children 数组赋给客户州下拉列表;
-    :遍历客户州下拉列表,找到与返回的州 id 一致的对象，
-    并将该对象的 children 数组赋给客户城市下拉列表;
-    note right
-      伪代码
-      ====
-      let state = country.find(item => item.country_id === x).children;
-      let city = state.find(item => item.state_id === x).children;
-    end note
+    :请求"/waybill/detail"接口;
   else (no)
     :提示出错信息;
     stop
   endif
-endif
-fork again
-  :请求"/option/sku-list"接口;
-   if(请求 成功?) then (yes)
-    :将返回的数据赋给SKU的下拉列表;
-  else (no)
-    :提示出错信息;
-    stop
-  endif 
-fork again
-  :请求"/option/order-list"接口;
-   if(请求 成功?) then (yes)
-    :将返回的数据赋给订单的下拉列表;
-  else (no)
-    :提示出错信息;
-    stop
-  endif 
-fork again
-  :将支付时间、预计送达时间、首枪时间、
-  送达时间、获取时间、最新轨迹时间通过
-  时间戳转化函数，转成时间格式;
-fork again
-  :遍历物流轨迹数组，
-  将北京时间通过时间戳转化函数，转成时间格式;
-fork again
-  :将首枪时效和送达时效添加字符串"天";
-end fork
-:将处理后的数据赋给表单的对应项;
-:弹出详情弹窗;
+end split
+if(请求 成功?) then (yes)
+  :将返回的数据赋给表单对象;
 else (no)
   :提示出错信息;
 endif
