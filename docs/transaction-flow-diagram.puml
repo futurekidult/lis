@@ -21,7 +21,7 @@ fork again
   repeat 
     :新增订单信息;
     :系统校验;
-  backward: 修改订单号;
+  backward: 修改订单信息;
   repeat while (校验通过?) is (no) not (yes)
 fork again
   if (运单信息是否有误) then (yes)
@@ -41,8 +41,8 @@ fork again
   :给运单添加标签;
   if(运单标签是否有误) then (yes)
       :删除错误标签;
-      :勾选运单，将运单批量标记为对应的标签;
   endif
+  :勾选运单，将运单批量标记为对应的标签;
 fork again
   if(运单对应的物流商是否有误) then (yes)
     :批量修改供应商;
