@@ -1,0 +1,22 @@
+@startuml
+title 以海外仓为例
+
+start
+if(localStorage overseaLocation?) then (no)
+  :请求list接口，将返回的数据渲染到表格;
+  :本地存储overseaLocation变量;
+  note right
+    有效期：
+      1.物流商： 10h
+      2.除物流商外：24h
+  end note
+else (yes)
+  if(current_page === 1 && page_size === 10)
+    :从本地存储中获取overseaLocation变量，将其渲染到表格;
+  else (no)
+    :请求接口，将返回的数据渲染到表格;
+  endif
+endif
+end
+
+@enduml

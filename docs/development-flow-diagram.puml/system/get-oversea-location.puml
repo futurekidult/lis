@@ -1,50 +1,17 @@
 @startuml
 
 start
-if(localStorage overseaLocation?) then (yes)
-  :将本地存储的数据渲染到表格;
-else (no)
-  :请求"/system/base/oversea-location-list?current_page=&page_size="接口;
-  if(请求 成功?) then (yes)
-    :遍历返回的数据列表，将创建时间通过时间戳转化函数，转化为时间格式;
-    :本地存储处理过后的数据，存入overseaLocation变量中;
-  else (no)
-    :提示出错信息;
-    stop
-   endif
-endif
+:获取数据;
 split
   :点击修改，获取到该海外仓id和name;
   :将该海外仓name赋给修改表单对象;
   :弹出修改海外仓弹窗;
-  repeat
-    :修改海外仓;
-  repeat while(表单校验 通过?) is (no) not (yes)
-  note right 
-    校验规则伪代码
-    ====
-    //允许中英文，数字，下划线，中划线
-    let reg = new RegExp
-    ("^[\u4E00-\u9FA5A-Za-z0-9_-]+$")
-    //true: 通过校验; false: 未通过校验
-    reg.test(str) 
-  end note
-  :请求"/system/base/oversea-location-update"接口;
-  if(请求 成功?) then (yes)
-    :设置current_page = 1;
-    :请求
-      - "/system/base/oversea-location-list?current_page=&page_size="接口
-      - "/option/oversea-location-list"接口;
-    :更新本地存储的overseaLocation和对应的overseaLocationOption;
-    :关闭修改弹窗;
-  else (no)
-    :提示出错信息;
-  endif
 split again
   :点击新增海外仓按钮;
   :弹出新增海外仓弹窗;
-  repeat
-    :输入或更改海外仓;
+end split
+ repeat
+    :输入/修改海外仓;
   repeat while(表单校验 通过?) is (no) not (yes)
   note right 
     校验规则伪代码
@@ -55,37 +22,22 @@ split again
     //true: 通过校验; false: 未通过校验
     reg.test(str) 
   end note
-  :请求"/system/base/oversea-location-create"接口;
-  if(请求 成功?) then (yes)
-    :设置current_page = 1;
-    :请求
-      - "/system/base/oversea-location-list?current_page=&page_size="接口
-      - "/option/oversea-location-list"接口;
-    :更新本地存储的overseaLocation和对应的overseaLocationOption;
-    :关闭新增海外仓弹窗;
+  if(新增 ?) then (yes)
+    :请求"/system/base/oversea-location-create"接口;
   else (no)
-    :提示出错信息;
-  endif    
-split again
-  :切换当前页;
-  :设置current_page为当前页;
-  :请求"/system/base/oversea-location-list?current_page=&page_size="接口;
+    :请求"/system/base/oversea-location-update"接口;
+  endif
   if(请求 成功?) then (yes)
-    :将返回数据渲染到表格;
+    if(新增 ?) then (yes)
+      :current_page = 1;
+      :删除overseaLocation变量;
+    endif
+    :删除overseaLocationOption缓存;
+    :获取数据;
+    :提示成功，关闭弹窗;
   else (no)
     :提示出错信息;
   endif
-split again 
-  :切换每页显示条数;
-  :设置current_page = 1;
-  :设置page_size为当前选中的每页展示条数;
-  :请求"/system/base/oversea-location-list?current_page=&page_size="接口;
-  if(请求 成功?) then (yes)
-    :将返回数据渲染到表格;
-  else (no)
-    :提示出错信息;
-  endif
-end split
 end
 
 @enduml

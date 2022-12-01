@@ -1,23 +1,21 @@
 @startuml
 
 start
-if(localStorage logisticsShop?) then (yes)
-  :将本地存储的数据渲染到表格;
-else (no)
-  :请求"/system/base/shop-list?current_page=&page_size="接口;
-  if(请求 成功?) then (yes)
-    :本地存储返回的数据，存入logisticsShop变量中;
-  else (no)
-    :提示出错信息;
-    stop
-  endif
-endif
+:获取数据;
 split
   :点击修改，获取到该店铺id和name;
   :将该店铺name赋给修改表单对象;
   :弹出修改店铺弹窗;
-  repeat
-    :修改店铺名;
+split again
+  :点击新增店铺按钮;
+  :弹出新增店铺弹窗;
+end split
+ repeat
+    :批量输入/修改店铺;
+    if(输入的字符串长度 === 1000) then (yes)
+      :弹出提示：超出规定字数，请检查最后一项是否被截断;
+      :修改输入的店铺;
+    endif
   repeat while(表单校验 通过?) is (no) not (yes)
   note right 
     校验规则伪代码
@@ -28,66 +26,28 @@ split
     //true: 通过校验; false: 未通过校验
     reg.test(str)  
   end note
-  :请求"/system/base/shop-update"接口;
-  if(请求 成功?) then (yes)
-    :设置current_page = 1;
-    :请求
-      - "/system/base/shop-list?current_page=&page_size="接口
-      - "/option/shop-list"接口;
-    :更新本地存储的logisticsShop和logisticsShopOption;
-    :关闭修改弹窗;
+  if(新增 ?) then (yes)
+    :请求"/system/base/shop-create"接口;
   else (no)
-    :提示出错信息;
-    stop
-  endif 
-split again
-  :点击新增店铺按钮;
-  :弹出新增店铺弹窗;
-  repeat
-    :批量输入店铺;
-    if(输入的字符串长度 === 1000) then (yes)
-      :弹出提示：超出规定字数，请检查最后一项是否被截断;
-      :修改输入的店铺;
-    endif
-  repeat while(表单校验 通过?) is (no) not (yes)
-  :请求"/system/base/shop-create"接口;
+    :请求"/system/base/shop-update"接口;
+  endif
   if(请求 成功?) then (yes)
     if(存在错误数据 ?) then (yes)
       :将返回的错误数据列表赋给表格对象;
       :弹出错误详情展示弹窗;
     else (no)
-      :提示新增成功;
-      :设置current_page = 1;
-      :请求
-        - "/system/base/shop-list?current_page=&page_size="接口
-        - "/option/shop-list"接口;
-      :更新本地存储的logisticsShop和logisticsShopOption;
-      :关闭新增店铺弹窗;
-    endif
+      if(新增 ?) then (yes)
+        :current_page = 1;
+        :删除overseaLocation变量;
+      endif
+       :删除overseaLocationOption缓存;
+      :获取数据;
+      :提示成功，关闭弹窗;
+      endif
   else (no)
     :提示出错信息;
     stop
   endif
-split again
-  :切换当前页;
-  :设置current_page为当前页;
-  :请求"/system/base/shop-list?current_page=&page_size="接口;
-  if(请求 成功?) then (yes)
-    :将返回数据渲染到表格;
-  else (no)
-    :提示出错信息;
-  endif
-split again 
-  :切换每页显示条数;
-  :设置current_page = 1;
-  :设置page_size为当前选中的每页展示条数;
-  :请求"/system/base/shop-list?current_page=&page_size="接口;
-  if(请求 成功?) then (yes)
-    :将返回数据渲染到表格;
-  else (no)
-    :提示出错信息;
-  endif
-end split
 end
 
 @enduml

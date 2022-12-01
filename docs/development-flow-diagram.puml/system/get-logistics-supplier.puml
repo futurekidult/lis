@@ -1,16 +1,10 @@
 @startuml
 
 start
-  :请求"/system/base/logistic-supplier-list?current_page=&page_size="接口;
-  if(请求 成功?) then (yes)
-    :将返回的数据渲染到表格;
-  else (no)
-    :提示出错信息;
-    stop
-  endif
+:获取数据;
 split
   :点击查看映射，获取到该物流商id;
-  :请求"/system/base/logistic-supplier-map-list?id="接口;
+  :请求"/system/base/logistic-supplier-map-list"接口;
   if(请求 成功?) then (yes)
     :将返回的数据赋给物流商映射表格对象;
     :弹出物流商映射列表弹窗;
@@ -25,7 +19,7 @@ split
     :点击确认按钮;
     :请求"/system/base/logistic-supplier-map-delete"接口;
     if(请求 成功?) then (yes)
-      :请求"/system/base/logistic-supplier-map-list?id="接口，
+      :请求"/system/base/logistic-supplier-map-list"接口，
       更新该物流商映射列表;
     else (no)
       :提示出错信息;
@@ -56,17 +50,6 @@ split again
   else (no)
     :提示出错信息;
   endif    
-split again
-  :切换当前页;
-  :设置current_page为当前页;
-  :请求"/system/base/logistic-supplier-list?current_page=&page_size="接口，
-  更新列表;
-split again 
-  :切换每页显示条数;
-  :设置current_page = 1;
-  :设置page_size为当前选中的每页展示条数;
-  :请求"/system/base/logistic-supplier-list?current_page=&page_size="接口，
-  更新列表;;
 end split
 end
 
