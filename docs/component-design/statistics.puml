@@ -12,7 +12,7 @@ package "Child Components" {
 }
 
 package "Descendant Components" {
-  [NativeTable]
+  [BaseTable]
 }
 
 [DailyStatistics]            -->       [BaseForm]
@@ -20,7 +20,7 @@ package "Descendant Components" {
 [AverageStatistics]       -->       [BaseForm]
 [AverageStatistics]       -->       [BaseBreadcrumb]
 [AverageStatistics]       -->       [BaseChart]
-[BaseChart]                  -->       [NativeTable]
+[BaseChart]                  -->       [BaseTable]
 
 
 @enduml
