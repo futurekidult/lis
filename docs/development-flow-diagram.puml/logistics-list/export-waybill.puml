@@ -17,7 +17,7 @@ if(请求 成功?) then (yes)
       ====
       let blob = new Blob([res], { type: "text/csv" });
       let url = URL.createObjectURL(blob);
-      let filename = '物流运单列表' + '.csv';
+      let filename = '物流运单列表' +当前日期 + '.csv';
       let a = document.createElement("a");
       a.setAttribute("href", url);
       a.setAttribute("download", filename);

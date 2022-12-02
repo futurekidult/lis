@@ -18,8 +18,8 @@ if(请求 成功?) then (yes)
     :创建a标签，设置a标签的href和download属性;
     note right
         导出的文件名：
-          1. 每日统计：每日物流时效表
-          2. 平均统计：平均物流时效表
+          1. 每日统计：每日物流时效表 + 当前日期
+          2. 平均统计：平均物流时效表 + 当前日期
           (具体实现可参考export-waybill)
     end note
   endif

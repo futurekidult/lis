@@ -8,7 +8,7 @@ if(localStorage overseaLocation?) then (no)
   note right
     有效期：
       1.物流商： 10h
-      2.除物流商外：24h
+      2.除物流商外：当前访问时间与隔天凌晨5点的差值
   end note
 else (yes)
   if(current_page === 1 && page_size === 10)
