@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import GlobalData from './components/common/global-data.vue';
 import Manage from './components/layout/manage.vue';
-import demoList from './components/pages/demo/demo-list.vue';
+const LogisticsList = () => {
+  return import('./components/pages/logistics/logistics-list.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -9,18 +10,15 @@ const router = createRouter({
     {
       path: '/',
       component: Manage,
-      redirect: '/demo-list',
+      redirect: '/logistics-list',
       children: [
         {
-          path: '/demo-list',
-          name: 'demo',
-          component: demoList,
+          path: '/logistics-list',
+          name: 'logistics',
+          component: LogisticsList,
           meta: {
             formVisible: true,
-            breadcrumb: [{ title: 'Demo管理' }, { title: 'Demo列表' }],
-            chooseProperties: GlobalData.demoChooseOptions,
-            editProperties: GlobalData.demoEditOptions,
-            editRules: GlobalData.demoEditRules
+            breadcrumb: [{ title: '尾程物流管理' }, { title: '尾程物流列表' }]
           }
         }
       ]

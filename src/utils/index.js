@@ -1,4 +1,4 @@
-//公共方法,比如时间转换
+//时间戳转换成时间格式
 export const timestampToTime = (timestamp) => {
   let date = new Date(timestamp * 1000);
   let year = `${date.getFullYear()}-`;
@@ -18,6 +18,7 @@ export const timestampToTime = (timestamp) => {
   return year + month + day + hour + minute + second;
 };
 
+// 时间转换成时间戳
 export const timeToTimestamp = (time) => {
   let date = new Date(time);
   return date.getTime() / 1000;

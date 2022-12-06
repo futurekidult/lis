@@ -35,10 +35,24 @@ export default defineComponent({
 }
 
 .el-input__wrapper {
-  width: 150px !important;
+  width: 120px !important;
 }
 
 .el-range-editor.el-input__wrapper {
   width: 300px !important;
+}
+
+.el-button {
+  width: 100px;
+}
+
+.select-title {
+  font-weight: 900;
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.el-divider--vertical {
+  border-left: 4px rgba(0, 102, 183, 1) solid !important;
 }
 </style>
