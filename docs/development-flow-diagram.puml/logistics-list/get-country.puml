@@ -1,0 +1,47 @@
+@startuml
+
+start
+ if( localStorage customerCountry ?) then (yes)
+    :从本地存储中获取到国家列表;
+  else (no)
+    :请求"/option/state-list"接口;
+    if(请求 成功?) then (yes)
+      :将返回的数据进行本地存储;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  endif
+  :获取到客户国家;
+  if( localStorage 包含该国家变量名 ?) then (yes)
+    :从本地存储中获取到该国家对应的州列表;
+  else (no)
+    :请求"/option/state-list"接口;
+    if(请求 成功?) then (yes)
+      :将返回的数据进行本地存储;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  endif
+  :获取到客户州;
+  if( localStorage 包含该州变量名?) then (yes)
+    :从本地存储中获取到该州对应的城市列表;
+  else (no)
+    :请求"/option/city-list"接口;
+    if(请求 成功?) then (yes)
+      :将返回的数据列表进行存储;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  endif
+  note right
+    比如存储被选择过的国家的对应州(被选择过的国家的对应州类似): 
+    localStorage.setItem(`state-${某国家id}`, [])
+    本地存储有效期: 3个月
+    可翻译成的国家、州、城市均需要拼接(origin + name_cn)
+  end note
+end
+
+@enduml

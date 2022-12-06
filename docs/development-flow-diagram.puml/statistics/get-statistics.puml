@@ -1,0 +1,81 @@
+@startuml
+title 渲染数据
+
+start
+:获取筛选条件;
+:点击查询;
+split
+  :请求"/statistics/daily"接口;
+  if(请求 成功?) then (yes)
+    :遍历返回的数据数组;
+    :将处理后的数据渲染到表格;
+  else (no)
+    :提示出错信息;
+  endif
+split again
+  :请求"/statistics/average"接口;
+  if(请求 成功?) then (yes)
+    :遍历返回的数据数组;
+    split
+    :将处理后的数据渲染到表格;
+    split again
+      :根据返回的数据数组的长度初始化length个echarts实例;
+      :根据返回的数据动态设置每个实例的option;
+      :将设置好的option赋给echarts实例，渲染成折线图;  
+    end split
+  else (no)
+    :提示出错信息;
+  endif
+end split
+end 
+
+start
+note right
+  处理返回的数据
+end note
+fork
+  :将日期通过时间戳转化函数，转换成时间格式;
+fork again 
+  :处理颜色和字符串的拼接;
+fork again  
+  :根据维度动态设置表格的最后一行显示的内容;
+  :设置最后一行文本为可点击文字按钮;
+  :点击里面的某一项;
+  :请求"/statistics/daily-detail"接口;
+  if(请求 成功?) then (yes)
+    :遍历返回的数据数组;
+    :处理颜色和字符串的拼接;
+    :将处理后的数据数组渲染到表格;
+  else (no)
+    :提示出错信息;
+  endif
+end fork
+end
+
+start
+note right
+  处理颜色和字符串的拼接
+end note
+:将返回数合格率数值拼接"%"字符串;
+if(parseFloat(返回的合格率数值) 97<= x <= 98?) then (yes)
+  :合格率文本颜色变橙;
+elseif(parseFloat(返回的合格率数值) <97 ?) then (yes)
+  :合格率文本颜色变红;
+else (other)
+  :合格率文本颜色变绿;
+endif
+end
+@enduml
+
+@startuml
+title 重置
+
+start
+:点击重置;
+:将筛选条件和统计维度全部置空;
+:将表格数组和折线图对象均置空;
+:将图表组件隐藏;
+end
+
+@enduml
+

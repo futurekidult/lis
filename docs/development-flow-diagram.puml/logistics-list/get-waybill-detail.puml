@@ -1,0 +1,24 @@
+@startuml
+
+start
+split
+  :详情;
+  :请求"/waybill/detail"接口;
+split again
+  :同步;
+  :请求"/waybill/detail-synchronize"接口;
+  if(请求 成功?) then (yes)
+    :请求"/waybill/detail"接口;
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+end split
+if(请求 成功?) then (yes)
+  :将返回的数据赋给表单对象;
+else (no)
+  :提示出错信息;
+endif
+end
+
+@enduml
