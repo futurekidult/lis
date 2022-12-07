@@ -80,12 +80,12 @@ const logisticsChooseOptions = [
     options: []
   },
   {
-    label: '发货时间',
+    label: '发货日期',
     type: 'date',
     prop: 'shipping_time'
   },
   {
-    label: '创建时间',
+    label: '创建日期',
     type: 'date',
     prop: 'create_time'
   },

@@ -110,6 +110,7 @@
 <script>
 import BaseForm from '../../common/base-form.vue';
 import { ArrowDown } from '@element-plus/icons-vue';
+import { handleDateRange } from '../../../utils/index.js';
 
 export default {
   components: {
@@ -141,6 +142,7 @@ export default {
     };
   },
   mounted() {
+    this.chooseForm.create_time = this.lastThreeMonth();
     let column = JSON.parse(localStorage.getItem('logistics-column'));
     if (column) {
       this.tableFields = column;
@@ -152,6 +154,8 @@ export default {
   methods: {
     async getListData(dialog = true, transitState = '') {
       this.$store.commit('logistics/setListLoading', true);
+      handleDateRange(this.chooseForm, 'shipping_time');
+      handleDateRange(this.chooseForm, 'create_time');
       let params = this.chooseForm;
       params.current_page = this.pagination.current_page;
       params.page_size = this.pagination.page_size;
@@ -176,6 +180,7 @@ export default {
       this.pagination.current_page = 1;
       this.pagination.page_size = 10;
       this.chooseForm = {};
+      this.chooseForm.create_time = this.lastThreeMonth();
       this.getListData();
     },
     handleClick(tab) {
@@ -186,6 +191,12 @@ export default {
     },
     changePagination(val) {
       this.pagination = val;
+    },
+    lastThreeMonth() {
+      let end = new Date();
+      let start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+      return [start, end];
     }
   }
 };

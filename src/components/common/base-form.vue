@@ -42,9 +42,9 @@
       <el-date-picker
         v-if="item.type === 'date' && !item.range"
         v-model="form[item.prop]"
-        type="datetimerange"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间"
+        type="daterange"
+        start-placeholder="年-月-日"
+        end-placeholder="年-月-日"
       />
       <el-input
         v-if="item.type === 'textarea' && !item.range"

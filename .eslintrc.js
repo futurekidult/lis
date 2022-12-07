@@ -25,7 +25,6 @@ module.exports = {
     'object-shorthand': 'error',
     'no-prototype-builtins': 'error',
     'no-array-constructor': 'error',
-    'prefer-destructuring': 'error',
     quotes: ['error', 'single'],
     'prefer-template': 'error',
     'template-curly-spacing': ['error', 'never'],

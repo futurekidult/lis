@@ -39,7 +39,7 @@ export default defineComponent({
 }
 
 .el-range-editor.el-input__wrapper {
-  width: 300px !important;
+  width: 250px !important;
 }
 
 .el-button {

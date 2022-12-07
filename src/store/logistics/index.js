@@ -1,5 +1,5 @@
 import axios from '../../utils/axios';
-import { timestampToTime } from '../../utils/index';
+import { handleTimestamp } from '../../utils/index';
 
 export default {
   namespaced: true,
@@ -39,10 +39,12 @@ export default {
               item.stay_time = `${Math.ceil(time.toFixed(1))}天`;
             }
             //时间戳转化
-            item.sync_time = timestampToTime(item.sync_time);
-            item.create_time = timestampToTime(item.create_time);
-            item.shipping_time = timestampToTime(item.shipping_time);
-            item.current_event_time = timestampToTime(item.current_event_time);
+            handleTimestamp(item, [
+              'sync_time',
+              'create_time',
+              'shipping_time',
+              'current_event_time'
+            ]);
             // 字符串拼接
             item.receipt_days = `${item.receipt_days}天`;
             item.delivery_days = `${item.delivery_days}天`;
