@@ -1,10 +1,9 @@
 import { createStore } from 'vuex';
-//引入子模块
-import demo from './demo/index.js';
+import logistics from './logistics/index.js';
 
 const store = createStore({
   modules: {
-    demo
+    logistics
   },
   state() {
     return {};

@@ -3,28 +3,34 @@
     ref="form"
     :inline="inline"
     :model="form"
-    :label-width="width"
     :rules="baseRules"
-    size="small"
   >
     <el-form-item
       v-for="(item, index) in properties"
       :key="index"
       :label="item.label"
       :prop="item.prop"
+      :label-width="item.label === '最新轨迹停留时长(天)' ? '150px' : width"
     >
       <el-input
         v-if="item.type === 'input' && !item.range"
         v-model="form[item.prop]"
-        placeholder="enter a value"
+        placeholder="请输入"
         clearable
+      />
+      <el-autocomplete
+        v-if="item.type === 'remote' && !item.range"
+        v-model="form[item.prop]"
+        placeholder="请输入"
       />
       <el-select
         v-if="item.type === 'select' && !item.range"
         v-model="form[item.prop]"
-        placeholder="select a value"
+        placeholder="请选择"
         clearable
         style="width: 100%"
+        filterable
+        :multiple="item.multiple"
       >
         <el-option
           v-for="option in item.options"
@@ -37,31 +43,31 @@
         v-if="item.type === 'date' && !item.range"
         v-model="form[item.prop]"
         type="datetimerange"
-        start-placeholder="Start date"
-        end-placeholder="End date"
+        start-placeholder="开始时间"
+        end-placeholder="结束时间"
       />
       <el-input
         v-if="item.type === 'textarea' && !item.range"
         v-model="form[item.prop]"
         type="textarea"
-        placeholder="enter a value"
+        placeholder="请输入"
         clearable
       />
       <div
         v-if="item.range"
-        style="display: flex"
+        style="display: flex; width: 220px"
       >
-        <el-col :span="5">
+        <el-col :span="8">
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop1]"
-            placeholder=""
+            placeholder="请输入"
             clearable
           />
           <el-select
             v-if="item.type === 'select'"
             v-model="form[item.prop1]"
-            placeholder=""
+            placeholder="请选择"
             clearable
             style="width: 100%"
           >
@@ -79,18 +85,18 @@
         >
           <span>至</span>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="8">
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop2]"
-            placeholder=""
+            placeholder="请输入"
             clearable
             style="width: 100%"
           />
           <el-select
             v-if="item.type === 'select'"
             v-model="form[item.prop2]"
-            placeholder=""
+            placeholder="请选择"
             clearable
             style="width: 100%"
           >

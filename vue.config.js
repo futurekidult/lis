@@ -3,6 +3,7 @@ const Components = require('unplugin-vue-components/webpack');
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers');
 
 module.exports = {
+  // 按需自动引入ElementPlus
   configureWebpack: {
     plugins: [
       AutoImport({
@@ -17,7 +18,8 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://xxx/api',
+        target:
+          'https://8ff8dda4-13ca-499d-bfad-64024f50a527.mock.pstmn.io/api/',
         ws: true,
         changeOrigin: true,
         pathRewrite: {

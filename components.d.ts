@@ -8,13 +8,12 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BaseBreadcrumb: typeof import('./src/components/common/base-breadcrumb.vue')['default']
-    BaseChoose: typeof import('./src/components/common/base-choose.vue')['default']
     BaseConfirmDialog: typeof import('./src/components/common/base-confirm-dialog.vue')['default']
     BaseForm: typeof import('./src/components/common/base-form.vue')['default']
     BaseOptionDialog: typeof import('./src/components/common/base-option-dialog.vue')['default']
     BaseTable: typeof import('./src/components/common/base-table.vue')['default']
-    DemoList: typeof import('./src/components/pages/demo/demo-list.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
+    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -37,17 +36,25 @@ declare module '@vue/runtime-core' {
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPagination: typeof import('element-plus/es')['ElPagination']
+    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
+    ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
     GlobalData: typeof import('./src/components/common/global-data.vue')['default']
+    LogisticsList: typeof import('./src/components/pages/logistics/logistics-list.vue')['default']
     MainContainer: typeof import('./src/components/layout/main-container.vue')['default']
     Manage: typeof import('./src/components/layout/manage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }
