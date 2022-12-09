@@ -133,6 +133,16 @@ const logisticsTableFields = [
     show: true
   },
   {
+    label: '平台',
+    prop: 'platform',
+    show: false
+  },
+  {
+    label: '店铺',
+    prop: 'shop',
+    show: false
+  },
+  {
     label: '包裹类型',
     prop: 'parcel_type_desc',
     show: true
@@ -168,6 +178,11 @@ const logisticsTableFields = [
     show: true
   },
   {
+    label: '预计送达时间',
+    prop: 'estimated_delivery_time',
+    show: false
+  },
+  {
     label: '最新轨迹停留时长',
     prop: 'stay_time',
     show: true
@@ -181,16 +196,16 @@ const logisticsTableFields = [
     label: '运输子状态',
     prop: 'transit_sub_state_desc',
     width: '300px',
+    show: false
+  },
+  {
+    label: '最新轨迹时间',
+    prop: 'current_event_time',
     show: true
   },
   {
     label: '最新轨迹地址',
     prop: 'current_event_address',
-    show: true
-  },
-  {
-    label: '最新轨迹时间',
-    prop: 'current_event_time',
     show: true
   },
   {

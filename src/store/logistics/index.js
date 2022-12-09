@@ -23,7 +23,11 @@ export default {
   },
   actions: {
     async getListData(context, payload) {
-      await axios.get('waybill/list', payload).then((res) => {
+      let listParams = JSON.parse(JSON.stringify(payload));
+      // 删除多传的参数
+      delete listParams.params.create_time;
+      delete listParams.params.shipping_time;
+      await axios.get('waybill-list', listParams).then((res) => {
         if (res.code === 200) {
           res.data.list.forEach((item) => {
             // 最新轨迹停留时长计算
@@ -43,7 +47,8 @@ export default {
               'sync_time',
               'create_time',
               'shipping_time',
-              'current_event_time'
+              'current_event_time',
+              'estimated_delivery_time'
             ]);
             // 字符串拼接
             item.receipt_days = `${item.receipt_days}天`;

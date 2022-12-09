@@ -208,9 +208,11 @@ export default {
       if (
         (prop === 'exception_handling_desc' && val === 10) ||
         (prop === 'sync_state_desc' && val === 20) ||
-        parseFloat(val) > 5
+        (prop === 'stay_time' && parseFloat(val) > 5)
       ) {
         return '#EA1D1D';
+      } else if (prop === 'exception_handling_desc' && val === 0) {
+        return '#D7D7D7';
       }
     },
     handleCurrentChange(val) {

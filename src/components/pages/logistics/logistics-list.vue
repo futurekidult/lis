@@ -191,6 +191,7 @@ export default {
     },
     changePagination(val) {
       this.pagination = val;
+      this.getListData(false, this.activeTabKey);
     },
     lastThreeMonth() {
       let end = new Date();
