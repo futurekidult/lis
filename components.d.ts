@@ -13,7 +13,6 @@ declare module '@vue/runtime-core' {
     BaseOptionDialog: typeof import('./src/components/common/base-option-dialog.vue')['default']
     BaseTable: typeof import('./src/components/common/base-table.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
-    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']

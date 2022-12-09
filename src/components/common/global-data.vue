@@ -1,6 +1,6 @@
 <script>
 // 物流列表筛选条件表单项
-const logisticsChooseOptions = [
+let logisticsChooseOptions = [
   {
     label: '运单号',
     type: 'input',
@@ -9,75 +9,86 @@ const logisticsChooseOptions = [
   {
     label: '订单号',
     type: 'remote',
-    prop: 'order_id'
+    prop: 'order_id',
+    options: []
   },
   {
     label: '物流商',
     type: 'select',
     multiple: true,
     prop: 'logistic_supplier_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '海外仓',
     type: 'select',
     multiple: true,
     prop: 'oversea_location_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '仓库分布',
     type: 'select',
     multiple: true,
     prop: 'warehouse_area_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '仓库',
     type: 'select',
     multiple: true,
     prop: 'warehouse_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '平台',
     type: 'select',
     multiple: true,
     prop: 'platform_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '店铺',
     type: 'select',
     multiple: true,
     prop: 'shop_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: 'SKU',
     type: 'remote',
-    prop: 'sku_id'
+    prop: 'sku_id',
+    options: []
   },
   {
     label: '标签',
     type: 'select',
     multiple: true,
     prop: 'label_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '包裹类型',
     type: 'select',
     multiple: false,
-    prop: 'label_id',
-    options: []
+    prop: 'parcel_type',
+    options: [],
+    option_type: 'other'
   },
   {
     label: '异常处理情况',
     type: 'select',
     multiple: false,
-    prop: 'exception_handing',
-    options: []
+    prop: 'exception_handling',
+    options: [],
+    option_type: 'other'
   },
   {
     label: '发货时间',
@@ -122,6 +133,16 @@ const logisticsTableFields = [
     show: true
   },
   {
+    label: '平台',
+    prop: 'platform',
+    show: false
+  },
+  {
+    label: '店铺',
+    prop: 'shop',
+    show: false
+  },
+  {
     label: '包裹类型',
     prop: 'parcel_type_desc',
     show: true
@@ -157,6 +178,11 @@ const logisticsTableFields = [
     show: true
   },
   {
+    label: '预计送达时间',
+    prop: 'estimated_delivery_time',
+    show: false
+  },
+  {
     label: '最新轨迹停留时长',
     prop: 'stay_time',
     show: true
@@ -170,16 +196,16 @@ const logisticsTableFields = [
     label: '运输子状态',
     prop: 'transit_sub_state_desc',
     width: '300px',
+    show: false
+  },
+  {
+    label: '最新轨迹时间',
+    prop: 'current_event_time',
     show: true
   },
   {
     label: '最新轨迹地址',
     prop: 'current_event_address',
-    show: true
-  },
-  {
-    label: '最新轨迹时间',
-    prop: 'current_event_time',
     show: true
   },
   {
