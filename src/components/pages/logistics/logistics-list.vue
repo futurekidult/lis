@@ -39,8 +39,12 @@
           :name="tag.name"
         >
           <div class="position-right btn-right">
-            <el-button>新增订单信息</el-button>
-            <el-button>修改订单信息</el-button>
+            <el-button @click="showOrderForm('create')">
+              新增订单信息
+            </el-button>
+            <el-button @click="showOrderForm('update')">
+              修改订单信息
+            </el-button>
             <el-button>修改物流商</el-button>
             <el-button>异常已处理</el-button>
             <el-dropdown style="margin: 0 12px">
@@ -104,13 +108,45 @@
         </el-tab-pane>
       </el-tabs>
     </section>
+    <!-- 订单弹窗 -->
+    <base-option
+      v-model="orderFormVisible"
+      :title="orderFormType === 'create' ? '新增订单信息' : '修改订单信息'"
+      width="24%"
+      :close-on-click-modal="false"
+      @close-dialog="closeOrderForm"
+    >
+      <base-form
+        ref="orderForm"
+        :properties="
+          orderFormType === 'create'
+            ? $global.createOrderFields
+            : $global.updateOrderFields
+        "
+        :base-form="orderForm"
+        :inline="false"
+        width="100px"
+        :base-rules="$global.orderRules"
+        @get-info="getOrderInfo"
+      >
+        <el-button @click="closeOrderForm">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitOrderForm(orderFormType)"
+        >
+          确定
+        </el-button>
+      </base-form>
+    </base-option>
   </section>
 </template>
 
 <script>
 import BaseForm from '../../common/base-form.vue';
 import { ArrowDown } from '@element-plus/icons-vue';
-import { handleDateRange } from '../../../utils/index.js';
+import { handleDateRange, timeToTimestamp } from '../../../utils/index.js';
 
 export default {
   components: {
@@ -138,7 +174,10 @@ export default {
       pagination: {
         current_page: 1,
         page_size: 10
-      }
+      },
+      orderFormVisible: false,
+      orderForm: {},
+      orderFormType: ''
     };
   },
   mounted() {
@@ -198,6 +237,45 @@ export default {
       let start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
       return [start, end];
+    },
+    showOrderForm(type) {
+      this.orderFormType = type;
+      this.orderFormVisible = true;
+    },
+    submitOrderForm(type) {
+      this.$refs.orderForm.$refs.form.validate((valid) => {
+        if (valid) {
+          if (type === 'create') {
+            this.updateOrderInfo(this.orderForm, type);
+          } else {
+            this.updateOrderInfo(this.orderForm, type);
+          }
+        }
+      });
+    },
+    async updateOrderInfo(form, type) {
+      let orderParams = JSON.parse(JSON.stringify(form));
+      orderParams.payment_time = timeToTimestamp(orderParams.payment_time);
+      try {
+        await this.$store.dispatch(`logistics/${type}Order`, orderParams);
+        this.orderFormVisible = false;
+        this.$refs.orderForm.$refs.form.resetFields();
+      } catch (err) {
+        return;
+      }
+    },
+    closeOrderForm() {
+      this.orderFormVisible = false;
+      this.$refs.orderForm.$refs.form.resetFields();
+    },
+    async getOrderInfo(id) {
+      await this.$store.dispatch('logistics/getOrderDetail', {
+        id
+      });
+      let orderDetail = this.$store.state.logistics.orderDetail;
+      this.orderForm.platform_id = orderDetail.platform_id;
+      this.orderForm.shop_id = orderDetail.shop_id;
+      this.orderForm.payment_time = orderDetail.payment_time;
     }
   }
 };

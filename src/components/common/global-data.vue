@@ -10,6 +10,7 @@ let logisticsChooseOptions = [
     label: '订单号',
     type: 'remote',
     prop: 'order_id',
+    multiple: true,
     options: []
   },
   {
@@ -300,8 +301,106 @@ const transitState = [
   }
 ];
 
+//表单正则校验
+const regExp = {
+  order: '^[A-Za-z0-9-]+$'
+};
+
+//订单表单公共项
+const orderCommonFields = [
+  {
+    label: '平台',
+    type: 'select',
+    multiple: false,
+    prop: 'platform_id',
+    options: [],
+    option_type: 'normal'
+  },
+  {
+    label: '店铺',
+    type: 'select',
+    multiple: false,
+    prop: 'shop_id',
+    options: [],
+    option_type: 'normal'
+  },
+  {
+    label: '支付时间',
+    type: 'single-date',
+    prop: 'payment_time'
+  }
+];
+
+// 新增订单表单项
+const createOrderFields = [
+  {
+    label: '订单号',
+    type: 'input',
+    prop: 'order_no'
+  }
+].concat(orderCommonFields);
+
+// 修改订单表单项
+let updateOrderFields = [
+  {
+    label: '订单号',
+    type: 'remote',
+    prop: 'id',
+    multiple: false,
+    options: []
+  }
+].concat(orderCommonFields);
+
+// 订单表单校验项
+const orderRules = {
+  id: [
+    {
+      required: true,
+      message: '请输入订单号',
+      trigger: 'blur'
+    }
+  ],
+  order_no: [
+    {
+      required: true,
+      message: '请输入订单号'
+    },
+    {
+      pattern: regExp.order,
+      message: '只允许输入数字、中划线'
+    },
+    {
+      min: 1,
+      max: 25,
+      message: '最多只允许输入25位'
+    }
+  ],
+  platform_id: [
+    {
+      required: true,
+      message: '请选择平台'
+    }
+  ],
+  shop_id: [
+    {
+      required: true,
+      message: '请选择店铺'
+    }
+  ],
+  payment_time: [
+    {
+      type: 'date',
+      required: true,
+      message: '请选择支付时间'
+    }
+  ]
+};
+
 export default {
+  orderRules,
   transitState,
+  createOrderFields,
+  updateOrderFields,
   logisticsTableFields,
   logisticsChooseOptions
 };

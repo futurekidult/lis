@@ -6,7 +6,7 @@
     align-center
     center
     :close-on-click-modal="false"
-    @close="cancel"
+    :before-close="cancel"
   >
     <div style="text-align: center">
       {{ content }}

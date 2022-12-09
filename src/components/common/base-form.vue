@@ -22,17 +22,18 @@
         v-if="item.type === 'remote' && !item.range"
         ref="select"
         v-model="form[item.prop]"
-        multiple
+        :multiple="item.multiple"
         filterable
         remote
         reserve-keyword
-        collapse-tags
-        collapse-tags-tooltip
+        :collapse-tags="item.multiple"
+        :collapse-tags-tooltip="item.multiple"
         placeholder="请输入"
         :remote-method="(str) => remoteMethod(str, item.prop)"
         :loading="remoteLoading"
+        @change="(val) => getRelatedInfo(val, item.multiple)"
       >
-        <div v-if="item.prop === 'order_id'">
+        <div v-if="item.prop === 'order_id' || item.prop === 'id'">
           <el-option
             v-for="option in item.options"
             :key="option.id"
@@ -55,7 +56,6 @@
         clearable
         filterable
         placeholder="请选择"
-        style="width: 100%"
         :multiple="item.multiple"
         :collapse-tags="item.multiple"
         :collapse-tags-tooltip="item.multiple"
@@ -80,6 +80,12 @@
           </div>
         </div>
       </el-select>
+      <el-date-picker
+        v-if="item.type === 'single-date' && !item.range"
+        v-model="form[item.prop]"
+        type="datetime"
+        placeholder="请选择支付时间"
+      />
       <el-date-picker
         v-if="item.type === 'date' && !item.range"
         v-model="form[item.prop]"
@@ -184,6 +190,7 @@ export default {
       default: null
     }
   },
+  emits: ['get-info'],
   data() {
     return {
       form: this.baseForm,
@@ -205,7 +212,7 @@ export default {
   },
   methods: {
     getOptionObj(prop) {
-      return this.$global.logisticsChooseOptions.find((item) => {
+      return this.properties.find((item) => {
         return item.prop === prop;
       });
     },
@@ -288,6 +295,11 @@ export default {
       } else {
         let selectObj = this.getOptionObj(prop);
         selectObj.options = [];
+      }
+    },
+    getRelatedInfo(id, flag) {
+      if (!flag) {
+        this.$emit('get-info', id);
       }
     }
   }
