@@ -18,26 +18,67 @@
         placeholder="请输入"
         clearable
       />
-      <el-autocomplete
+      <el-select
         v-if="item.type === 'remote' && !item.range"
+        ref="select"
         v-model="form[item.prop]"
+        multiple
+        filterable
+        remote
+        reserve-keyword
+        collapse-tags
+        collapse-tags-tooltip
         placeholder="请输入"
-      />
+        :remote-method="(str) => remoteMethod(str, item.prop)"
+        :loading="remoteLoading"
+      >
+        <div v-if="item.prop === 'order_id'">
+          <el-option
+            v-for="option in item.options"
+            :key="option.id"
+            :label="option.order_no"
+            :value="option.id"
+          />
+        </div>
+        <div v-else>
+          <el-option
+            v-for="option in item.options"
+            :key="option.id"
+            :label="option.name"
+            :value="option.id"
+          />
+        </div>
+      </el-select>
       <el-select
         v-if="item.type === 'select' && !item.range"
         v-model="form[item.prop]"
-        placeholder="请选择"
         clearable
-        style="width: 100%"
         filterable
+        placeholder="请选择"
+        style="width: 100%"
         :multiple="item.multiple"
+        :collapse-tags="item.multiple"
+        :collapse-tags-tooltip="item.multiple"
+        @change="getWarehouseOption(item.prop)"
       >
-        <el-option
-          v-for="option in item.options"
-          :key="option.value"
-          :label="option.label"
-          :value="option.value"
-        />
+        <div v-loading="optionLoading">
+          <div v-if="item.option_type === 'normal'">
+            <el-option
+              v-for="option in item.options"
+              :key="option.id"
+              :label="option.name"
+              :value="option.id"
+            />
+          </div>
+          <div v-else>
+            <el-option
+              v-for="option in item.options"
+              :key="option.key"
+              :label="option.value"
+              :value="option.key"
+            />
+          </div>
+        </div>
       </el-select>
       <el-date-picker
         v-if="item.type === 'date' && !item.range"
@@ -118,6 +159,8 @@
 </template>
 
 <script>
+import { cache } from '../../utils/index.js';
+
 export default {
   props: {
     properties: {
@@ -143,12 +186,109 @@ export default {
   },
   data() {
     return {
-      form: this.baseForm
+      form: this.baseForm,
+      optionLoading: true,
+      remoteLoading: false
     };
   },
   watch: {
     baseForm(val) {
       this.form = val;
+    }
+  },
+  mounted() {
+    this.properties.forEach((item) => {
+      if (item.type === 'select') {
+        this.getOption(item.prop);
+      }
+    });
+  },
+  methods: {
+    getOptionObj(prop) {
+      return this.$global.logisticsChooseOptions.find((item) => {
+        return item.prop === prop;
+      });
+    },
+    async getOption(prop) {
+      this.optionLoading = true;
+      let selectObj = this.getOptionObj(prop);
+      try {
+        if (prop !== 'exception_handling' && prop !== 'parcel_type') {
+          let newProp = prop.replace('_id', '');
+          let arr = [];
+          if (newProp !== 'warehouse') {
+            arr = newProp.split('_');
+            // 将获取到的属性的首字母大写
+            for (let i = 0; i < arr.length; i++) {
+              arr[i] =
+                arr[i].slice(0, 1).toUpperCase() +
+                arr[i].slice(1).toLowerCase();
+            }
+            if (!cache(newProp)) {
+              await this.$store.dispatch(`get${arr.join('')}`);
+            }
+            selectObj.options = JSON.parse(cache(newProp));
+          }
+        } else {
+          if (!cache(prop)) {
+            await this.$store.dispatch('getSystemParameter');
+          }
+          selectObj.options = JSON.parse(cache(prop));
+        }
+        this.optionLoading = false;
+      } catch (err) {
+        this.optionLoading = false;
+        return;
+      }
+    },
+    async getWarehouseOption(prop) {
+      if (prop === 'warehouse_area_id' || prop === 'oversea_location_id') {
+        try {
+          let params = {
+            oversea_location_id: this.form.oversea_location_id.join(','),
+            warehouse_area_id: this.form.warehouse_area_id.join(',')
+          };
+          await this.$store.dispatch('getWarehouse', { params });
+          let selectObj = this.getOptionObj('warehouse_id');
+          selectObj.options = this.$store.state.warehouse;
+        } catch (err) {
+          return;
+        }
+      }
+    },
+    async getSkuOrOrderOption(label, str, query, prop, fn) {
+      let selectObj = this.getOptionObj(prop);
+      selectObj.options = [];
+      await this.$store.dispatch(fn, {
+        params: {
+          [label]: query
+        }
+      });
+      selectObj.options = this.$store.state[str];
+      this.remoteLoading = false;
+    },
+    remoteMethod(query, prop) {
+      if (query) {
+        this.remoteLoading = true;
+        try {
+          if (prop === 'sku_id') {
+            this.getSkuOrOrderOption('name', 'sku', query, prop, 'getSku');
+          } else {
+            this.getSkuOrOrderOption(
+              'order_no',
+              'order',
+              query,
+              prop,
+              'getOrder'
+            );
+          }
+        } catch (err) {
+          return;
+        }
+      } else {
+        let selectObj = this.getOptionObj(prop);
+        selectObj.options = [];
+      }
     }
   }
 };

@@ -35,11 +35,11 @@ export default defineComponent({
 }
 
 .el-input__wrapper {
-  width: 120px !important;
+  width: 220px !important;
 }
 
 .el-range-editor.el-input__wrapper {
-  width: 250px !important;
+  width: 222px !important;
 }
 
 .el-button {

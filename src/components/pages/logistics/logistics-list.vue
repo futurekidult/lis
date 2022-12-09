@@ -8,7 +8,7 @@
         :properties="$global.logisticsChooseOptions"
         :base-form="chooseForm"
         :inline="true"
-        width="96px"
+        width="130px"
       >
         <el-button
           type="primary"

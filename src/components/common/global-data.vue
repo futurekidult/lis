@@ -1,6 +1,6 @@
 <script>
 // 物流列表筛选条件表单项
-const logisticsChooseOptions = [
+let logisticsChooseOptions = [
   {
     label: '运单号',
     type: 'input',
@@ -9,83 +9,94 @@ const logisticsChooseOptions = [
   {
     label: '订单号',
     type: 'remote',
-    prop: 'order_id'
+    prop: 'order_id',
+    options: []
   },
   {
     label: '物流商',
     type: 'select',
     multiple: true,
     prop: 'logistic_supplier_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '海外仓',
     type: 'select',
     multiple: true,
     prop: 'oversea_location_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '仓库分布',
     type: 'select',
     multiple: true,
     prop: 'warehouse_area_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '仓库',
     type: 'select',
     multiple: true,
     prop: 'warehouse_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '平台',
     type: 'select',
     multiple: true,
     prop: 'platform_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '店铺',
     type: 'select',
     multiple: true,
     prop: 'shop_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: 'SKU',
     type: 'remote',
-    prop: 'sku_id'
+    prop: 'sku_id',
+    options: []
   },
   {
     label: '标签',
     type: 'select',
     multiple: true,
     prop: 'label_id',
-    options: []
+    options: [],
+    option_type: 'normal'
   },
   {
     label: '包裹类型',
     type: 'select',
     multiple: false,
-    prop: 'label_id',
-    options: []
+    prop: 'parcel_type',
+    options: [],
+    option_type: 'other'
   },
   {
     label: '异常处理情况',
     type: 'select',
     multiple: false,
-    prop: 'exception_handing',
-    options: []
+    prop: 'exception_handling',
+    options: [],
+    option_type: 'other'
   },
   {
-    label: '发货日期',
+    label: '发货时间',
     type: 'date',
     prop: 'shipping_time'
   },
   {
-    label: '创建日期',
+    label: '创建时间',
     type: 'date',
     prop: 'create_time'
   },

@@ -45,3 +45,31 @@ export const handleTimestamp = (obj, propArr) => {
     obj[i] = timestampToTime(obj[i]);
   });
 };
+
+// 获取缓存下拉数据
+export const cache = (key, value, seconds) => {
+  let timestamp = Date.parse(new Date()) / 1000;
+  let expire = null;
+  if (key && value === null) {
+    localStorage.removeItem(key);
+  } else if (key && value) {
+    if (!seconds) {
+      expire = timestamp + 3600 * 24 * 7;
+    } else {
+      expire = timestamp + seconds;
+    }
+    let new_value = `${value}|${expire}`;
+    localStorage.setItem(key, new_value);
+  } else if (key) {
+    let val = localStorage.getItem(key);
+    if (val) {
+      let tmp = val.split('|');
+      if (!tmp[1] || timestamp >= parseInt(tmp[1])) {
+        localStorage.removeItem(key);
+        return false;
+      } else {
+        return tmp[0];
+      }
+    }
+  }
+};
