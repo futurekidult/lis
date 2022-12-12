@@ -103,6 +103,13 @@ export default {
             ElMessage.success(res.message);
           }
         });
+    },
+    async deleteWaybill(_, payload) {
+      await axios.post('waybill/delete', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
     }
   },
   getters: {}
