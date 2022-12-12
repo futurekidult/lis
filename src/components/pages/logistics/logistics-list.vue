@@ -269,13 +269,18 @@ export default {
       this.$refs.orderForm.$refs.form.resetFields();
     },
     async getOrderInfo(id) {
-      await this.$store.dispatch('logistics/getOrderDetail', {
-        id
-      });
-      let orderDetail = this.$store.state.logistics.orderDetail;
-      this.orderForm.platform_id = orderDetail.platform_id;
-      this.orderForm.shop_id = orderDetail.shop_id;
-      this.orderForm.payment_time = orderDetail.payment_time;
+      if (id) {
+        await this.$store.dispatch('logistics/getOrderDetail', {
+          id
+        });
+        let orderDetail = this.$store.state.logistics.orderDetail;
+        this.orderForm.platform_id = orderDetail.platform_id;
+        this.orderForm.shop_id = orderDetail.shop_id;
+        this.orderForm.payment_time = orderDetail.payment_time;
+      } else {
+        this.orderForm = {};
+        this.$refs.orderForm.$refs.form.resetFields();
+      }
     }
   }
 };

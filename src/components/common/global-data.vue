@@ -11,7 +11,9 @@ let logisticsChooseOptions = [
     type: 'remote',
     prop: 'order_id',
     multiple: true,
-    options: []
+    options: [],
+    option_type: 'order_no',
+    placeholder: '请输入内容'
   },
   {
     label: '物流商',
@@ -19,7 +21,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'logistic_supplier_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '海外仓',
@@ -27,7 +29,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'oversea_location_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '仓库分布',
@@ -35,7 +37,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'warehouse_area_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '仓库',
@@ -43,7 +45,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'warehouse_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '平台',
@@ -51,7 +53,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'platform_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '店铺',
@@ -59,13 +61,16 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'shop_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: 'SKU',
     type: 'remote',
     prop: 'sku_id',
-    options: []
+    multiple: true,
+    options: [],
+    option_type: 'name',
+    placeholder: '请输入内容'
   },
   {
     label: '标签',
@@ -73,7 +78,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'label_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '包裹类型',
@@ -314,7 +319,7 @@ const orderCommonFields = [
     multiple: false,
     prop: 'platform_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '店铺',
@@ -322,7 +327,7 @@ const orderCommonFields = [
     multiple: false,
     prop: 'shop_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '支付时间',
@@ -347,7 +352,9 @@ let updateOrderFields = [
     type: 'remote',
     prop: 'id',
     multiple: false,
-    options: []
+    options: [],
+    option_type: 'order_no',
+    placeholder: '请输入内容'
   }
 ].concat(orderCommonFields);
 
