@@ -238,13 +238,17 @@ export default {
     async getSkuOrOrderOption(label, str, query, prop, fn) {
       let selectObj = this.getOptionObj(prop);
       selectObj.options = [];
-      await this.$store.dispatch(fn, {
-        params: {
-          [label]: query
-        }
-      });
-      selectObj.options = this.$store.state[str];
-      this.remoteLoading = false;
+      try {
+        await this.$store.dispatch(fn, {
+          params: {
+            [label]: query
+          }
+        });
+        selectObj.options = this.$store.state[str];
+        this.remoteLoading = false;
+      } catch (err) {
+        return;
+      }
     },
     remoteMethod(query, prop, type) {
       if (type === 'remote') {
@@ -297,5 +301,6 @@ export default {
 <style scoped>
 .btn-position {
   float: right;
+  padding-top: 15px;
 }
 </style>

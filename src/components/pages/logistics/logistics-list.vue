@@ -45,8 +45,12 @@
             <el-button @click="showOrderForm('update')">
               修改订单信息
             </el-button>
-            <el-button>修改物流商</el-button>
-            <el-button>异常已处理</el-button>
+            <el-button @click="showUpdateLogisticSupplierForm">
+              修改物流商
+            </el-button>
+            <el-button @click="handleExceptionHandling">
+              异常已处理
+            </el-button>
             <el-dropdown style="margin: 0 12px">
               <el-button style="width: 80px">
                 标记为
@@ -60,7 +64,9 @@
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-            <el-button>删除</el-button>
+            <el-button @click="showDeleteWaybillDialog">
+              删除
+            </el-button>
             <el-dropdown style="margin: 0 12px">
               <el-button style="width: 80px">
                 导入
@@ -83,6 +89,7 @@
             :pagination="pagination"
             :total="$store.state.logistics.listTotal"
             @change-pagination="changePagination"
+            @get-selected-ids="getSelectedIds"
           >
             <template #default="slotProps">
               <el-button
@@ -140,6 +147,57 @@
         </el-button>
       </base-form>
     </base-option>
+    <!-- 物流商弹窗 -->
+    <base-option
+      v-model="logisticSupplierVisible"
+      title="修改物流商"
+      width="24%"
+      :close-on-click-modal="false"
+      @close-dialog="closeLogisticSupplierForm"
+    >
+      <base-form
+        ref="logisticSupplierForm"
+        :properties="[
+          {
+            label: '新物流商',
+            type: 'select',
+            multiple: false,
+            prop: 'logistic_supplier_id',
+            options: [],
+            option_type: 'name'
+          }
+        ]"
+        :base-form="logisticSupplierForm"
+        :inline="false"
+        width="100px"
+        :base-rules="{
+          logistic_supplier_id: [
+            {
+              required: true,
+              message: '请输入内容'
+            }
+          ]
+        }"
+      >
+        <el-button @click="closeLogisticSupplierForm">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitLogisticSupplierForm"
+        >
+          确定
+        </el-button>
+      </base-form>
+    </base-option>
+    <!-- 删除确认弹窗 -->
+    <base-confirm
+      v-if="deleteWaybillVisible"
+      :dialog-visible="deleteWaybillVisible"
+      content="是否确认删除选中的运单?"
+      @get-visible="closeDeleteWaybillDialog"
+      @confirm-deletion="confirmDeletionWaybill"
+    />
   </section>
 </template>
 
@@ -177,7 +235,11 @@ export default {
       },
       orderFormVisible: false,
       orderForm: {},
-      orderFormType: ''
+      orderFormType: '',
+      logisticSupplierVisible: false,
+      logisticSupplierForm: {},
+      selectedIds: [],
+      deleteWaybillVisible: false
     };
   },
   mounted() {
@@ -191,7 +253,7 @@ export default {
     this.getListData();
   },
   methods: {
-    async getListData(dialog = true, transitState = '') {
+    async getListData(transitState = '') {
       this.$store.commit('logistics/setListLoading', true);
       handleDateRange(this.chooseForm, 'shipping_time');
       handleDateRange(this.chooseForm, 'create_time');
@@ -202,9 +264,6 @@ export default {
       try {
         await this.$store.dispatch('logistics/getListData', { params });
         this.listData = this.$store.state.logistics.listData;
-        if (dialog) {
-          this.deleteDialogVisible = false;
-        }
       } catch (err) {
         this.$store.commit('logistics/setListLoading', false);
         return;
@@ -212,10 +271,11 @@ export default {
     },
     queryList() {
       this.pagination.current_page = 1;
-      this.getListData(false, this.activeTabKey);
+      this.getListData(this.activeTabKey);
     },
     resetForm() {
       this.activeTab = 'all';
+      this.activeTabKey = '';
       this.pagination.current_page = 1;
       this.pagination.page_size = 10;
       this.chooseForm = {};
@@ -226,11 +286,11 @@ export default {
       this.activeTabKey = this.$global.transitState.find((item) => {
         return item.name === tab.props.name;
       }).key;
-      this.getListData(false, this.activeTabKey);
+      this.getListData(this.activeTabKey);
     },
     changePagination(val) {
       this.pagination = val;
-      this.getListData(false, this.activeTabKey);
+      this.getListData(this.activeTabKey);
     },
     lastThreeMonth() {
       let end = new Date();
@@ -269,17 +329,90 @@ export default {
       this.$refs.orderForm.$refs.form.resetFields();
     },
     async getOrderInfo(id) {
-      if (id) {
-        await this.$store.dispatch('logistics/getOrderDetail', {
-          id
-        });
-        let orderDetail = this.$store.state.logistics.orderDetail;
-        this.orderForm.platform_id = orderDetail.platform_id;
-        this.orderForm.shop_id = orderDetail.shop_id;
-        this.orderForm.payment_time = orderDetail.payment_time;
+      try {
+        if (id) {
+          await this.$store.dispatch('logistics/getOrderDetail', {
+            id
+          });
+          let orderDetail = this.$store.state.logistics.orderDetail;
+          this.orderForm.platform_id = orderDetail.platform_id;
+          this.orderForm.shop_id = orderDetail.shop_id;
+          this.orderForm.payment_time = orderDetail.payment_time;
+        } else {
+          this.orderForm = {};
+          this.$refs.orderForm.$refs.form.resetFields();
+        }
+      } catch (err) {
+        return;
+      }
+    },
+    closeLogisticSupplierForm() {
+      this.logisticSupplierVisible = false;
+      this.$refs.logisticSupplierForm.$refs.form.resetFields();
+    },
+    getSelectedIds(ids) {
+      this.selectedIds = ids;
+    },
+    handleSelectedIds(fn) {
+      if (this.selectedIds.length === 0) {
+        this.$message.warning('请先选择要修改的运单');
       } else {
-        this.orderForm = {};
-        this.$refs.orderForm.$refs.form.resetFields();
+        fn();
+      }
+    },
+    showUpdateLogisticSupplierForm() {
+      this.handleSelectedIds(() => {
+        this.logisticSupplierVisible = true;
+      });
+    },
+    async updateLogisticSupplier() {
+      let body = this.logisticSupplierForm;
+      body.id = this.selectedIds;
+      try {
+        await this.$store.dispatch('logistics/updateLogisticSupplier', body);
+        this.logisticSupplierVisible = false;
+        this.$refs.logisticSupplierForm.$refs.form.resetFields();
+        this.getListData(this.activeTabKey);
+      } catch (err) {
+        return;
+      }
+    },
+    submitLogisticSupplierForm() {
+      this.$refs.logisticSupplierForm.$refs.form.validate((valid) => {
+        if (valid) {
+          this.updateLogisticSupplier();
+        }
+      });
+    },
+    handleExceptionHandling() {
+      try {
+        this.handleSelectedIds(async () => {
+          await this.$store.dispatch('logistics/updateExceptionHandling', {
+            id: this.selectedIds
+          });
+          this.getListData(this.activeTabKey);
+        });
+      } catch (err) {
+        return;
+      }
+    },
+    showDeleteWaybillDialog() {
+      this.handleSelectedIds(() => {
+        this.deleteWaybillVisible = true;
+      });
+    },
+    closeDeleteWaybillDialog() {
+      this.deleteWaybillVisible = false;
+    },
+    async confirmDeletionWaybill() {
+      try {
+        await this.$store.dispatch('logistics/deleteWaybill', {
+          id: this.selectedIds
+        });
+        this.deleteWaybillVisible = false;
+        this.getListData(this.activeTabKey);
+      } catch (err) {
+        return;
       }
     }
   }

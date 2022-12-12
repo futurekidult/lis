@@ -85,6 +85,31 @@ export default {
           context.commit('setOrderDetail', res.data);
         }
       });
+    },
+    async updateLogisticSupplier(_, payload) {
+      await axios
+        .post('waybill/logistic-supplier-update', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            ElMessage.success(res.message);
+          }
+        });
+    },
+    async updateExceptionHandling(_, payload) {
+      await axios
+        .post('waybill/exception-handling-update', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            ElMessage.success(res.message);
+          }
+        });
+    },
+    async deleteWaybill(_, payload) {
+      await axios.post('waybill/delete', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
     }
   },
   getters: {}

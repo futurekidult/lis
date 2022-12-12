@@ -161,7 +161,7 @@ export default {
       default: 0
     }
   },
-  emits: ['change-pagination'],
+  emits: ['change-pagination', 'get-selected-ids'],
   data() {
     return {
       tableKey: 1,
@@ -169,7 +169,8 @@ export default {
         label: 'label'
       },
       dataTotal: this.total,
-      listPagination: this.pagination
+      listPagination: this.pagination,
+      ids: []
     };
   },
   computed: {
@@ -195,8 +196,12 @@ export default {
     changeStatus(arr) {
       localStorage.setItem('logistics-column', JSON.stringify(arr));
     },
-    handleSelectionChange() {
-      //执行选中之后的操作
+    // 获取选中的row
+    handleSelectionChange(val) {
+      this.ids = val.map((item) => {
+        return item.id;
+      });
+      this.$emit('get-selected-ids', this.ids);
     },
     // 固定表格列
     toFixedPosition(str, node, table) {
