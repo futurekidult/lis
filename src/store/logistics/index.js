@@ -85,6 +85,15 @@ export default {
           context.commit('setOrderDetail', res.data);
         }
       });
+    },
+    async updateLogisticSupplier(_, payload) {
+      await axios
+        .post('waybill/logistic-supplier-update', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            ElMessage.success(res.message);
+          }
+        });
     }
   },
   getters: {}

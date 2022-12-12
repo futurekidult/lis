@@ -297,5 +297,6 @@ export default {
 <style scoped>
 .btn-position {
   float: right;
+  padding-top: 15px;
 }
 </style>

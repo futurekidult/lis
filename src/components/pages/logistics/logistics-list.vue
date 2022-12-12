@@ -45,7 +45,9 @@
             <el-button @click="showOrderForm('update')">
               修改订单信息
             </el-button>
-            <el-button>修改物流商</el-button>
+            <el-button @click="logisticSupplierVisible = true">
+              修改物流商
+            </el-button>
             <el-button>异常已处理</el-button>
             <el-dropdown style="margin: 0 12px">
               <el-button style="width: 80px">
@@ -83,6 +85,7 @@
             :pagination="pagination"
             :total="$store.state.logistics.listTotal"
             @change-pagination="changePagination"
+            @get-selected-ids="getSelectedIds"
           >
             <template #default="slotProps">
               <el-button
@@ -140,6 +143,49 @@
         </el-button>
       </base-form>
     </base-option>
+    <!-- 物流商弹窗 -->
+    <base-option
+      v-model="logisticSupplierVisible"
+      title="修改物流商"
+      width="24%"
+      :close-on-click-modal="false"
+      @close-dialog="closeLogisticSupplierForm"
+    >
+      <base-form
+        ref="logisticSupplierForm"
+        :properties="[
+          {
+            label: '新物流商',
+            type: 'select',
+            multiple: false,
+            prop: 'logistic_supplier_id',
+            options: [],
+            option_type: 'name'
+          }
+        ]"
+        :base-form="logisticSupplierForm"
+        :inline="false"
+        width="100px"
+        :base-rules="{
+          logistic_supplier_id: [
+            {
+              required: true,
+              message: '请输入内容'
+            }
+          ]
+        }"
+      >
+        <el-button @click="closeLogisticSupplierForm">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitLogisticSupplierForm"
+        >
+          确定
+        </el-button>
+      </base-form>
+    </base-option>
   </section>
 </template>
 
@@ -177,7 +223,10 @@ export default {
       },
       orderFormVisible: false,
       orderForm: {},
-      orderFormType: ''
+      orderFormType: '',
+      logisticSupplierVisible: false,
+      logisticSupplierForm: {},
+      selectedIds: []
     };
   },
   mounted() {
@@ -281,6 +330,36 @@ export default {
         this.orderForm = {};
         this.$refs.orderForm.$refs.form.resetFields();
       }
+    },
+    closeLogisticSupplierForm() {
+      this.logisticSupplierVisible = false;
+      this.$refs.logisticSupplierForm.$refs.form.resetFields();
+    },
+    getSelectedIds(ids) {
+      this.selectedIds = ids;
+    },
+    async updateLogisticSupplier() {
+      let body = this.logisticSupplierForm;
+      body.id = this.selectedIds;
+      try {
+        await this.$store.dispatch('logistics/updateLogisticSupplier', body);
+        this.logisticSupplierVisible = false;
+        this.$refs.logisticSupplierForm.$refs.form.resetFields();
+        this.getListData(false, this.activeTabKey);
+      } catch (err) {
+        return;
+      }
+    },
+    submitLogisticSupplierForm() {
+      this.$refs.logisticSupplierForm.$refs.form.validate((valid) => {
+        if (valid) {
+          if (this.selectedIds.length === 0) {
+            this.$message.warning('请先选择要修改的运单');
+          } else {
+            this.updateLogisticSupplier();
+          }
+        }
+      });
     }
   }
 };
