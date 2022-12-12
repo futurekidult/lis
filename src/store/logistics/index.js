@@ -94,6 +94,15 @@ export default {
             ElMessage.success(res.message);
           }
         });
+    },
+    async updateExceptionHandling(_, payload) {
+      await axios
+        .post('waybill/exception-handling-update', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            ElMessage.success(res.message);
+          }
+        });
     }
   },
   getters: {}

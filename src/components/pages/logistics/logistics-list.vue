@@ -48,7 +48,9 @@
             <el-button @click="logisticSupplierVisible = true">
               修改物流商
             </el-button>
-            <el-button>异常已处理</el-button>
+            <el-button @click="handleExceptionHandling">
+              异常已处理
+            </el-button>
             <el-dropdown style="margin: 0 12px">
               <el-button style="width: 80px">
                 标记为
@@ -338,6 +340,13 @@ export default {
     getSelectedIds(ids) {
       this.selectedIds = ids;
     },
+    handleSelectedIds(fn) {
+      if (this.selectedIds.length === 0) {
+        this.$message.warning('请先选择要修改的运单');
+      } else {
+        fn();
+      }
+    },
     async updateLogisticSupplier() {
       let body = this.logisticSupplierForm;
       body.id = this.selectedIds;
@@ -356,9 +365,17 @@ export default {
           if (this.selectedIds.length === 0) {
             this.$message.warning('请先选择要修改的运单');
           } else {
-            this.updateLogisticSupplier();
+            this.handleSelectedIds(this.updateLogisticSupplier());
           }
         }
+      });
+    },
+    handleExceptionHandling() {
+      this.handleSelectedIds(async () => {
+        await this.$store.dispatch('logistics/updateExceptionHandling', {
+          id: this.selectedIds
+        });
+        this.getListData(false, this.activeTabKey);
       });
     }
   }
