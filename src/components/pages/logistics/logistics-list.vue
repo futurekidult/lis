@@ -329,17 +329,21 @@ export default {
       this.$refs.orderForm.$refs.form.resetFields();
     },
     async getOrderInfo(id) {
-      if (id) {
-        await this.$store.dispatch('logistics/getOrderDetail', {
-          id
-        });
-        let orderDetail = this.$store.state.logistics.orderDetail;
-        this.orderForm.platform_id = orderDetail.platform_id;
-        this.orderForm.shop_id = orderDetail.shop_id;
-        this.orderForm.payment_time = orderDetail.payment_time;
-      } else {
-        this.orderForm = {};
-        this.$refs.orderForm.$refs.form.resetFields();
+      try {
+        if (id) {
+          await this.$store.dispatch('logistics/getOrderDetail', {
+            id
+          });
+          let orderDetail = this.$store.state.logistics.orderDetail;
+          this.orderForm.platform_id = orderDetail.platform_id;
+          this.orderForm.shop_id = orderDetail.shop_id;
+          this.orderForm.payment_time = orderDetail.payment_time;
+        } else {
+          this.orderForm = {};
+          this.$refs.orderForm.$refs.form.resetFields();
+        }
+      } catch (err) {
+        return;
       }
     },
     closeLogisticSupplierForm() {
@@ -381,12 +385,16 @@ export default {
       });
     },
     handleExceptionHandling() {
-      this.handleSelectedIds(async () => {
-        await this.$store.dispatch('logistics/updateExceptionHandling', {
-          id: this.selectedIds
+      try {
+        this.handleSelectedIds(async () => {
+          await this.$store.dispatch('logistics/updateExceptionHandling', {
+            id: this.selectedIds
+          });
+          this.getListData(this.activeTabKey);
         });
-        this.getListData(this.activeTabKey);
-      });
+      } catch (err) {
+        return;
+      }
     },
     showDeleteWaybillDialog() {
       this.handleSelectedIds(() => {
@@ -397,11 +405,15 @@ export default {
       this.deleteWaybillVisible = false;
     },
     async confirmDeletionWaybill() {
-      await this.$store.dispatch('logistics/deleteWaybill', {
-        id: this.selectedIds
-      });
-      this.deleteWaybillVisible = false;
-      this.getListData(this.activeTabKey);
+      try {
+        await this.$store.dispatch('logistics/deleteWaybill', {
+          id: this.selectedIds
+        });
+        this.deleteWaybillVisible = false;
+        this.getListData(this.activeTabKey);
+      } catch (err) {
+        return;
+      }
     }
   }
 };
