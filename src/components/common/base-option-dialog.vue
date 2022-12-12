@@ -4,6 +4,7 @@
     :title="title"
     :width="width"
     :close-on-click-modal="false"
+    align-center
     @close="closeDialog"
   >
     <slot />

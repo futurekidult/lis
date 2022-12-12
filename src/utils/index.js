@@ -24,7 +24,7 @@ export const timestampToTime = (timestamp) => {
 
 // 时间转换成时间戳
 export const timeToTimestamp = (time) => {
-  return Date.parse(time) / 1000;
+  return Date.parse(new Date(time)) / 1000;
 };
 
 // 将类型为daterange的日期选择器绑定的值做处理

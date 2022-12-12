@@ -15,54 +15,28 @@
       <el-input
         v-if="item.type === 'input' && !item.range"
         v-model="form[item.prop]"
-        placeholder="请输入"
+        placeholder="请输入内容"
         clearable
       />
       <el-select
-        v-if="item.type === 'remote' && !item.range"
-        ref="select"
-        v-model="form[item.prop]"
-        multiple
-        filterable
-        remote
-        reserve-keyword
-        collapse-tags
-        collapse-tags-tooltip
-        placeholder="请输入"
-        :remote-method="(str) => remoteMethod(str, item.prop)"
-        :loading="remoteLoading"
-      >
-        <div v-if="item.prop === 'order_id'">
-          <el-option
-            v-for="option in item.options"
-            :key="option.id"
-            :label="option.order_no"
-            :value="option.id"
-          />
-        </div>
-        <div v-else>
-          <el-option
-            v-for="option in item.options"
-            :key="option.id"
-            :label="option.name"
-            :value="option.id"
-          />
-        </div>
-      </el-select>
-      <el-select
-        v-if="item.type === 'select' && !item.range"
+        v-if="(item.type === 'select' || item.type === 'remote') && !item.range"
         v-model="form[item.prop]"
         clearable
         filterable
-        placeholder="请选择"
-        style="width: 100%"
+        :placeholder="item.placeholder ? item.placeholder : '请选择'"
+        :remote="item.type === 'remote'"
+        :reserve-keyword="item.type === 'remote'"
+        :loading="item.type === 'remote' ? remoteLoading : false"
         :multiple="item.multiple"
         :collapse-tags="item.multiple"
         :collapse-tags-tooltip="item.multiple"
-        @change="getWarehouseOption(item.prop)"
+        :remote-method="(str) => remoteMethod(str, item.prop, item.type)"
+        @change="
+          (val) => getRelatedInfo(val, item.multiple, item.prop, item.type)
+        "
       >
         <div v-loading="optionLoading">
-          <div v-if="item.option_type === 'normal'">
+          <div v-if="item.option_type === 'name'">
             <el-option
               v-for="option in item.options"
               :key="option.id"
@@ -70,7 +44,7 @@
               :value="option.id"
             />
           </div>
-          <div v-else>
+          <div v-else-if="item.option_type === 'other'">
             <el-option
               v-for="option in item.options"
               :key="option.key"
@@ -78,8 +52,22 @@
               :value="option.key"
             />
           </div>
+          <div v-else>
+            <el-option
+              v-for="option in item.options"
+              :key="option.id"
+              :label="option.order_no"
+              :value="option.id"
+            />
+          </div>
         </div>
       </el-select>
+      <el-date-picker
+        v-if="item.type === 'single-date' && !item.range"
+        v-model="form[item.prop]"
+        type="datetime"
+        placeholder="请选择支付时间"
+      />
       <el-date-picker
         v-if="item.type === 'date' && !item.range"
         v-model="form[item.prop]"
@@ -91,26 +79,29 @@
         v-if="item.type === 'textarea' && !item.range"
         v-model="form[item.prop]"
         type="textarea"
-        placeholder="请输入"
+        placeholder="请输入内容"
         clearable
       />
       <div
         v-if="item.range"
         style="display: flex; width: 220px"
       >
-        <el-col :span="8">
-          <el-input
+        <el-col :span="10">
+          <el-input-number
             v-if="item.type === 'input'"
             v-model="form[item.prop1]"
             placeholder="请输入"
-            clearable
+            auto-complete="off"
+            :precision="1"
+            :controls="false"
+            style="width: 90px !important"
           />
           <el-select
             v-if="item.type === 'select'"
             v-model="form[item.prop1]"
             placeholder="请选择"
             clearable
-            style="width: 100%"
+            style="width: 90px !important"
           >
             <el-option
               v-for="option in item.options"
@@ -121,25 +112,27 @@
           </el-select>
         </el-col>
         <el-col
-          :span="2"
+          :span="4"
           style="text-align: center"
         >
           <span>至</span>
         </el-col>
-        <el-col :span="8">
-          <el-input
+        <el-col :span="10">
+          <el-input-number
             v-if="item.type === 'input'"
             v-model="form[item.prop2]"
             placeholder="请输入"
-            clearable
-            style="width: 100%"
+            auto-complete="off"
+            :precision="1"
+            :controls="false"
+            style="width: 90px !important"
           />
           <el-select
             v-if="item.type === 'select'"
             v-model="form[item.prop2]"
             placeholder="请选择"
             clearable
-            style="width: 100%"
+            style="width: 90px !important"
           >
             <el-option
               v-for="option in item.options"
@@ -184,6 +177,7 @@ export default {
       default: null
     }
   },
+  emits: ['get-info'],
   data() {
     return {
       form: this.baseForm,
@@ -205,7 +199,7 @@ export default {
   },
   methods: {
     getOptionObj(prop) {
-      return this.$global.logisticsChooseOptions.find((item) => {
+      return this.properties.find((item) => {
         return item.prop === prop;
       });
     },
@@ -241,7 +235,43 @@ export default {
         return;
       }
     },
-    async getWarehouseOption(prop) {
+    async getSkuOrOrderOption(label, str, query, prop, fn) {
+      let selectObj = this.getOptionObj(prop);
+      selectObj.options = [];
+      await this.$store.dispatch(fn, {
+        params: {
+          [label]: query
+        }
+      });
+      selectObj.options = this.$store.state[str];
+      this.remoteLoading = false;
+    },
+    remoteMethod(query, prop, type) {
+      if (type === 'remote') {
+        if (query) {
+          this.remoteLoading = true;
+          try {
+            if (prop === 'sku_id') {
+              this.getSkuOrOrderOption('name', 'sku', query, prop, 'getSku');
+            } else {
+              this.getSkuOrOrderOption(
+                'order_no',
+                'order',
+                query,
+                prop,
+                'getOrder'
+              );
+            }
+          } catch (err) {
+            return;
+          }
+        } else {
+          let selectObj = this.getOptionObj(prop);
+          selectObj.options = [];
+        }
+      }
+    },
+    async getRelatedInfo(id, flag, prop, type) {
       if (prop === 'warehouse_area_id' || prop === 'oversea_location_id') {
         try {
           let params = {
@@ -254,40 +284,10 @@ export default {
         } catch (err) {
           return;
         }
-      }
-    },
-    async getSkuOrOrderOption(label, str, query, prop, fn) {
-      let selectObj = this.getOptionObj(prop);
-      selectObj.options = [];
-      await this.$store.dispatch(fn, {
-        params: {
-          [label]: query
+      } else if (type === 'remote') {
+        if (!flag) {
+          this.$emit('get-info', id);
         }
-      });
-      selectObj.options = this.$store.state[str];
-      this.remoteLoading = false;
-    },
-    remoteMethod(query, prop) {
-      if (query) {
-        this.remoteLoading = true;
-        try {
-          if (prop === 'sku_id') {
-            this.getSkuOrOrderOption('name', 'sku', query, prop, 'getSku');
-          } else {
-            this.getSkuOrOrderOption(
-              'order_no',
-              'order',
-              query,
-              prop,
-              'getOrder'
-            );
-          }
-        } catch (err) {
-          return;
-        }
-      } else {
-        let selectObj = this.getOptionObj(prop);
-        selectObj.options = [];
       }
     }
   }

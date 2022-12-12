@@ -1,5 +1,6 @@
 import axios from '../../utils/axios';
 import { handleTimestamp } from '../../utils/index';
+import { ElMessage } from 'element-plus';
 
 export default {
   namespaced: true,
@@ -7,6 +8,7 @@ export default {
     return {
       listData: [],
       listTotal: 0,
+      orderDetail: {},
       listLoading: true,
       transitStateStatistics: {}
     };
@@ -19,6 +21,9 @@ export default {
     },
     setListLoading(state, payload) {
       state.listLoading = payload;
+    },
+    setOrderDetail(state, payload) {
+      state.orderDetail = payload;
     }
   },
   actions: {
@@ -56,6 +61,28 @@ export default {
           });
           context.commit('setListData', res.data);
           context.commit('setListLoading', false);
+        }
+      });
+    },
+    async createOrder(_, payload) {
+      await axios.post('order/create', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async updateOrder(_, payload) {
+      await axios.post('order/update', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async getOrderDetail(context, payload) {
+      await axios.get('order/detail', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.payment_time = res.data.payment_time * 1000;
+          context.commit('setOrderDetail', res.data);
         }
       });
     }

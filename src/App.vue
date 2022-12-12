@@ -34,7 +34,11 @@ export default defineComponent({
   margin-bottom: 5px;
 }
 
-.el-input__wrapper {
+.el-input {
+  width: auto !important;
+}
+
+.el-input--suffix .el-input__wrapper {
   width: 220px !important;
 }
 
@@ -54,5 +58,9 @@ export default defineComponent({
 
 .el-divider--vertical {
   border-left: 4px rgba(0, 102, 183, 1) solid !important;
+}
+
+.el-dialog__body {
+  padding-bottom: 45px !important;
 }
 </style>
