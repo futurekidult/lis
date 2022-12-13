@@ -51,7 +51,10 @@
             <el-button @click="handleExceptionHandling">
               异常已处理
             </el-button>
-            <el-dropdown style="margin: 0 12px">
+            <el-dropdown
+              style="margin: 0 12px"
+              @command="handleWaybillLabel"
+            >
               <el-button style="width: 80px">
                 标记为
                 <el-icon class="el-icon--right">
@@ -60,7 +63,13 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>标签1</el-dropdown-item>
+                  <el-dropdown-item
+                    v-for="item in labelList"
+                    :key="item.id"
+                    :command="item.id"
+                  >
+                    {{ item.name }}
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -90,6 +99,7 @@
             :total="$store.state.logistics.listTotal"
             @change-pagination="changePagination"
             @get-selected-ids="getSelectedIds"
+            @get-deleted-id="getDeletedId"
           >
             <template #default="slotProps">
               <el-button
@@ -204,7 +214,11 @@
 <script>
 import BaseForm from '../../common/base-form.vue';
 import { ArrowDown } from '@element-plus/icons-vue';
-import { handleDateRange, timeToTimestamp } from '../../../utils/index.js';
+import {
+  handleDateRange,
+  timeToTimestamp,
+  cache
+} from '../../../utils/index.js';
 
 export default {
   components: {
@@ -239,7 +253,9 @@ export default {
       logisticSupplierVisible: false,
       logisticSupplierForm: {},
       selectedIds: [],
-      deleteWaybillVisible: false
+      deleteWaybillVisible: false,
+      labelList: [],
+      deletedId: 0
     };
   },
   mounted() {
@@ -253,6 +269,7 @@ export default {
     this.getListData();
   },
   methods: {
+    cache,
     async getListData(transitState = '') {
       this.$store.commit('logistics/setListLoading', true);
       handleDateRange(this.chooseForm, 'shipping_time');
@@ -264,6 +281,7 @@ export default {
       try {
         await this.$store.dispatch('logistics/getListData', { params });
         this.listData = this.$store.state.logistics.listData;
+        this.labelList = JSON.parse(cache('label'));
       } catch (err) {
         this.$store.commit('logistics/setListLoading', false);
         return;
@@ -410,6 +428,27 @@ export default {
           id: this.selectedIds
         });
         this.deleteWaybillVisible = false;
+        this.getListData(this.activeTabKey);
+      } catch (err) {
+        return;
+      }
+    },
+    handleWaybillLabel(command) {
+      try {
+        this.handleSelectedIds(async () => {
+          await this.$store.dispatch('logistics/updateWaybillLabel', {
+            id: this.selectedIds,
+            label_id: command
+          });
+          this.getListData(this.activeTabKey);
+        });
+      } catch (err) {
+        return;
+      }
+    },
+    async getDeletedId(body) {
+      try {
+        await this.$store.dispatch('logistics/deleteWaybillLabel', body);
         this.getListData(this.activeTabKey);
       } catch (err) {
         return;

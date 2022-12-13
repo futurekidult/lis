@@ -79,6 +79,7 @@
               closable
               effect="plain"
               style="width: 80px"
+              @close="deleteLabel(label.id, scope.row.id)"
             >
               {{ label.name }}
             </el-tag>
@@ -161,7 +162,7 @@ export default {
       default: 0
     }
   },
-  emits: ['change-pagination', 'get-selected-ids'],
+  emits: ['change-pagination', 'get-selected-ids', 'get-deleted-id'],
   data() {
     return {
       tableKey: 1,
@@ -227,6 +228,12 @@ export default {
     handleSizeChange(val) {
       this.listPagination.page_size = val;
       this.$emit('change-pagination', this.pagination);
+    },
+    deleteLabel(labelId, waybillId) {
+      this.$emit('get-deleted-id', {
+        id: waybillId,
+        label_id: labelId
+      });
     }
   }
 };

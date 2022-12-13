@@ -110,6 +110,20 @@ export default {
           ElMessage.success(res.message);
         }
       });
+    },
+    async updateWaybillLabel(_, payload) {
+      await axios.post('waybill/label-update', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async deleteWaybillLabel(_, payload) {
+      await axios.post('waybill/label-delete', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
     }
   },
   getters: {}
