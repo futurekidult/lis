@@ -14,6 +14,12 @@ module.exports = {
       })
     ]
   },
+  chainWebpack: (config) => {
+    config.plugin('html').tap((args) => {
+      args[0].title = '物流管理系统';
+      return args;
+    });
+  },
   //配置代理
   devServer: {
     proxy: {
