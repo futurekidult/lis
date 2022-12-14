@@ -3,7 +3,7 @@
     type="manage"
     @get-collapse="getCollapse"
   >
-    <el-container v-if="menu.list.length">
+    <el-container v-if="menuList.length">
       <el-aside width="auto">
         <el-menu
           router
@@ -11,7 +11,7 @@
           class="el-menu-vertical"
           :default-active="$route.path"
           :collapse="collapse"
-          :default-openeds="menu.openeds"
+          :default-openeds="defaultOpeneds"
           background-color="#545c64"
         >
           <div
@@ -158,6 +158,14 @@ export default {
       collapse: false,
       menu: this.$store.state.adminInfo.menu
     };
+  },
+  computed: {
+    menuList() {
+      return this.menu.list;
+    },
+    defaultOpeneds() {
+      return this.menu.openeds;
+    }
   },
   methods: {
     getCollapse(val) {
