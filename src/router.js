@@ -5,6 +5,9 @@ const Manage = () => {
 const LogisticsList = () => {
   return import('./components/pages/logistics/logistics-list.vue');
 };
+const NotFound = () => {
+  return import('./components/layout/not-found.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -24,6 +27,13 @@ const router = createRouter({
           }
         }
       ]
+    },
+    {
+      path: '/:notFound(.*)',
+      component: NotFound,
+      meta: {
+        tooltipVisible: false
+      }
     }
   ]
 });
