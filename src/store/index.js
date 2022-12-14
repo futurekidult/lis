@@ -2,6 +2,7 @@ import { createStore } from 'vuex';
 import logistics from './logistics/index.js';
 import axios from '../utils/axios.js';
 import { cache } from '../utils/index.js';
+import { ElMessage } from 'element-plus';
 
 const store = createStore({
   modules: {
@@ -11,7 +12,8 @@ const store = createStore({
     return {
       warehouse: [],
       sku: [],
-      order: []
+      order: [],
+      adminInfo: {}
     };
   },
   mutations: {
@@ -23,6 +25,9 @@ const store = createStore({
     },
     setOrder(state, payload) {
       state.order = payload;
+    },
+    setAdminInfo(state, payload) {
+      state.adminInfo = payload;
     }
   },
   actions: {
@@ -98,6 +103,28 @@ const store = createStore({
       await axios.get('option/order-list', payload).then((res) => {
         if (res.code === 200) {
           context.commit('setOrder', res.data.list);
+        }
+      });
+    },
+    async getCsrfToken() {
+      await axios.get('csrftoken-get').then((res) => {
+        if (res.code === 200) {
+          localStorage.setItem('logistics-token', res.data.csrftoken);
+        }
+      });
+    },
+    async getAdminInfo(context) {
+      context.dispatch('getCsrfToken');
+      await axios.get('admin-info').then((res) => {
+        if (res.code === 200) {
+          context.commit('setAdminInfo', res.data);
+        }
+      });
+    },
+    async logout() {
+      await axios.get('logout').then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
         }
       });
     }

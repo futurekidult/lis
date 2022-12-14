@@ -17,6 +17,13 @@ export default defineComponent({
     return {
       locale: zhCn
     };
+  },
+  mounted() {
+    try {
+      this.$store.dispatch('getAdminInfo');
+    } catch (err) {
+      return;
+    }
   }
 });
 </script>
@@ -42,6 +49,10 @@ export default defineComponent({
   width: 220px !important;
 }
 
+.el-select--small .el-input--suffix .el-input__wrapper {
+  width: 80px !important;
+}
+
 .el-range-editor.el-input__wrapper {
   width: 222px !important;
 }
@@ -62,5 +73,15 @@ export default defineComponent({
 
 .el-dialog__body {
   padding-bottom: 45px !important;
+}
+
+.content-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 60px);
+  width: 100%;
+  font-size: 20px;
 }
 </style>

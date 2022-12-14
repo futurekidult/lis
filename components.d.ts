@@ -51,6 +51,9 @@ declare module '@vue/runtime-core' {
     LogisticsList: typeof import('./src/components/pages/logistics/logistics-list.vue')['default']
     MainContainer: typeof import('./src/components/layout/main-container.vue')['default']
     Manage: typeof import('./src/components/layout/manage.vue')['default']
+    Menu: typeof import('./src/components/layout/menu.vue')['default']
+    NoPrivilege: typeof import('./src/components/layout/no-privilege.vue')['default']
+    NotFound: typeof import('./src/components/layout/not-found.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
