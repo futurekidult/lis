@@ -4,9 +4,7 @@
       <section>
         <div
           v-if="
-            type === 'manage'
-              ? $store.state.adminInfo.menu.list.length
-              : $route.meta.tooltipVisible
+            type === 'manage' ? menuList.length : $route.meta.tooltipVisible
           "
         >
           <el-tooltip
@@ -88,10 +86,6 @@ export default {
   },
   props: {
     menuList: {
-      type: Array,
-      default: null
-    },
-    defaultOpeneds: {
       type: Array,
       default: null
     },

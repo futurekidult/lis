@@ -1,9 +1,10 @@
 <template>
   <base-menu
     type="manage"
+    :menu-list="menuList"
     @get-collapse="getCollapse"
   >
-    <el-container v-if="menuList.length">
+    <el-container v-show="menuList.length">
       <el-aside width="auto">
         <el-menu
           router
@@ -15,7 +16,7 @@
           background-color="#545c64"
         >
           <div
-            v-for="item in menu.list"
+            v-for="item in menuList"
             :key="item.id"
           >
             <el-menu-item
@@ -101,7 +102,7 @@
         <main-container />
       </el-main>
     </el-container>
-    <el-container v-else>
+    <el-container v-show="menuList.length === 0">
       <no-privilege />
     </el-container>
   </base-menu>
@@ -156,15 +157,15 @@ export default {
   data() {
     return {
       collapse: false,
-      menu: this.$store.state.adminInfo.menu
+      menu: this.$store.state.adminInfo.menu,
+      menuList: [],
+      defaultOpeneds: []
     };
   },
-  computed: {
-    menuList() {
-      return this.menu.list;
-    },
-    defaultOpeneds() {
-      return this.menu.openeds;
+  watch: {
+    '$store.state.adminInfo'(val) {
+      this.menuList = val.menu.list;
+      this.defaultOpeneds = val.menu.openeds;
     }
   },
   methods: {
