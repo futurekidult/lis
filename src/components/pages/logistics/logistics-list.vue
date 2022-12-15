@@ -95,6 +95,7 @@
             </el-button>
           </div>
           <base-table
+            :table="table"
             :pagination="pagination"
             :total="$store.state.logistics.listTotal"
             @change-pagination="changePagination"
@@ -107,7 +108,7 @@
                 type="primary"
                 size="small"
                 style="width: 40px"
-                @click="editItem(slotProps.row.id, slotProps.row.state)"
+                @click="updateWaybill(slotProps.row.id)"
               >
                 修改运单
               </el-button>
@@ -116,7 +117,7 @@
                 type="success"
                 size="small"
                 style="width: 40px"
-                @click="viewItem(slotProps.row.id)"
+                @click="viewWaybill(slotProps.row.id, slotProps.row.stay_time)"
               >
                 详情
               </el-button>
@@ -208,11 +209,29 @@
       @get-visible="closeDeleteWaybillDialog"
       @confirm-deletion="confirmDeletionWaybill"
     />
+    <!-- 查看运单表单 -->
+    <base-option
+      v-model="viewWaybillVisible"
+      width="70%"
+    >
+      <view-waybill
+        :form="waybillDetail"
+        :stay-time="stayTime"
+      >
+        <el-button
+          type="primary"
+          @click="asyncWaybillInfo"
+        >
+          同步
+        </el-button>
+      </view-waybill>
+    </base-option>
   </section>
 </template>
 
 <script>
 import BaseForm from '../../common/base-form.vue';
+import ViewWaybill from './view-waybill.vue';
 import { ArrowDown } from '@element-plus/icons-vue';
 import {
   handleDateRange,
@@ -223,17 +242,8 @@ import {
 export default {
   components: {
     BaseForm,
-    ArrowDown
-  },
-  provide() {
-    return {
-      getTable: () => {
-        return {
-          tableFields: this.tableFields,
-          tableData: this.listData
-        };
-      }
-    };
+    ArrowDown,
+    ViewWaybill
   },
   data() {
     return {
@@ -255,7 +265,12 @@ export default {
       selectedIds: [],
       deleteWaybillVisible: false,
       labelList: [],
-      deletedId: 0
+      deletedId: 0,
+      table: {},
+      stayTime: '',
+      viewWaybillVisible: false,
+      waybillDetail: {},
+      waybillId: 0
     };
   },
   mounted() {
@@ -282,6 +297,10 @@ export default {
         await this.$store.dispatch('logistics/getListData', { params });
         this.listData = this.$store.state.logistics.listData;
         this.labelList = JSON.parse(cache('label'));
+        this.table = {
+          tableFields: this.tableFields,
+          tableData: this.listData
+        };
       } catch (err) {
         this.$store.commit('logistics/setListLoading', false);
         return;
@@ -450,6 +469,33 @@ export default {
       try {
         await this.$store.dispatch('logistics/deleteWaybillLabel', body);
         this.getListData(this.activeTabKey);
+      } catch (err) {
+        return;
+      }
+    },
+    async viewWaybill(id, time, dialogFlag = true) {
+      this.waybillId = id;
+      try {
+        await this.$store.dispatch('logistics/getWaybillDetail', {
+          params: {
+            id
+          }
+        });
+        this.waybillDetail = this.$store.state.logistics.waybillDetail;
+        this.stayTime = time;
+        if (dialogFlag) {
+          this.viewWaybillVisible = true;
+        }
+      } catch (err) {
+        return;
+      }
+    },
+    async asyncWaybillInfo() {
+      try {
+        await this.$store.dispatch('logistics/asyncWaybillInfo', {
+          waybill_id: this.waybillId
+        });
+        this.viewWaybill(this.waybillId, this.stayTime, false);
       } catch (err) {
         return;
       }
