@@ -306,11 +306,6 @@ const transitState = [
   }
 ];
 
-//表单正则校验
-const regExp = {
-  order: '^[A-Za-z0-9-]+$'
-};
-
 //订单表单公共项
 const orderCommonFields = [
   {
@@ -373,7 +368,7 @@ const orderRules = {
       message: '请输入订单号'
     },
     {
-      pattern: regExp.order,
+      pattern: /^[A-Za-z0-9-]+$/,
       message: '只允许输入数字、中划线'
     },
     {

@@ -55,7 +55,11 @@ const store = createStore({
     async getWarehouse(context, payload) {
       await axios.get('option/warehouse-list', payload).then((res) => {
         if (res.code === 200) {
-          context.commit('setWarehouse', res.data.list);
+          if (payload) {
+            context.commit('setWarehouse', res.data.list);
+          } else {
+            cache('warehouse', JSON.stringify(res.data.list), 3600 * 24);
+          }
         }
       });
     },
@@ -125,6 +129,40 @@ const store = createStore({
       await axios.get('logout').then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.message);
+        }
+      });
+    },
+    async getCountry() {
+      await axios.get('option/country-list').then((res) => {
+        if (res.code === 200) {
+          cache(
+            'logistics-country',
+            JSON.stringify(res.data.list),
+            3600 * 24 * 30 * 3
+          );
+        }
+      });
+    },
+    async getState(_, payload) {
+      await axios.get('option/state-list', payload).then((res) => {
+        if (res.code === 200) {
+          cache(
+            `logistics-state-${payload.params.country_id}`,
+            JSON.stringify(res.data.list),
+            3600 * 24 * 30 * 3
+          );
+        }
+      });
+    },
+    async getCity(_, payload) {
+      let params = payload.params;
+      await axios.get('option/city-list', payload).then((res) => {
+        if (res.code === 200) {
+          cache(
+            `logistics-city-${params.state_id}-${params.country_id}`,
+            JSON.stringify(res.data.list),
+            3600 * 24 * 30 * 3
+          );
         }
       });
     }

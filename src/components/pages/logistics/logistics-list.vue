@@ -209,7 +209,31 @@
       @get-visible="closeDeleteWaybillDialog"
       @confirm-deletion="confirmDeletionWaybill"
     />
-    <!-- 查看运单表单 -->
+    <!-- 修改运单弹窗 -->
+    <base-option
+      v-model="updateWaybillVisible"
+      width="60%"
+    >
+      <update-waybill
+        ref="updateWaybillForm"
+        :form="updateWaybillForm"
+        :city-option="cityOption"
+        :state-option="stateOption"
+        :country-option="countryOption"
+        :warehouse-option="warehouseOption"
+      >
+        <el-button @click="closeUpdateWaybillDialog">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitUpdateWaybillForm"
+        >
+          确定
+        </el-button>
+      </update-waybill>
+    </base-option>
+    <!-- 查看运单弹窗 -->
     <base-option
       v-model="viewWaybillVisible"
       width="70%"
@@ -231,6 +255,7 @@
 
 <script>
 import BaseForm from '../../common/base-form.vue';
+import UpdateWaybill from './update-waybill.vue';
 import ViewWaybill from './view-waybill.vue';
 import { ArrowDown } from '@element-plus/icons-vue';
 import {
@@ -243,7 +268,8 @@ export default {
   components: {
     BaseForm,
     ArrowDown,
-    ViewWaybill
+    ViewWaybill,
+    UpdateWaybill
   },
   data() {
     return {
@@ -266,6 +292,12 @@ export default {
       deleteWaybillVisible: false,
       labelList: [],
       deletedId: 0,
+      updateWaybillVisible: false,
+      updateWaybillForm: {},
+      countryOption: [],
+      stateOption: [],
+      cityOption: [],
+      warehouseOption: [],
       table: {},
       stayTime: '',
       viewWaybillVisible: false,
@@ -282,6 +314,7 @@ export default {
       this.tableFields = this.$global.logisticsTableFields;
     }
     this.getListData();
+    this.getCountry();
   },
   methods: {
     cache,
@@ -471,6 +504,99 @@ export default {
         this.getListData(this.activeTabKey);
       } catch (err) {
         return;
+      }
+    },
+    closeUpdateWaybillDialog() {
+      this.updateWaybillVisible = false;
+      this.$refs.updateWaybillForm.$refs.form.resetFields();
+    },
+    async updateWaybill(id) {
+      this.waybillId = id;
+      this.warehouseOption = JSON.parse(cache('warehouse'));
+      this.countryOption = JSON.parse(cache('logistics-country'));
+      try {
+        await this.$store.dispatch('logistics/getBaseWaybillDetail', {
+          params: {
+            id
+          }
+        });
+        this.updateWaybillForm = this.$store.state.logistics.baseWaybillDetail;
+        if (this.updateWaybillForm.country_id) {
+          this.getState(this.updateWaybillForm.country_id);
+          if (this.updateWaybillForm.state_id) {
+            this.getCity(
+              this.updateWaybillForm.country_id,
+              this.updateWaybillForm.state_id
+            );
+          }
+        }
+        this.updateWaybillVisible = true;
+      } catch (err) {
+        return;
+      }
+    },
+    submitUpdateWaybillForm() {
+      this.$refs.updateWaybillForm.$refs.form.validate((valid) => {
+        if (valid) {
+          this.updateWaybillInfo();
+        }
+      });
+    },
+    async updateWaybillInfo() {
+      let body = this.updateWaybillForm;
+      body.id = this.waybillId;
+      try {
+        await this.$store.dispatch('logistics/updateWaybill', body);
+        this.updateWaybillVisible = false;
+        this.getListData(this.activeTabKey);
+      } catch (err) {
+        return;
+      }
+    },
+    async getCountry() {
+      if (!cache('logistics-country')) {
+        try {
+          await this.$store.dispatch('getCountry');
+        } catch (err) {
+          return;
+        }
+      }
+    },
+    async getState(country) {
+      let state = cache(`logistics-state-${country}`);
+      if (state) {
+        this.stateOption = JSON.parse(state);
+      } else {
+        try {
+          await this.$store.dispatch('getState', {
+            params: {
+              country_id: country
+            }
+          });
+          this.stateOption = JSON.parse(cache(`logistics-state-${country}`));
+        } catch (err) {
+          return;
+        }
+      }
+    },
+    async getCity(country, state) {
+      let city = cache(`logistics-city-${state}-${country}`);
+      if (city) {
+        this.cityOption = JSON.parse(city);
+      } else {
+        try {
+          await this.$store.dispatch('getCity', {
+            params: {
+              country_id: country,
+              state_id: state
+            }
+          });
+          this.cityOption = JSON.parse(
+            cache(`logistics-city-${state}-${country}`)
+          );
+        } catch (err) {
+          return;
+        }
       }
     },
     async viewWaybill(id, time, dialogFlag = true) {

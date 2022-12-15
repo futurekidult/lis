@@ -1,5 +1,9 @@
 import axios from '../../utils/axios';
-import { handleTimestamp, timestampToTime } from '../../utils/index';
+import {
+  handleTimestamp,
+  timestampToTime,
+  timeToTimestamp
+} from '../../utils/index';
 import { ElMessage } from 'element-plus';
 
 export default {
@@ -11,6 +15,7 @@ export default {
       orderDetail: {},
       listLoading: true,
       transitStateStatistics: {},
+      baseWaybillDetail: {},
       waybillDetail: {}
     };
   },
@@ -132,6 +137,14 @@ export default {
         }
       });
     },
+    async getBaseWaybillDetail(context, payload) {
+      await axios.get('waybill/detail-base', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.shipping_time = timestampToTime(res.data.shipping_time);
+          context.commit('setBaseWaybillDetail', res.data);
+        }
+      });
+    },
     async getWaybillDetail(context, payload) {
       await axios.get('waybill/detail', payload).then((res) => {
         if (res.code === 200) {
@@ -155,6 +168,17 @@ export default {
     },
     async asyncWaybillInfo(_, payload) {
       await axios.post('waybill/detail-synchronize', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async updateWaybill(_, payload) {
+      let params = payload;
+      params.state_id = params.state;
+      params.city_id = params.city;
+      params.shipping_time = timeToTimestamp(params.shipping_time);
+      await axios.post('waybill/update', params).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.message);
         }
