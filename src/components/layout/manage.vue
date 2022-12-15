@@ -157,7 +157,6 @@ export default {
   data() {
     return {
       collapse: false,
-      menu: this.$store.state.adminInfo.menu,
       menuList: [],
       defaultOpeneds: []
     };
