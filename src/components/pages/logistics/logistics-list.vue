@@ -263,6 +263,7 @@ import {
   timeToTimestamp,
   cache
 } from '../../../utils/index.js';
+import { getState, getCity } from '../../../utils/state-city.js';
 
 export default {
   components: {
@@ -512,27 +513,38 @@ export default {
     },
     async updateWaybill(id) {
       this.waybillId = id;
-      this.warehouseOption = JSON.parse(cache('warehouse'));
-      this.countryOption = JSON.parse(cache('logistics-country'));
-      try {
-        await this.$store.dispatch('logistics/getBaseWaybillDetail', {
-          params: {
-            id
-          }
-        });
-        this.updateWaybillForm = this.$store.state.logistics.baseWaybillDetail;
-        if (this.updateWaybillForm.country_id) {
-          this.getState(this.updateWaybillForm.country_id);
-          if (this.updateWaybillForm.state_id) {
-            this.getCity(
-              this.updateWaybillForm.country_id,
-              this.updateWaybillForm.state_id
-            );
+      if (cache('warehouse')) {
+        this.warehouseOption = JSON.parse(cache('warehouse'));
+        if (cache('logistics-country')) {
+          this.countryOption = JSON.parse(cache('logistics-country'));
+          try {
+            await this.$store.dispatch('logistics/getBaseWaybillDetail', {
+              params: {
+                id
+              }
+            });
+            this.updateWaybillForm =
+              this.$store.state.logistics.baseWaybillDetail;
+            if (this.updateWaybillForm.country_id) {
+              getState(this.updateWaybillForm.country_id).then((res) => {
+                this.stateOption = res;
+              });
+              if (this.updateWaybillForm.state_id) {
+                getCity(
+                  this.updateWaybillForm.country_id,
+                  this.updateWaybillForm.state_id
+                ).then((res) => {
+                  this.cityOption = res;
+                });
+              }
+            }
+            this.updateWaybillVisible = true;
+          } catch (err) {
+            return;
           }
         }
-        this.updateWaybillVisible = true;
-      } catch (err) {
-        return;
+      } else {
+        this.$message.warning('请刷新后再尝试！');
       }
     },
     submitUpdateWaybillForm() {
@@ -557,43 +569,6 @@ export default {
       if (!cache('logistics-country')) {
         try {
           await this.$store.dispatch('getCountry');
-        } catch (err) {
-          return;
-        }
-      }
-    },
-    async getState(country) {
-      let state = cache(`logistics-state-${country}`);
-      if (state) {
-        this.stateOption = JSON.parse(state);
-      } else {
-        try {
-          await this.$store.dispatch('getState', {
-            params: {
-              country_id: country
-            }
-          });
-          this.stateOption = JSON.parse(cache(`logistics-state-${country}`));
-        } catch (err) {
-          return;
-        }
-      }
-    },
-    async getCity(country, state) {
-      let city = cache(`logistics-city-${state}-${country}`);
-      if (city) {
-        this.cityOption = JSON.parse(city);
-      } else {
-        try {
-          await this.$store.dispatch('getCity', {
-            params: {
-              country_id: country,
-              state_id: state
-            }
-          });
-          this.cityOption = JSON.parse(
-            cache(`logistics-city-${state}-${country}`)
-          );
         } catch (err) {
           return;
         }

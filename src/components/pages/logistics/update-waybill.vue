@@ -52,6 +52,7 @@
             <el-input
               v-model="waybillForm.postcode"
               clearable
+              @change="checkPostcodeValid"
             />
           </el-form-item>
         </el-col>
@@ -125,9 +126,7 @@
               clearable
               placeholder=""
               @clear="clearCountry"
-              @change="
-                changeCountry(waybillForm.country_id, waybillForm.postcode)
-              "
+              @change="changeCountry"
             >
               <el-option
                 v-for="item in country"
@@ -152,7 +151,7 @@
                 clearable
                 placeholder=""
                 @clear="clearState"
-                @change="getCity(waybillForm.country, waybillForm.state)"
+                @change="getCity(waybillForm.country_id, waybillForm.state)"
               >
                 <el-option
                   v-for="item in state"
@@ -263,7 +262,7 @@
 </template>
 
 <script>
-import { cache } from '../../../utils/index.js';
+import { getState, getCity } from '../../../utils/state-city.js';
 import { checkPattern } from '../../../utils/zipcode.js';
 export default {
   props: {
@@ -381,8 +380,7 @@ export default {
         ],
         phone: [
           {
-            required: true,
-            message: '请输入客户电话'
+            required: false
           },
           {
             pattern: /^[A-Za-z0-9-.+ ]+$/,
@@ -431,9 +429,28 @@ export default {
     },
     warehouseOption(val) {
       this.warehouse = val;
+    },
+    'form.country_id'(country) {
+      this.checkPostcode(country, this.waybillForm.postcode);
     }
   },
   methods: {
+    checkPostcodeValid(val) {
+      if (val) {
+        this.checkPostcode(this.waybillForm.country_id, val);
+      }
+    },
+    checkPostcode(country, postcode) {
+      if (country) {
+        let selectedCountry = this.country.find((item) => {
+          return item.id === country;
+        });
+        let reg = new RegExp(checkPattern(selectedCountry.iso3));
+        if (!reg.test(postcode)) {
+          this.$message.error('输入的邮编与选定的客户国家不匹配，请检查');
+        }
+      }
+    },
     async remoteMethod(query, prop) {
       if (query) {
         try {
@@ -459,6 +476,12 @@ export default {
         } catch (err) {
           return;
         }
+      } else {
+        if (prop === 'sku_id') {
+          this.skuOption = [];
+        } else {
+          this.orderOption = [];
+        }
       }
     },
     async changeId(val, prop) {
@@ -471,51 +494,17 @@ export default {
     clearState() {
       this.waybillForm.city = '';
     },
-    async changeCountry(country, code) {
-      if (country) {
-        let selectedCountry = this.country.find((item) => {
-          return item.id === country;
-        });
-        let reg = new RegExp(checkPattern(selectedCountry.iso3));
-        if (!reg.test(code)) {
-          this.$message.error('输入的邮编与选定的客户国家不匹配，请检查');
-        }
-      }
+    async changeCountry(country) {
       this.clearCountry();
-      let state = cache(`logistics-state-${country}`);
-      if (state) {
-        this.state = JSON.parse(state);
-      } else {
-        try {
-          await this.$store.dispatch('getState', {
-            params: {
-              country_id: country
-            }
-          });
-          this.state = JSON.parse(cache(`logistics-state-${country}`));
-        } catch (err) {
-          return;
-        }
-      }
+      getState(country).then((res) => {
+        this.state = res;
+      });
     },
     async getCity(country, state) {
       this.clearState();
-      let city = cache(`logistics-city-${state}-${country}`);
-      if (city) {
-        this.city = JSON.parse(city);
-      } else {
-        try {
-          await this.$store.dispatch('getCity', {
-            params: {
-              country_id: country,
-              state_id: state
-            }
-          });
-          this.city = JSON.parse(cache(`logistics-city-${state}-${country}`));
-        } catch (err) {
-          return;
-        }
-      }
+      getCity(country, state).then((res) => {
+        this.city = res;
+      });
     }
   }
 };
