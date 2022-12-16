@@ -263,7 +263,7 @@
 
 <script>
 import { getState, getCity } from '../../../utils/state-city.js';
-import { checkPattern } from '../../../utils/zipcode.js';
+import { getCountryIso3 } from '../../../utils/index.js';
 export default {
   props: {
     form: {
@@ -430,25 +430,20 @@ export default {
     warehouseOption(val) {
       this.warehouse = val;
     },
-    'form.country_id'(country) {
-      this.checkPostcode(country, this.waybillForm.postcode);
+    'form.country_id'() {
+      this.checkPostcode(this.waybillForm.postcode);
     }
   },
   methods: {
     checkPostcodeValid(val) {
       if (val) {
-        this.checkPostcode(this.waybillForm.country_id, val);
+        this.checkPostcode(val);
       }
     },
-    checkPostcode(country, postcode) {
-      if (country) {
-        let selectedCountry = this.country.find((item) => {
-          return item.id === country;
-        });
-        let reg = new RegExp(checkPattern(selectedCountry.iso3));
-        if (!reg.test(postcode)) {
-          this.$message.error('输入的邮编与选定的客户国家不匹配，请检查');
-        }
+    checkPostcode(postcode) {
+      let reg = getCountryIso3(this.waybillForm, this.country);
+      if (!reg.test(postcode)) {
+        this.$message.error('输入的邮编与选定的客户国家不匹配，请检查');
       }
     },
     async remoteMethod(query, prop) {

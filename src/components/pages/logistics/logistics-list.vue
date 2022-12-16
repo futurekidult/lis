@@ -261,7 +261,8 @@ import { ArrowDown } from '@element-plus/icons-vue';
 import {
   handleDateRange,
   timeToTimestamp,
-  cache
+  cache,
+  getCountryIso3
 } from '../../../utils/index.js';
 import { getState, getCity } from '../../../utils/state-city.js';
 
@@ -547,15 +548,23 @@ export default {
         this.$message.warning('请刷新后再尝试！');
       }
     },
+    checkPostcode() {
+      let reg = getCountryIso3(this.updateWaybillForm, this.countryOption);
+      if (!reg.test(this.updateWaybillForm.postcode)) {
+        this.$message.error('输入的邮编与选定的客户国家不匹配，请检查');
+      } else {
+        this.updateWaybillInfo();
+      }
+    },
     submitUpdateWaybillForm() {
       this.$refs.updateWaybillForm.$refs.form.validate((valid) => {
         if (valid) {
-          this.updateWaybillInfo();
+          this.checkPostcode();
         }
       });
     },
     async updateWaybillInfo() {
-      let body = this.updateWaybillForm;
+      let body = JSON.parse(JSON.stringify(this.updateWaybillForm));
       body.id = this.waybillId;
       try {
         await this.$store.dispatch('logistics/updateWaybill', body);
