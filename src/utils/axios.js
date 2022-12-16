@@ -10,9 +10,6 @@ const http = axios.create({
   }
 });
 
-let isRefreshing = false;
-let requests = [];
-
 http.interceptors.request.use((config) => {
   if (config.method === 'post') {
     config.headers['X-CSRFToken'] = localStorage.getItem('logistics-token');
@@ -20,53 +17,58 @@ http.interceptors.request.use((config) => {
   return config;
 });
 
+let isRefreshing = false;
+let requests = [];
+
 http.interceptors.response.use(
   async (res) => {
     let { code } = res.data;
-    if (code !== 200) {
-      if (code === 401) {
-        localStorage.removeItem('logistics-token');
-        if (process.env.NODE_ENV === 'development') {
-          await devLogin();
-          return http(res.config);
-        } else {
-          window.location.href = res.data.data.auth_url;
-        }
-      } else if (code === 403) {
-        ElMessage.error('无权限访问');
-      } else if (code === 405) {
-        //token过期时，重新获取token并执行刚暂停的请求
-        let { config } = res;
-        if (!isRefreshing) {
-          isRefreshing = true;
-          return await refreshToken()
-            .then((response) => {
-              let token = response.csrftoken;
-              config.headers['X-CSRFToken'] = token;
-              localStorage.setItem('logistics-token', token);
-              config.baseURL = '/api';
-              requests.forEach((cb) => {
-                cb(token);
+    if (code) {
+      if (code !== 200 && code !== 40015) {
+        if (code === 401) {
+          localStorage.removeItem('logistics-token');
+          if (process.env.NODE_ENV === 'development') {
+            await devLogin();
+            return http(res.config);
+          } else {
+            window.location.href = res.data.data.auth_url;
+          }
+        } else if (code === 403) {
+          ElMessage.error('无权限访问');
+        } else if (code === 405) {
+          //token过期时，重新获取token并执行刚暂停的请求
+          let { config } = res;
+          if (!isRefreshing) {
+            isRefreshing = true;
+            return await refreshToken()
+              .then((response) => {
+                let token = response.csrftoken;
+                config.headers['X-CSRFToken'] = token;
+                localStorage.setItem('logistics-token', token);
+                config.baseURL = '/api';
+                requests.forEach((cb) => {
+                  cb(token);
+                });
+                requests = [];
+                return http(config);
+              })
+              .finally(() => {
+                isRefreshing = false;
               });
-              requests = [];
-              return http(config);
-            })
-            .finally(() => {
-              isRefreshing = false;
+          } else {
+            return new Promise((resolve) => {
+              requests.push((token) => {
+                config.baseURL = '/api';
+                config.headers['X-CSRFToken'] = token;
+                resolve(http(config));
+              });
             });
+          }
         } else {
-          return new Promise((resolve) => {
-            requests.push((token) => {
-              config.baseURL = '/api';
-              config.headers['X-CSRFToken'] = token;
-              resolve(http(config));
-            });
-          });
+          ElMessage.error(res.data.message);
         }
-      } else {
-        ElMessage.error(res.data.message);
+        throw new Error(code);
       }
-      throw new Error(code);
     }
     return res.data;
   },

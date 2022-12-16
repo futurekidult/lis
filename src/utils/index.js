@@ -86,3 +86,17 @@ export const getCountryIso3 = (waybillForm, countryArr) => {
     return new RegExp(checkPattern(selectedCountry.iso3));
   }
 };
+
+//导出
+export const download = (res, type, filename) => {
+  const a = document.createElement('a');
+  const blob = new Blob([res.data], { type });
+  const url = URL.createObjectURL(blob);
+  a.target = '_ blank';
+  a.setAttribute('href', url);
+  a.setAttribute(
+    'download',
+    `${filename}-${timestampToTime(new Date().getTime() / 1000)}.xlsx`
+  );
+  a.click();
+};
