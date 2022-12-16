@@ -1,3 +1,5 @@
+import { checkPattern } from './zipcode.js';
+
 //时间戳转换成时间格式
 export const timestampToTime = (timestamp) => {
   if (timestamp !== 0 && timestamp !== undefined) {
@@ -71,5 +73,16 @@ export const cache = (key, value, seconds) => {
         return tmp[0];
       }
     }
+  }
+};
+
+//获取国家的iso3
+export const getCountryIso3 = (waybillForm, countryArr) => {
+  let form = waybillForm;
+  if (form.country_id) {
+    let selectedCountry = countryArr.find((item) => {
+      return item.id === form.country_id;
+    });
+    return new RegExp(checkPattern(selectedCountry.iso3));
   }
 };

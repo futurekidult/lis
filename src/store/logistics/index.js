@@ -1,5 +1,9 @@
 import axios from '../../utils/axios';
-import { handleTimestamp } from '../../utils/index';
+import {
+  handleTimestamp,
+  timestampToTime,
+  timeToTimestamp
+} from '../../utils/index';
 import { ElMessage } from 'element-plus';
 
 export default {
@@ -10,7 +14,9 @@ export default {
       listTotal: 0,
       orderDetail: {},
       listLoading: true,
-      transitStateStatistics: {}
+      transitStateStatistics: {},
+      baseWaybillDetail: {},
+      waybillDetail: {}
     };
   },
   mutations: {
@@ -24,6 +30,12 @@ export default {
     },
     setOrderDetail(state, payload) {
       state.orderDetail = payload;
+    },
+    setBaseWaybillDetail(state, payload) {
+      state.baseWaybillDetail = payload;
+    },
+    setWaybillDetail(state, payload) {
+      state.waybillDetail = payload;
     }
   },
   actions: {
@@ -120,6 +132,53 @@ export default {
     },
     async deleteWaybillLabel(_, payload) {
       await axios.post('waybill/label-delete', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async getBaseWaybillDetail(context, payload) {
+      await axios.get('waybill/detail-base', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.shipping_time = timestampToTime(res.data.shipping_time);
+          context.commit('setBaseWaybillDetail', res.data);
+        }
+      });
+    },
+    async getWaybillDetail(context, payload) {
+      await axios.get('waybill/detail', payload).then((res) => {
+        if (res.code === 200) {
+          handleTimestamp(res.data, [
+            'sync_time',
+            'receipt_time',
+            'delivery_time',
+            'payment_time',
+            'shipping_time',
+            'current_event_time',
+            'estimated_delivery_time'
+          ]);
+          res.data.receipt_days = `${res.data.receipt_days}天`;
+          res.data.delivery_days = `${res.data.delivery_days}天`;
+          res.data.logistic_tracking.forEach((item) => {
+            item.event_time = timestampToTime(item.event_time);
+          });
+          context.commit('setWaybillDetail', res.data);
+        }
+      });
+    },
+    async asyncWaybillInfo(_, payload) {
+      await axios.post('waybill/detail-synchronize', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async updateWaybill(_, payload) {
+      let params = payload;
+      params.state_id = params.state;
+      params.city_id = params.city;
+      params.shipping_time = timeToTimestamp(params.shipping_time);
+      await axios.post('waybill/update', params).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.message);
         }

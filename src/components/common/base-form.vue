@@ -210,19 +210,16 @@ export default {
         if (prop !== 'exception_handling' && prop !== 'parcel_type') {
           let newProp = prop.replace('_id', '');
           let arr = [];
-          if (newProp !== 'warehouse') {
-            arr = newProp.split('_');
-            // 将获取到的属性的首字母大写
-            for (let i = 0; i < arr.length; i++) {
-              arr[i] =
-                arr[i].slice(0, 1).toUpperCase() +
-                arr[i].slice(1).toLowerCase();
-            }
-            if (!cache(newProp)) {
-              await this.$store.dispatch(`get${arr.join('')}`);
-            }
-            selectObj.options = JSON.parse(cache(newProp));
+          arr = newProp.split('_');
+          // 将获取到的属性的首字母大写
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] =
+              arr[i].slice(0, 1).toUpperCase() + arr[i].slice(1).toLowerCase();
           }
+          if (!cache(newProp)) {
+            await this.$store.dispatch(`get${arr.join('')}`);
+          }
+          selectObj.options = JSON.parse(cache(newProp));
         } else {
           if (!cache(prop)) {
             await this.$store.dispatch('getSystemParameter');
@@ -297,10 +294,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.btn-position {
-  float: right;
-  padding-top: 15px;
-}
-</style>

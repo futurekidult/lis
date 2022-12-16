@@ -95,6 +95,7 @@
             </el-button>
           </div>
           <base-table
+            :table="table"
             :pagination="pagination"
             :total="$store.state.logistics.listTotal"
             @change-pagination="changePagination"
@@ -107,7 +108,7 @@
                 type="primary"
                 size="small"
                 style="width: 40px"
-                @click="editItem(slotProps.row.id, slotProps.row.state)"
+                @click="updateWaybill(slotProps.row.id)"
               >
                 修改运单
               </el-button>
@@ -116,7 +117,7 @@
                 type="success"
                 size="small"
                 style="width: 40px"
-                @click="viewItem(slotProps.row.id)"
+                @click="viewWaybill(slotProps.row.id, slotProps.row.stay_time)"
               >
                 详情
               </el-button>
@@ -208,32 +209,69 @@
       @get-visible="closeDeleteWaybillDialog"
       @confirm-deletion="confirmDeletionWaybill"
     />
+    <!-- 修改运单弹窗 -->
+    <base-option
+      v-model="updateWaybillVisible"
+      width="60%"
+    >
+      <update-waybill
+        ref="updateWaybillForm"
+        :form="updateWaybillForm"
+        :city-option="cityOption"
+        :state-option="stateOption"
+        :country-option="countryOption"
+        :warehouse-option="warehouseOption"
+      >
+        <el-button @click="closeUpdateWaybillDialog">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitUpdateWaybillForm"
+        >
+          确定
+        </el-button>
+      </update-waybill>
+    </base-option>
+    <!-- 查看运单弹窗 -->
+    <base-option
+      v-model="viewWaybillVisible"
+      width="70%"
+    >
+      <view-waybill
+        :form="waybillDetail"
+        :stay-time="stayTime"
+      >
+        <el-button
+          type="primary"
+          @click="asyncWaybillInfo"
+        >
+          同步
+        </el-button>
+      </view-waybill>
+    </base-option>
   </section>
 </template>
 
 <script>
 import BaseForm from '../../common/base-form.vue';
+import UpdateWaybill from './update-waybill.vue';
+import ViewWaybill from './view-waybill.vue';
 import { ArrowDown } from '@element-plus/icons-vue';
 import {
   handleDateRange,
   timeToTimestamp,
-  cache
+  cache,
+  getCountryIso3
 } from '../../../utils/index.js';
+import { getState, getCity } from '../../../utils/state-city.js';
 
 export default {
   components: {
     BaseForm,
-    ArrowDown
-  },
-  provide() {
-    return {
-      getTable: () => {
-        return {
-          tableFields: this.tableFields,
-          tableData: this.listData
-        };
-      }
-    };
+    ArrowDown,
+    ViewWaybill,
+    UpdateWaybill
   },
   data() {
     return {
@@ -255,7 +293,18 @@ export default {
       selectedIds: [],
       deleteWaybillVisible: false,
       labelList: [],
-      deletedId: 0
+      deletedId: 0,
+      updateWaybillVisible: false,
+      updateWaybillForm: {},
+      countryOption: [],
+      stateOption: [],
+      cityOption: [],
+      warehouseOption: [],
+      table: {},
+      stayTime: '',
+      viewWaybillVisible: false,
+      waybillDetail: {},
+      waybillId: 0
     };
   },
   mounted() {
@@ -267,6 +316,7 @@ export default {
       this.tableFields = this.$global.logisticsTableFields;
     }
     this.getListData();
+    this.getCountry();
   },
   methods: {
     cache,
@@ -282,6 +332,10 @@ export default {
         await this.$store.dispatch('logistics/getListData', { params });
         this.listData = this.$store.state.logistics.listData;
         this.labelList = JSON.parse(cache('label'));
+        this.table = {
+          tableFields: this.tableFields,
+          tableData: this.listData
+        };
       } catch (err) {
         this.$store.commit('logistics/setListLoading', false);
         return;
@@ -450,6 +504,108 @@ export default {
       try {
         await this.$store.dispatch('logistics/deleteWaybillLabel', body);
         this.getListData(this.activeTabKey);
+      } catch (err) {
+        return;
+      }
+    },
+    closeUpdateWaybillDialog() {
+      this.updateWaybillVisible = false;
+      this.$refs.updateWaybillForm.$refs.form.resetFields();
+    },
+    async updateWaybill(id) {
+      this.waybillId = id;
+      if (cache('warehouse')) {
+        this.warehouseOption = JSON.parse(cache('warehouse'));
+        if (cache('logistics-country')) {
+          this.countryOption = JSON.parse(cache('logistics-country'));
+          try {
+            await this.$store.dispatch('logistics/getBaseWaybillDetail', {
+              params: {
+                id
+              }
+            });
+            this.updateWaybillForm =
+              this.$store.state.logistics.baseWaybillDetail;
+            if (this.updateWaybillForm.country_id) {
+              getState(this.updateWaybillForm.country_id).then((res) => {
+                this.stateOption = res;
+              });
+              if (this.updateWaybillForm.state_id) {
+                getCity(
+                  this.updateWaybillForm.country_id,
+                  this.updateWaybillForm.state_id
+                ).then((res) => {
+                  this.cityOption = res;
+                });
+              }
+            }
+            this.updateWaybillVisible = true;
+          } catch (err) {
+            return;
+          }
+        }
+      } else {
+        this.$message.warning('请刷新后再尝试！');
+      }
+    },
+    checkPostcode() {
+      let reg = getCountryIso3(this.updateWaybillForm, this.countryOption);
+      if (!reg.test(this.updateWaybillForm.postcode)) {
+        this.$message.error('输入的邮编与选定的客户国家不匹配，请检查');
+      } else {
+        this.updateWaybillInfo();
+      }
+    },
+    submitUpdateWaybillForm() {
+      this.$refs.updateWaybillForm.$refs.form.validate((valid) => {
+        if (valid) {
+          this.checkPostcode();
+        }
+      });
+    },
+    async updateWaybillInfo() {
+      let body = JSON.parse(JSON.stringify(this.updateWaybillForm));
+      body.id = this.waybillId;
+      try {
+        await this.$store.dispatch('logistics/updateWaybill', body);
+        this.updateWaybillVisible = false;
+        this.getListData(this.activeTabKey);
+      } catch (err) {
+        return;
+      }
+    },
+    async getCountry() {
+      if (!cache('logistics-country')) {
+        try {
+          await this.$store.dispatch('getCountry');
+        } catch (err) {
+          return;
+        }
+      }
+    },
+    async viewWaybill(id, time, dialogFlag = true) {
+      this.waybillId = id;
+      try {
+        await this.$store.dispatch('logistics/getWaybillDetail', {
+          params: {
+            id
+          }
+        });
+        this.waybillDetail = this.$store.state.logistics.waybillDetail;
+        this.stayTime = time;
+        if (dialogFlag) {
+          this.viewWaybillVisible = true;
+        }
+      } catch (err) {
+        return;
+      }
+    },
+    async asyncWaybillInfo() {
+      try {
+        await this.$store.dispatch('logistics/asyncWaybillInfo', {
+          waybill_id: this.waybillId
+        });
+        this.viewWaybill(this.waybillId, this.stayTime, false);
       } catch (err) {
         return;
       }
