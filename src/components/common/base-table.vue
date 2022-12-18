@@ -221,6 +221,7 @@ export default {
     },
     handleSizeChange(val) {
       this.listPagination.page_size = val;
+      this.listPagination.current_page = 1;
       this.$emit('change-pagination', this.pagination);
     }
   }
