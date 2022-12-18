@@ -121,6 +121,7 @@
     </el-table>
     <div class="position-right">
       <el-pagination
+        v-if="dataTotal > listPagination.page_size"
         :current-page="listPagination.current_page"
         :page-size="listPagination.page_size"
         :page-sizes="[10, 20, 30, 40]"
