@@ -194,15 +194,18 @@ export default {
       });
     },
     async exportTemplate() {
-      await axios
-        .post('waybill/export-template', { responseType: 'blob' })
-        .then((res) => {
-          download(
-            res,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            '物流跟踪模板'
-          );
-        });
+      await axios({
+        url: 'waybill/export-template',
+        method: 'post',
+        responseType: 'blob'
+      }).then((res) => {
+        download(
+          res,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          '物流跟踪模板',
+          'xlsx'
+        );
+      });
     },
     async importWaybill(context, payload) {
       await axios
@@ -219,6 +222,26 @@ export default {
             context.commit('setStepActive', 2);
           }
         });
+    },
+    async exportWaybill(_, payload) {
+      let body = JSON.parse(JSON.stringify(payload));
+      // 删除多传的参数
+      delete body.create_time;
+      delete body.shipping_time;
+      delete body.current_page;
+      delete body.page_size;
+      await axios({
+        url: 'waybill/export',
+        method: 'post',
+        data: body,
+        responseType: 'blob'
+      }).then((res) => {
+        if (res.type === 'application/json') {
+          ElMessage.error('下载条数超过15000');
+        } else {
+          download(res, 'text/csv', '物流运单列表', 'csv');
+        }
+      });
     }
   },
   getters: {}

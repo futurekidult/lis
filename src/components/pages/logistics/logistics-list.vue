@@ -100,7 +100,10 @@
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-            <el-button type="primary">
+            <el-button
+              type="primary"
+              @click="exportWaybill"
+            >
               导出
             </el-button>
           </div>
@@ -394,22 +397,35 @@ export default {
   },
   methods: {
     cache,
-    async getListData(transitState = '') {
-      this.$store.commit('logistics/setListLoading', true);
+    handleChoose(transitState) {
       handleDateRange(this.chooseForm, 'shipping_time');
       handleDateRange(this.chooseForm, 'create_time');
-      let params = this.chooseForm;
+      let params = JSON.parse(JSON.stringify(this.chooseForm));
       params.current_page = this.pagination.current_page;
       params.page_size = this.pagination.page_size;
       params.transit_state = transitState;
+      for (let i in params) {
+        if (
+          Array.isArray(params[i]) &&
+          i !== 'create_time' &&
+          i !== 'shipping_time'
+        ) {
+          params[i] = params[i].join(',');
+        }
+      }
+      return params;
+    },
+    async getListData(transitState = '') {
+      this.$store.commit('logistics/setListLoading', true);
+      let params = this.handleChoose(transitState);
       try {
         await this.$store.dispatch('logistics/getListData', { params });
         this.listData = this.$store.state.logistics.listData;
-        this.labelList = JSON.parse(cache('label'));
         this.table = {
           tableFields: this.tableFields,
           tableData: this.listData
         };
+          this.labelList = JSON.parse(cache('label'));
       } catch (err) {
         this.$store.commit('logistics/setListLoading', false);
         return;
@@ -713,6 +729,14 @@ export default {
     },
     backStep() {
       this.$store.commit('logistics/setStepActive', 1);
+    },
+    async exportWaybill() {
+      let body = this.handleChoose(this.activeTabKey);
+      try {
+        await this.$store.dispatch('logistics/exportWaybill', body);
+      } catch (err) {
+        return;
+      }
     }
   }
 };
