@@ -9,6 +9,7 @@
         :base-form="chooseForm"
         :inline="true"
         width="130px"
+        @get-warehouse="getWarehouse"
       >
         <el-button
           type="primary"
@@ -384,7 +385,8 @@ export default {
       waybillId: 0,
       importWaybillVisible: false,
       waybillType: '',
-      error: {}
+      error: {},
+      warehouse: []
     };
   },
   mounted() {
@@ -407,6 +409,9 @@ export default {
       params.current_page = this.pagination.current_page;
       params.page_size = this.pagination.page_size;
       params.transit_state = transitState;
+      if (this.chooseForm.warehouse_id.length === 0) {
+        params.warehouse_id = this.warehouse;
+      }
       for (let i in params) {
         if (
           Array.isArray(params[i]) &&
@@ -418,6 +423,11 @@ export default {
       }
       return params;
     },
+    getWarehouse(val) {
+      if (this.chooseForm.warehouse_id.length === 0) {
+        this.warehouse = val;
+      }
+    },
     async getListData(transitState = '') {
       this.$store.commit('logistics/setListLoading', true);
       let params = this.handleChoose(transitState);
@@ -428,7 +438,7 @@ export default {
           tableFields: this.tableFields,
           tableData: this.listData
         };
-          this.labelList = JSON.parse(cache('label'));
+        this.labelList = JSON.parse(cache('label'));
       } catch (err) {
         this.$store.commit('logistics/setListLoading', false);
         return;
@@ -443,7 +453,10 @@ export default {
       this.activeTabKey = '';
       this.pagination.current_page = 1;
       this.pagination.page_size = 10;
-      this.chooseForm = {};
+      this.chooseForm = {
+        warehouse_id: []
+      };
+      this.warehouse = [];
       this.chooseForm.create_time = this.lastThreeMonth();
       this.getListData();
     },
