@@ -199,12 +199,14 @@ export default {
         method: 'post',
         responseType: 'blob'
       }).then((res) => {
-        download(
-          res,
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          '物流跟踪模板',
-          'xlsx'
-        );
+        if (res.type !== 'application/json') {
+          download(
+            res,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            '物流跟踪模板',
+            'xlsx'
+          );
+        }
       });
     },
     async importWaybill(context, payload) {
@@ -236,9 +238,7 @@ export default {
         data: body,
         responseType: 'blob'
       }).then((res) => {
-        if (res.type === 'application/json') {
-          ElMessage.error('下载条数超过15000');
-        } else {
+        if (res.type !== 'application/json') {
           download(res, 'text/csv', '物流运单列表', 'csv');
         }
       });
