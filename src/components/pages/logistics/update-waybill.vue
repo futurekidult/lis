@@ -146,12 +146,12 @@
           >
             <div class="state-city_container">
               <el-select
-                v-model="waybillForm.state"
+                v-model="waybillForm.state_id"
                 filterable
                 clearable
                 placeholder=""
                 @clear="clearState"
-                @change="getCity(waybillForm.country_id, waybillForm.state)"
+                @change="getCity(waybillForm.country_id, waybillForm.state_id)"
               >
                 <el-option
                   v-for="item in state"
@@ -162,6 +162,7 @@
                       : item.origin
                   "
                   :value="item.id"
+                  :disabled="item.disabled"
                 />
               </el-select>
               <el-input
@@ -178,7 +179,7 @@
           >
             <div class="state-city_container">
               <el-select
-                v-model="waybillForm.city"
+                v-model="waybillForm.city_id"
                 filterable
                 clearable
                 placeholder=""
@@ -192,6 +193,7 @@
                       : item.origin
                   "
                   :value="item.id"
+                  :disabled="item.disabled"
                 />
               </el-select>
               <el-input
@@ -483,11 +485,11 @@ export default {
       this.waybillForm[prop] = val;
     },
     clearCountry() {
-      this.waybillForm.state = '';
-      this.waybillForm.city = '';
+      this.waybillForm.state_id = 0;
+      this.waybillForm.city_id = 0;
     },
     clearState() {
-      this.waybillForm.city = '';
+      this.waybillForm.city_id = 0;
     },
     async changeCountry(country) {
       this.clearCountry();

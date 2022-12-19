@@ -3,9 +3,15 @@ import store from '../store/index.js';
 
 export const getState = async (country) => {
   let state = cache(`logistics-state-${country}`);
-  let stateObj = {};
+  let stateArr = [
+    {
+      id: 0,
+      origin: '请选择',
+      disabled: true
+    }
+  ];
   if (state) {
-    stateObj = JSON.parse(state);
+    stateArr = stateArr.concat(JSON.parse(state));
   } else {
     try {
       await store.dispatch('getState', {
@@ -13,19 +19,29 @@ export const getState = async (country) => {
           country_id: country
         }
       });
-      stateObj = JSON.parse(cache(`logistics-state-${country}`));
+      if (cache(`logistics-state-${country}`)) {
+        stateArr = stateArr.concat(
+          JSON.parse(cache(`logistics-state-${country}`))
+        );
+      }
     } catch (err) {
       return;
     }
   }
-  return stateObj;
+  return stateArr;
 };
 
 export const getCity = async (country, state) => {
   let city = cache(`logistics-city-${state}-${country}`);
-  let cityObj = {};
+  let cityArr = [
+    {
+      id: 0,
+      origin: '请选择',
+      disabled: true
+    }
+  ];
   if (city) {
-    cityObj = JSON.parse(city);
+    cityArr = cityArr.concat(JSON.parse(city));
   } else {
     try {
       await store.dispatch('getCity', {
@@ -34,10 +50,14 @@ export const getCity = async (country, state) => {
           state_id: state
         }
       });
-      cityObj = JSON.parse(cache(`logistics-city-${state}-${country}`));
+      if (cache(`logistics-city-${state}-${country}`)) {
+        cityArr = cityArr.concat(
+          JSON.parse(cache(`logistics-city-${state}-${country}`))
+        );
+      }
     } catch (err) {
       return;
     }
   }
-  return cityObj;
+  return cityArr;
 };
