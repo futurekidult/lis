@@ -369,7 +369,7 @@ const orderRules = {
     },
     {
       pattern: /^[A-Za-z0-9-]+$/,
-      message: '只允许输入数字、中划线'
+      message: '只允许输入英文、数字、中划线'
     },
     {
       min: 1,
