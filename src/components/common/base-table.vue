@@ -69,7 +69,7 @@
       <template v-for="item in table.tableFields">
         <el-table-column
           v-if="item.show"
-          :key="item.id"
+          :key="item.prop"
           :prop="item.prop"
           :label="item.label"
           :fixed="item.fixed"

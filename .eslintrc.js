@@ -25,6 +25,8 @@ module.exports = {
     'object-shorthand': 'error',
     'no-prototype-builtins': 'warn',
     'no-array-constructor': 'error',
+    'vue/no-v-for-template-key': 'warn',
+    'vue/no-template-key': 'warn',
     quotes: ['error', 'single'],
     'prefer-template': 'error',
     'template-curly-spacing': ['error', 'never'],

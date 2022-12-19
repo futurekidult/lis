@@ -17,10 +17,12 @@ package "Child Components" {
 package "Descendant Coponents" {
   [BaseForm]
   [BaseTable]
+  [ErrorTable]
 }
 
 [LogisticsList]             -->       [BaseForm]
 [LogisticsList]             -->       [BaseTable]
+[LogisticsList]             -->       [ErrorTable]
 [LogisticsList]             -->       [BaseChoose]
 [LogisticsList]             -->       [BaseBreadcrumb]
 [LogisticsList]             -->       [BaseOptionDialog]

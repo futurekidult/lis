@@ -24,9 +24,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target:
-          'https://8ff8dda4-13ca-499d-bfad-64024f50a527.mock.pstmn.io/api/',
-        // target: 'http://lis.test.heymenology.cn/api/',
+        target: 'http://lis.test.heymenology.cn/api/',
         ws: true,
         changeOrigin: true,
         pathRewrite: {
