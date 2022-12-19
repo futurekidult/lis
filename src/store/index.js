@@ -13,7 +13,8 @@ const store = createStore({
       warehouse: [],
       sku: [],
       order: [],
-      adminInfo: {}
+      adminInfo: {},
+      menuVisible: false
     };
   },
   mutations: {
@@ -28,6 +29,9 @@ const store = createStore({
     },
     setAdminInfo(state, payload) {
       state.adminInfo = payload;
+    },
+    setMenuVisible(state, payload) {
+      state.menuVisible = payload;
     }
   },
   actions: {
@@ -129,6 +133,9 @@ const store = createStore({
       // context.dispatch('login');
       await axios.get('admin-info').then((res) => {
         if (res.code === 200) {
+          if (res.data.menu.list.length > 0) {
+            context.commit('setMenuVisible', true);
+          }
           context.commit('setAdminInfo', res.data);
         }
       });

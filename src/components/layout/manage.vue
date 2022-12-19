@@ -4,7 +4,7 @@
     :menu-list="menuList"
     @get-collapse="getCollapse"
   >
-    <el-container v-show="menuList.length">
+    <el-container v-show="$store.state.menuVisible">
       <el-aside width="auto">
         <el-menu
           router
@@ -102,7 +102,7 @@
         <main-container />
       </el-main>
     </el-container>
-    <el-container v-show="menuList.length === 0">
+    <el-container v-show="!$store.state.menuVisible">
       <no-privilege />
     </el-container>
   </base-menu>

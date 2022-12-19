@@ -1,5 +1,5 @@
 <template>
-  <section v-loading="$store.state.logistics.listLoading">
+  <section>
     <section class="section-border">
       <div class="select-title">
         <el-divider direction="vertical" /> 筛选条件
@@ -21,7 +21,10 @@
         </el-button>
       </base-form>
     </section>
-    <section class="section-border">
+    <section
+      v-loading="$store.state.logistics.listLoading"
+      class="section-border"
+    >
       <div class="select-title">
         <el-divider direction="vertical" /> 运单列表
       </div>
@@ -76,8 +79,14 @@
             <el-button @click="showDeleteWaybillDialog">
               删除
             </el-button>
-            <el-dropdown style="margin: 0 12px">
-              <el-button style="width: 80px">
+            <el-dropdown
+              style="margin: 0 12px"
+              @command="handleImport"
+            >
+              <el-button
+                style="width: 80px"
+                type="primary"
+              >
                 导入
                 <el-icon class="el-icon--right">
                   <arrow-down />
@@ -85,12 +94,19 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>导入发货运单</el-dropdown-item>
-                  <el-dropdown-item>导入退货运单</el-dropdown-item>
+                  <el-dropdown-item command="0">
+                    导入发货运单
+                  </el-dropdown-item>
+                  <el-dropdown-item command="1">
+                    导入退货运单
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-            <el-button type="primary">
+            <el-button
+              type="primary"
+              @click="exportWaybill"
+            >
               导出
             </el-button>
           </div>
@@ -131,7 +147,6 @@
       v-model="orderFormVisible"
       :title="orderFormType === 'create' ? '新增订单信息' : '修改订单信息'"
       width="24%"
-      :close-on-click-modal="false"
       @close-dialog="closeOrderForm"
     >
       <base-form
@@ -163,7 +178,6 @@
       v-model="logisticSupplierVisible"
       title="修改物流商"
       width="24%"
-      :close-on-click-modal="false"
       @close-dialog="closeLogisticSupplierForm"
     >
       <base-form
@@ -205,7 +219,7 @@
     <base-confirm
       v-if="deleteWaybillVisible"
       :dialog-visible="deleteWaybillVisible"
-      content="是否确认删除选中的运单?"
+      content="数据会全部清除，是否确认删除?"
       @get-visible="closeDeleteWaybillDialog"
       @confirm-deletion="confirmDeletionWaybill"
     />
@@ -250,6 +264,66 @@
         </el-button>
       </view-waybill>
     </base-option>
+    <!-- 导入运单弹窗 -->
+    <base-option
+      v-model="importWaybillVisible"
+      :title="waybillType === '0' ? '导入发货运单' : '导入退货运单'"
+      width="40%"
+    >
+      <div style="margin-bottom: 20px">
+        <el-steps
+          :active="$store.state.logistics.stepActive"
+          align-center
+        >
+          <el-step title="上传Excel" />
+          <el-step title="数据校验" />
+        </el-steps>
+      </div>
+      <el-upload
+        v-if="$store.state.logistics.stepActive === 1"
+        drag
+        action=""
+        :show-file-list="false"
+        :http-request="importWaybill"
+      >
+        <el-icon class="el-icon--upload">
+          <upload-filled />
+        </el-icon>
+        <div class="el-upload__text">
+          选择Excel文件，或拖拽文件到此区域
+        </div>
+        <template #tip>
+          <div class="el-upload__tip upload-border">
+            为保证数据顺利导入，推荐您下载
+            <a
+              class="import-template_btn"
+              @click="downloadImportTemplate"
+            >导入模板</a>
+          </div>
+        </template>
+      </el-upload>
+      <div v-else>
+        <div style="margin-bottom: 20px">
+          该文档存在{{ error.total }}条错误数据，请修改后上传。
+          <a
+            style="color: #0099ff"
+            href="https://alidocs.dingtalk.com/i/nodes/AY39rGpMPmeVNNO2xZ6RVOZkXKnaoNQ7"
+          >
+            点击可查看数据校验规则</a>
+        </div>
+        <el-scrollbar height="200px">
+          <error-table :list="error.list" />
+        </el-scrollbar>
+        <div style="float: right">
+          <el-button
+            type="primary"
+            @click="backStep"
+          >
+            上一步
+          </el-button>
+        </div>
+      </div>
+    </base-option>
   </section>
 </template>
 
@@ -257,7 +331,8 @@
 import BaseForm from '../../common/base-form.vue';
 import UpdateWaybill from './update-waybill.vue';
 import ViewWaybill from './view-waybill.vue';
-import { ArrowDown } from '@element-plus/icons-vue';
+import ErrorTable from '../../common/error-table.vue';
+import { ArrowDown, UploadFilled } from '@element-plus/icons-vue';
 import {
   handleDateRange,
   timeToTimestamp,
@@ -269,8 +344,10 @@ import { getState, getCity } from '../../../utils/state-city.js';
 export default {
   components: {
     BaseForm,
+    ErrorTable,
     ArrowDown,
     ViewWaybill,
+    UploadFilled,
     UpdateWaybill
   },
   data() {
@@ -304,7 +381,10 @@ export default {
       stayTime: '',
       viewWaybillVisible: false,
       waybillDetail: {},
-      waybillId: 0
+      waybillId: 0,
+      importWaybillVisible: false,
+      waybillType: '',
+      error: {}
     };
   },
   mounted() {
@@ -320,22 +400,35 @@ export default {
   },
   methods: {
     cache,
-    async getListData(transitState = '') {
-      this.$store.commit('logistics/setListLoading', true);
+    handleChoose(transitState) {
       handleDateRange(this.chooseForm, 'shipping_time');
       handleDateRange(this.chooseForm, 'create_time');
-      let params = this.chooseForm;
+      let params = JSON.parse(JSON.stringify(this.chooseForm));
       params.current_page = this.pagination.current_page;
       params.page_size = this.pagination.page_size;
       params.transit_state = transitState;
+      for (let i in params) {
+        if (
+          Array.isArray(params[i]) &&
+          i !== 'create_time' &&
+          i !== 'shipping_time'
+        ) {
+          params[i] = params[i].join(',');
+        }
+      }
+      return params;
+    },
+    async getListData(transitState = '') {
+      this.$store.commit('logistics/setListLoading', true);
+      let params = this.handleChoose(transitState);
       try {
         await this.$store.dispatch('logistics/getListData', { params });
         this.listData = this.$store.state.logistics.listData;
-        this.labelList = JSON.parse(cache('label'));
         this.table = {
           tableFields: this.tableFields,
           tableData: this.listData
         };
+          this.labelList = JSON.parse(cache('label'));
       } catch (err) {
         this.$store.commit('logistics/setListLoading', false);
         return;
@@ -607,6 +700,44 @@ export default {
       } catch (err) {
         return;
       }
+    },
+    handleImport(type) {
+      this.$store.commit('logistics/setStepActive', 1);
+      this.waybillType = type;
+      this.importWaybillVisible = true;
+    },
+    async downloadImportTemplate() {
+      try {
+        await this.$store.dispatch('logistics/exportTemplate');
+      } catch (err) {
+        return;
+      }
+    },
+    async importWaybill(e) {
+      let file = e.file;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', this.waybillType);
+      try {
+        await this.$store.dispatch('logistics/importWaybill', formData);
+        this.error = this.$store.state.logistics.error;
+        if (JSON.stringify(this.error) === '{}') {
+          this.importWaybillVisible = false;
+        }
+      } catch (err) {
+        return;
+      }
+    },
+    backStep() {
+      this.$store.commit('logistics/setStepActive', 1);
+    },
+    async exportWaybill() {
+      let body = this.handleChoose(this.activeTabKey);
+      try {
+        await this.$store.dispatch('logistics/exportWaybill', body);
+      } catch (err) {
+        return;
+      }
     }
   }
 };
@@ -622,5 +753,18 @@ export default {
 .btn-right {
   margin-right: 100px;
   margin-bottom: 20px;
+}
+
+.import-template_btn {
+  color: #0099ff;
+  cursor: pointer;
+}
+
+.upload-border {
+  padding: 10px 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 </style>

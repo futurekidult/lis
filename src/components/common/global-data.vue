@@ -398,9 +398,91 @@ const orderRules = {
   ]
 };
 
+//导入错误列表
+const errorTableFields = [
+  {
+    label: '行号',
+    prop: 'index',
+    width: '55px'
+  },
+  {
+    label: '订单号',
+    prop: 'order_no'
+  },
+  {
+    label: '运单号',
+    prop: 'waybill_no'
+  },
+  {
+    label: '物流商',
+    prop: 'logistic_supplier'
+  },
+  {
+    label: '邮编',
+    prop: 'postcode'
+  },
+  {
+    label: '仓库',
+    prop: 'warehouse'
+  },
+  {
+    label: '平台',
+    prop: 'platform'
+  },
+  {
+    label: '店铺',
+    prop: 'shop'
+  },
+  {
+    label: 'SKU',
+    prop: 'sku'
+  },
+  {
+    label: '客户国家',
+    prop: 'country'
+  },
+  {
+    label: '客户州',
+    prop: 'state'
+  },
+  {
+    label: '客户城市',
+    prop: 'city'
+  },
+  {
+    label: '客户地址',
+    prop: 'address'
+  },
+  {
+    label: '客户电话',
+    prop: 'phone'
+  },
+  {
+    label: '客户姓名',
+    prop: 'customer_name'
+  },
+  {
+    label: '客户邮箱',
+    prop: 'email'
+  },
+  {
+    label: '支付时间',
+    prop: 'payment_time'
+  },
+  {
+    label: '发货时间',
+    prop: 'shipping_time'
+  },
+  {
+    label: '备注',
+    prop: 'remark'
+  }
+];
+
 export default {
   orderRules,
   transitState,
+  errorTableFields,
   createOrderFields,
   updateOrderFields,
   logisticsTableFields,

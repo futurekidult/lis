@@ -1,12 +1,13 @@
 @startuml
 
-package "Parent Coponent" {
+package "Parent Component" {
   [LogisticsList]
 }
 
 package "Child Components" {
   [BaseTable]
   [BaseForm]
+  [ErrorTable]
   [ViewWaybill]
   [UpdateWaybill]
   [BaseBreadcrumb]
@@ -16,6 +17,7 @@ package "Child Components" {
 
 [LogisticsList]             -->       [BaseForm]
 [LogisticsList]             -->       [BaseTable]
+[LogisticsList]             -->       [ErrorTable]
 [LogisticsList]             -->       [ViewWaybill]
 [LogisticsList]             -->       [UpdateWaybill]
 [LogisticsList]             -->       [BaseBreadcrumb]
