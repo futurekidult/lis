@@ -117,8 +117,16 @@ const store = createStore({
         }
       });
     },
+    // async login() {
+    //   await axios.post('login?id=14').then((res) => {
+    //     if (res.code === 200) {
+    //       ElMessage.success(res.message);
+    //     }
+    //   });
+    // },
     async getAdminInfo(context) {
       context.dispatch('getCsrfToken');
+      // context.dispatch('login');
       await axios.get('admin-info').then((res) => {
         if (res.code === 200) {
           context.commit('setAdminInfo', res.data);
@@ -146,11 +154,13 @@ const store = createStore({
     async getState(_, payload) {
       await axios.get('option/state-list', payload).then((res) => {
         if (res.code === 200) {
-          cache(
-            `logistics-state-${payload.params.country_id}`,
-            JSON.stringify(res.data.list),
-            3600 * 24 * 30 * 3
-          );
+          if (res.data.list.length) {
+            cache(
+              `logistics-state-${payload.params.country_id}`,
+              JSON.stringify(res.data.list),
+              3600 * 24 * 30 * 3
+            );
+          }
         }
       });
     },
@@ -158,11 +168,13 @@ const store = createStore({
       let params = payload.params;
       await axios.get('option/city-list', payload).then((res) => {
         if (res.code === 200) {
-          cache(
-            `logistics-city-${params.state_id}-${params.country_id}`,
-            JSON.stringify(res.data.list),
-            3600 * 24 * 30 * 3
-          );
+          if (res.data.list.length) {
+            cache(
+              `logistics-city-${params.state_id}-${params.country_id}`,
+              JSON.stringify(res.data.list),
+              3600 * 24 * 30 * 3
+            );
+          }
         }
       });
     }

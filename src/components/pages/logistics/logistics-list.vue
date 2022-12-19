@@ -530,14 +530,12 @@ export default {
               getState(this.updateWaybillForm.country_id).then((res) => {
                 this.stateOption = res;
               });
-              if (this.updateWaybillForm.state_id) {
-                getCity(
-                  this.updateWaybillForm.country_id,
-                  this.updateWaybillForm.state_id
-                ).then((res) => {
-                  this.cityOption = res;
-                });
-              }
+              getCity(
+                this.updateWaybillForm.country_id,
+                this.updateWaybillForm.state_id
+              ).then((res) => {
+                this.cityOption = res;
+              });
             }
             this.updateWaybillVisible = true;
           } catch (err) {
