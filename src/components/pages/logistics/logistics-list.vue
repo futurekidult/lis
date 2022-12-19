@@ -1,5 +1,5 @@
 <template>
-  <section v-loading="$store.state.logistics.listLoading">
+  <section>
     <section class="section-border">
       <div class="select-title">
         <el-divider direction="vertical" /> 筛选条件
@@ -21,7 +21,10 @@
         </el-button>
       </base-form>
     </section>
-    <section class="section-border">
+    <section
+      v-loading="$store.state.logistics.listLoading"
+      class="section-border"
+    >
       <div class="select-title">
         <el-divider direction="vertical" /> 运单列表
       </div>

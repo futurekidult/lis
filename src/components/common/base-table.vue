@@ -133,6 +133,7 @@
       class="position-right"
     >
       <el-pagination
+        v-if="dataTotal > listPagination.page_size"
         :current-page="listPagination.current_page"
         :page-size="listPagination.page_size"
         :page-sizes="[10, 20, 30, 40]"
@@ -260,6 +261,7 @@ export default {
     },
     handleSizeChange(val) {
       this.listPagination.page_size = val;
+      this.listPagination.current_page = 1;
       this.$emit('change-pagination', this.pagination);
     },
     deleteLabel(labelId, waybillId) {
