@@ -1,7 +1,7 @@
 import { checkPattern } from './zipcode.js';
 
 //时间戳转换成时间格式
-export const timestampToTime = (timestamp) => {
+export const timestampToTime = (timestamp, isShow = true) => {
   if (timestamp !== 0 && timestamp !== undefined) {
     let date = new Date(timestamp * 1000);
     let year = `${date.getFullYear()}-`;
@@ -9,16 +9,20 @@ export const timestampToTime = (timestamp) => {
       date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
     }-`;
     let day = `${date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()} `;
-    let hour = `${
-      date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-    }:`;
-    let minute = `${
-      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-    }:`;
-    let second = `${
-      date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
-    }`;
-    return year + month + day + hour + minute + second;
+    if (isShow) {
+      let hour = `${
+        date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+      }:`;
+      let minute = `${
+        date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+      }:`;
+      let second = `${
+        date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
+      }`;
+      return year + month + day + hour + minute + second;
+    } else {
+      return year + month + day;
+    }
   } else {
     return '';
   }
@@ -99,4 +103,48 @@ export const download = (res, type, filename, suffix) => {
     `${filename}-${timestampToTime(new Date().getTime() / 1000)}.${suffix}`
   );
   a.click();
+};
+
+//合格率颜色
+export const changeRateColor = (val) => {
+  let rate = parseFloat(val);
+  if (rate < 97) {
+    return '#F78113';
+  } else if (rate > 98) {
+    return '#379F0D';
+  } else {
+    return '#EA1D1D';
+  }
+};
+
+//百分号
+export const toPercent = (item, arr) => {
+  arr.forEach((i) => {
+    if (item[i] === '-') {
+      item[i] = '-';
+    } else {
+      item[i] = `${item[i]}%`;
+    }
+  });
+};
+
+//数组转置
+export const transposeArray = (val, title) => {
+  let data = [];
+  let matrixData = val.map((row) => {
+    let arr = [];
+    for (let key in row) {
+      arr.push(row[key]);
+    }
+    return arr;
+  });
+  data = matrixData[0].map((col, i) => {
+    return [
+      title[i],
+      ...matrixData.map((row) => {
+        return row[i];
+      })
+    ];
+  });
+  return data;
 };
