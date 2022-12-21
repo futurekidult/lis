@@ -17,14 +17,14 @@ export default defineComponent({
     return {
       locale: zhCn
     };
-  },
-  mounted() {
-    try {
-      this.$store.dispatch('getAdminInfo');
-    } catch (err) {
-      return;
-    }
   }
+  // mounted() {
+  //   try {
+  //     this.$store.dispatch('getAdminInfo');
+  //   } catch (err) {
+  //     return;
+  //   }
+  // }
 });
 </script>
 
@@ -105,5 +105,10 @@ h2 {
 .btn-position {
   float: right;
   padding-top: 15px;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
