@@ -479,6 +479,68 @@ const errorTableFields = [
   }
 ];
 
+//时效统计筛选公共项
+const statisticsCommonChooseOptions = [
+  {
+    label: '海外仓',
+    type: 'select',
+    multiple: true,
+    prop: 'oversea_location_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '仓库分布',
+    type: 'select',
+    multiple: true,
+    prop: 'warehouse_area_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '仓库',
+    type: 'select',
+    multiple: true,
+    prop: 'warehouse_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '物流商',
+    type: 'select',
+    multiple: true,
+    prop: 'logistic_supplier_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: 'SKU',
+    type: 'remote',
+    prop: 'sku_id',
+    multiple: true,
+    options: [],
+    option_type: 'name',
+    placeholder: '请输入内容'
+  },
+  {
+    label: '店铺',
+    type: 'select',
+    multiple: true,
+    prop: 'shop_id',
+    options: [],
+    option_type: 'name'
+  }
+];
+
+//每日时效统计筛选项
+const dailyChooseOptions = statisticsCommonChooseOptions.concat([
+  {
+    label: '发货时间',
+    type: 'date',
+    prop: 'shipping_time'
+  }
+]);
+
 export default {
   orderRules,
   transitState,
@@ -486,6 +548,7 @@ export default {
   createOrderFields,
   updateOrderFields,
   logisticsTableFields,
+  dailyChooseOptions,
   logisticsChooseOptions
 };
 </script>

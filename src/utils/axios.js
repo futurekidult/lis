@@ -22,6 +22,14 @@ let requests = [];
 
 http.interceptors.response.use(
   async (res) => {
+    if (res.data.type === 'application/json') {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const { message } = JSON.parse(reader.result);
+        ElMessage.error(message);
+      };
+      reader.readAsText(res.data);
+    }
     let { code } = res.data;
     if (code) {
       if (code !== 200 && code !== 40015) {

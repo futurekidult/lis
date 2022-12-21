@@ -106,4 +106,9 @@ h2 {
   float: right;
   padding-top: 15px;
 }
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
 </style>
