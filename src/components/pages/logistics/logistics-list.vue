@@ -305,6 +305,7 @@
           该文档存在{{ error.total }}条错误数据，请修改后上传。
           <a
             style="color: #0099ff"
+            target="_blank"
             href="https://alidocs.dingtalk.com/i/nodes/AY39rGpMPmeVNNO2xZ6RVOZkXKnaoNQ7"
           >
             点击可查看数据校验规则</a>
@@ -312,7 +313,7 @@
         <el-scrollbar height="200px">
           <error-table :list="error.list" />
         </el-scrollbar>
-        <div style="float: right">
+        <div style="float: right; margin: 20px 0">
           <el-button
             type="primary"
             @click="backStep"
@@ -400,6 +401,7 @@ export default {
   methods: {
     cache,
     handleChoose(transitState) {
+      this.chooseForm.create_time = this.lastThreeMonth();
       handleDateRange(this.chooseForm, 'shipping_time');
       handleDateRange(this.chooseForm, 'create_time');
       let params = JSON.parse(JSON.stringify(this.chooseForm));
@@ -735,6 +737,7 @@ export default {
         this.error = this.$store.state.logistics.error;
         if (JSON.stringify(this.error) === '{}') {
           this.importWaybillVisible = false;
+          this.getListData(this.activeTabKey);
         }
       } catch (err) {
         return;

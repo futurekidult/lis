@@ -2,6 +2,7 @@
   <el-table
     border
     :data="errorList"
+    style="width: 99%"
   >
     <template
       v-for="item in $global.errorTableFields"
