@@ -31,6 +31,9 @@
         :collapse-tags="item.multiple"
         :collapse-tags-tooltip="item.multiple"
         :remote-method="(str) => remoteMethod(str, item.prop, item.type)"
+        :style="
+          item.prop === 'shipping_time_unit' ? 'width: 90px !important' : ''
+        "
         @change="
           (val) => getRelatedInfo(val, item.multiple, item.prop, item.type)
         "
@@ -103,12 +106,22 @@
             clearable
             style="width: 90px !important"
           >
-            <el-option
-              v-for="option in item.options"
-              :key="option.value"
-              :label="option.label"
-              :value="option.value"
-            />
+            <div v-if="form.shipping_time_unit !== 'y'">
+              <el-option
+                v-for="i in option"
+                :key="i"
+                :label="i"
+                :value="i"
+              />
+            </div>
+            <div v-else>
+              <el-option
+                v-for="i in option"
+                :key="i.value"
+                :label="i.label"
+                :value="i.value"
+              />
+            </div>
           </el-select>
         </el-col>
         <el-col
@@ -134,12 +147,22 @@
             clearable
             style="width: 90px !important"
           >
-            <el-option
-              v-for="option in item.options"
-              :key="option.value"
-              :label="option.label"
-              :value="option.value"
-            />
+            <div v-if="form.shipping_time_unit !== 'y'">
+              <el-option
+                v-for="i in option"
+                :key="i"
+                :label="i"
+                :value="i"
+              />
+            </div>
+            <div v-else>
+              <el-option
+                v-for="i in option"
+                :key="i.value"
+                :label="i.label"
+                :value="i.value"
+              />
+            </div>
           </el-select>
         </el-col>
       </div>
@@ -152,7 +175,12 @@
 </template>
 
 <script>
-import { cache } from '../../utils/index.js';
+import {
+  cache,
+  setWeekOption,
+  setYearOption,
+  getWeek
+} from '../../utils/index.js';
 
 export default {
   props: {
@@ -181,24 +209,63 @@ export default {
   data() {
     return {
       form: this.baseForm,
-      optionLoading: true,
+      optionLoading: false,
       remoteLoading: false,
-      warehouse: []
+      warehouse: [],
+      option: null,
+      date: new Date()
     };
   },
   watch: {
     baseForm(val) {
       this.form = val;
+    },
+    'form.shipping_time_unit': {
+      handler(val) {
+        if (val === 'w') {
+          this.option = setWeekOption();
+          this.getCurrentWeek();
+        } else if (val === 'y') {
+          this.option = setYearOption();
+          this.getCurrentYear();
+        } else {
+          this.option = 12;
+          this.getCurrentMonth();
+        }
+      },
+      immediate: true,
+      deep: true
     }
   },
   mounted() {
     this.properties.forEach((item) => {
-      if (item.type === 'select') {
+      if (item.type === 'select' && item.prop !== 'shipping_time_unit') {
         this.getOption(item.prop);
+      }
+      if (item.prop === 'shipping_time_unit') {
+        this.form.shipping_time_unit = 'w';
+        this.getCurrentWeek();
       }
     });
   },
   methods: {
+    getCurrentWeek() {
+      let year = this.date.getFullYear();
+      let month = this.date.getMonth() + 1;
+      let day = this.date.getDate();
+      this.form.start_shipping_time = getWeek(year, month, day);
+      this.form.end_shipping_time = getWeek(year, month, day);
+    },
+    getCurrentMonth() {
+      let month = this.date.getMonth() + 1;
+      this.form.start_shipping_time = month;
+      this.form.end_shipping_time = month;
+    },
+    getCurrentYear() {
+      let year = this.date.getFullYear();
+      this.form.start_shipping_time = year;
+      this.form.end_shipping_time = year;
+    },
     getOptionObj(prop) {
       return this.properties.find((item) => {
         return item.prop === prop;

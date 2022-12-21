@@ -10,7 +10,13 @@ export default {
       dailyTableVisible: false,
       logisticSupplier: [],
       emptyList: [],
-      dailyLoading: true
+      dailyLoading: true,
+      averageStatistics: [],
+      averageTableVisible: false,
+      averageEmptyList: [],
+      averageLoading: true,
+      averageList: [],
+      averageDetail: []
     };
   },
   mutations: {
@@ -26,6 +32,20 @@ export default {
     },
     setDailyLoading(state, payload) {
       state.dailyLoading = payload;
+    },
+    setAverageStatistics(state, payload) {
+      state.averageStatistics = payload.list;
+      state.emptyList = payload.empty_list;
+      state.averageList = payload.average_statistics;
+    },
+    setAverageTableVisible(state, payload) {
+      state.averageTableVisible = payload;
+    },
+    setAverageLoading(state, payload) {
+      state.averageLoading = payload;
+    },
+    setAverageDetail(state, payload) {
+      state.averageDetail = payload;
     }
   },
   actions: {
@@ -74,6 +94,62 @@ export default {
             res,
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             '每日物流时效表',
+            'xlsx'
+          );
+        }
+      });
+    },
+    async getAverageStatistics(context, payload) {
+      await axios.get('statistics/average', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.list.forEach((item) => {
+            item.table.data.forEach((data) => {
+              toPercent(data, [
+                'receipt_2days_rate',
+                'receipt_3days_rate',
+                'delivery_rate'
+              ]);
+            });
+          });
+          res.data.average_statistics.forEach((item) => {
+            toPercent(item, [
+              'receipt_2days_rate',
+              'receipt_3days_rate',
+              'delivery_rate'
+            ]);
+          });
+          context.commit('setAverageStatistics', res.data);
+          context.commit('setAverageTableVisible', true);
+          context.commit('setAverageLoading', false);
+        }
+      });
+    },
+    async getAverageDetail(context, payload) {
+      await axios.get('statistics/average-detail', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.list.forEach((item) => {
+            toPercent(item, [
+              'receipt_2days_rate',
+              'receipt_3days_rate',
+              'delivery_rate'
+            ]);
+          });
+          context.commit('setAverageDetail', res.data.list);
+        }
+      });
+    },
+    async exportAverageStatistics(_, payload) {
+      await axios({
+        url: 'statistics/average-export',
+        method: 'post',
+        data: payload,
+        responseType: 'blob'
+      }).then((res) => {
+        if (res.type !== 'application/json') {
+          download(
+            res,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            '平均物流时效表',
             'xlsx'
           );
         }

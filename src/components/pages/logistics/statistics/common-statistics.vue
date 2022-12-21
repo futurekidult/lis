@@ -7,7 +7,7 @@
       <div>
         <el-radio-group v-model="dimension">
           <el-radio
-            v-for="item in statisticalDimension"
+            v-for="item in $global.statisticalDimension"
             :key="item.value"
             :label="item.value"
           >
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { handleDateRange } from '../../../../utils/index.js';
+import { handleDateRange, getWeek } from '../../../../utils/index.js';
 
 export default {
   props: {
@@ -78,34 +78,20 @@ export default {
   data() {
     return {
       chooseForm: {},
-      statisticalDimension: [
-        {
-          label: '物流商',
-          value: 10
-        },
-        {
-          label: '仓库',
-          value: 20
-        },
-        {
-          label: '店铺',
-          value: 30
-        },
-        {
-          label: 'SKU',
-          value: 40
-        }
-      ],
       dimension: null,
       warehouse: []
     };
   },
   mounted() {
-    this.chooseForm.shipping_time = this.lastMonth();
+    if (this.type === 'daily') {
+      this.chooseForm.shipping_time = this.lastMonth();
+    }
   },
   methods: {
     handleChoose() {
-      handleDateRange(this.chooseForm, 'shipping_time');
+      if (this.type === 'daily') {
+        handleDateRange(this.chooseForm, 'shipping_time');
+      }
       let params = JSON.parse(JSON.stringify(this.chooseForm));
       if (this.chooseForm.warehouse_id.length === 0) {
         params.warehouse_id = this.warehouse;
@@ -129,10 +115,10 @@ export default {
       }
     },
     queryList() {
-      let params = this.handleChoose();
-      delete params.shipping_time;
-      params.statistical_dimension = this.dimension;
       if (this.dimension) {
+        let params = this.handleChoose();
+        delete params.shipping_time;
+        params.statistical_dimension = this.dimension;
         this.$emit('get-form', {
           params,
           request: true
@@ -150,12 +136,26 @@ export default {
         warehouse_id: []
       };
       this.warehouse = [];
-      this.chooseForm.shipping_time = this.lastMonth();
+      if (this.type === 'daily') {
+        this.chooseForm.shipping_time = this.lastMonth();
+      } else {
+        this.chooseForm.shipping_time_unit = 'w';
+        let date = new Date();
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        this.chooseForm.start_shipping_time = getWeek(year, month, day);
+        this.chooseForm.end_shipping_time = getWeek(year, month, day);
+      }
       this.$emit('get-form', {
         params,
         request: false
       });
-      this.$store.commit('statistics/setDailyTableVisible', false);
+      if (this.type === 'daily') {
+        this.$store.commit('statistics/setDailyTableVisible', false);
+      } else {
+        this.$store.commit('statistics/setAverageTableVisible', false);
+      }
     },
     async exportStatistics() {
       let body = this.handleChoose();
@@ -164,6 +164,8 @@ export default {
       try {
         if (this.type === 'daily') {
           await this.$store.dispatch('statistics/exportDailyStatistics', body);
+        } else {
+           await this.$store.dispatch('statistics/exportAverageStatistics', body);
         }
       } catch (err) {
         return;
