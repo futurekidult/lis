@@ -510,7 +510,7 @@ export default {
       try {
         if (id) {
           await this.$store.dispatch('logistics/getOrderDetail', {
-            id
+            params: { id }
           });
           let orderDetail = this.$store.state.logistics.orderDetail;
           this.orderForm.platform_id = orderDetail.platform_id;
