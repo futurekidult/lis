@@ -1,12 +1,14 @@
 import { createStore } from 'vuex';
 import logistics from './logistics/index.js';
+import statistics from './statistics/index.js';
 import axios from '../utils/axios.js';
 import { cache } from '../utils/index.js';
 import { ElMessage } from 'element-plus';
 
 const store = createStore({
   modules: {
-    logistics
+    logistics,
+    statistics
   },
   state() {
     return {
@@ -64,7 +66,11 @@ const store = createStore({
     async getWarehouse(context, payload) {
       await axios.get('option/warehouse-list', payload).then((res) => {
         if (res.code === 200) {
-          context.commit('setWarehouse', res.data.list);
+          if (payload) {
+            context.commit('setWarehouse', res.data.list);
+          } else {
+            cache('warehouse', JSON.stringify(res.data.list), 3600 * 24);
+          }
         }
       });
     },
@@ -136,6 +142,44 @@ const store = createStore({
       await axios.get('logout').then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.message);
+        }
+      });
+    },
+    async getCountry() {
+      await axios.get('option/country-list').then((res) => {
+        if (res.code === 200) {
+          cache(
+            'logistics-country',
+            JSON.stringify(res.data.list),
+            3600 * 24 * 30 * 3
+          );
+        }
+      });
+    },
+    async getState(_, payload) {
+      await axios.get('option/state-list', payload).then((res) => {
+        if (res.code === 200) {
+          if (res.data.list.length) {
+            cache(
+              `logistics-state-${payload.params.country_id}`,
+              JSON.stringify(res.data.list),
+              3600 * 24 * 30 * 3
+            );
+          }
+        }
+      });
+    },
+    async getCity(_, payload) {
+      let params = payload.params;
+      await axios.get('option/city-list', payload).then((res) => {
+        if (res.code === 200) {
+          if (res.data.list.length) {
+            cache(
+              `logistics-city-${params.state_id}-${params.country_id}`,
+              JSON.stringify(res.data.list),
+              3600 * 24 * 30 * 3
+            );
+          }
         }
       });
     }

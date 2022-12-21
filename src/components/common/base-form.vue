@@ -177,12 +177,13 @@ export default {
       default: null
     }
   },
-  emits: ['get-info'],
+  emits: ['get-info', 'get-warehouse'],
   data() {
     return {
       form: this.baseForm,
       optionLoading: true,
-      remoteLoading: false
+      remoteLoading: false,
+      warehouse: []
     };
   },
   watch: {
@@ -210,19 +211,16 @@ export default {
         if (prop !== 'exception_handling' && prop !== 'parcel_type') {
           let newProp = prop.replace('_id', '');
           let arr = [];
-          if (newProp !== 'warehouse') {
-            arr = newProp.split('_');
-            // 将获取到的属性的首字母大写
-            for (let i = 0; i < arr.length; i++) {
-              arr[i] =
-                arr[i].slice(0, 1).toUpperCase() +
-                arr[i].slice(1).toLowerCase();
-            }
-            if (!cache(newProp)) {
-              await this.$store.dispatch(`get${arr.join('')}`);
-            }
-            selectObj.options = JSON.parse(cache(newProp));
+          arr = newProp.split('_');
+          // 将获取到的属性的首字母大写
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] =
+              arr[i].slice(0, 1).toUpperCase() + arr[i].slice(1).toLowerCase();
           }
+          if (!cache(newProp)) {
+            await this.$store.dispatch(`get${arr.join('')}`);
+          }
+          selectObj.options = JSON.parse(cache(newProp));
         } else {
           if (!cache(prop)) {
             await this.$store.dispatch('getSystemParameter');
@@ -285,6 +283,18 @@ export default {
           await this.$store.dispatch('getWarehouse', { params });
           let selectObj = this.getOptionObj('warehouse_id');
           selectObj.options = this.$store.state.warehouse;
+          if (this.form.warehouse_id.length === 0) {
+            this.warehouse = selectObj.options.map((item) => {
+              return item.id;
+            });
+            if (
+              this.form.warehouse_area_id.length === 0 &&
+              this.form.oversea_location_id.length === 0
+            ) {
+              this.warehouse = [];
+            }
+            this.$emit('get-warehouse', this.warehouse);
+          }
         } catch (err) {
           return;
         }
@@ -297,10 +307,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.btn-position {
-  float: right;
-  padding-top: 15px;
-}
-</style>

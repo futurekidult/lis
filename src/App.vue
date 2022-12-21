@@ -97,4 +97,31 @@ export default defineComponent({
   width: 100%;
   font-size: 20px;
 }
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.waybill-form .el-input__wrapper {
+  width: 200px !important;
+}
+
+.state-city_container {
+  display: flex;
+}
+
+.waybill-form .state-city_container .el-input__wrapper {
+  width: 90px !important;
+}
+
+.btn-position {
+  float: right;
+  padding-top: 15px;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
 </style>
