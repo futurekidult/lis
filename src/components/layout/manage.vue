@@ -157,15 +157,18 @@ export default {
   data() {
     return {
       collapse: false,
-      menu: this.$store.state.adminInfo.menu
+      menuList: [],
+      defaultOpeneds: []
     };
   },
-  computed: {
-    menuList() {
-      return this.menu.list;
-    },
-    defaultOpeneds() {
-      return this.menu.openeds;
+  watch: {
+    '$store.state.adminInfo': {
+      handler(val) {
+        this.menuList = val.menu.list;
+        this.defaultOpeneds = val.menu.openeds;
+      },
+      immediate: true,
+      deep: true
     }
   },
   methods: {

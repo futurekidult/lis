@@ -13,7 +13,12 @@ const store = createStore({
       warehouse: [],
       sku: [],
       order: [],
-      adminInfo: {},
+      adminInfo: {
+        menu: {
+          list: [],
+          openeds: []
+        }
+      },
       menuVisible: false
     };
   },
@@ -118,7 +123,6 @@ const store = createStore({
       });
     },
     async getAdminInfo(context) {
-      context.dispatch('getCsrfToken');
       await axios.get('admin-info').then((res) => {
         if (res.code === 200) {
           if (res.data.menu.list.length > 0) {
