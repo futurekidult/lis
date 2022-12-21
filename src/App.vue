@@ -17,14 +17,14 @@ export default defineComponent({
     return {
       locale: zhCn
     };
+  },
+  mounted() {
+    try {
+      this.$store.dispatch('getAdminInfo');
+    } catch (err) {
+      return;
+    }
   }
-  // mounted() {
-  //   try {
-  //     this.$store.dispatch('getAdminInfo');
-  //   } catch (err) {
-  //     return;
-  //   }
-  // }
 });
 </script>
 
