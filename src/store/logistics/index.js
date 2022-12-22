@@ -19,7 +19,8 @@ export default {
       baseWaybillDetail: {},
       waybillDetail: {},
       error: {},
-      stepActive: 1
+      stepActive: 1,
+      isDateChange: false
     };
   },
   mutations: {
@@ -45,6 +46,9 @@ export default {
     },
     setStepActive(state, payload) {
       state.stepActive = payload;
+    },
+    setDateChange(state, payload) {
+      state.isDateChange = payload;
     }
   },
   actions: {

@@ -10,6 +10,7 @@
         :inline="true"
         width="130px"
         @get-warehouse="getWarehouse"
+        @get-date="getDate"
       >
         <el-button
           type="primary"
@@ -403,8 +404,16 @@ export default {
   },
   methods: {
     cache,
+    getDate(obj) {
+      if (obj.prop === 'create_time') {
+        this.chooseForm.create_time = obj.val;
+        this.$store.commit('logistics/setDateChange', true);
+      }
+    },
     handleChoose(transitState) {
-      this.chooseForm.create_time = this.lastThreeMonth();
+      if (!this.$store.state.logistics.isDateChange) {
+        this.chooseForm.create_time = this.lastThreeMonth();
+      }
       handleDateRange(this.chooseForm, 'shipping_time');
       handleDateRange(this.chooseForm, 'create_time');
       let params = JSON.parse(JSON.stringify(this.chooseForm));
@@ -460,6 +469,7 @@ export default {
       };
       this.warehouse = [];
       this.chooseForm.create_time = this.lastThreeMonth();
+      this.$store.commit('logistics/setDateChange', false);
       this.getListData();
     },
     handleClick(tab) {
