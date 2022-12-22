@@ -31,7 +31,12 @@
 <script>
 import { transposeArray, changeRateColor } from '../../../../../utils/index.js';
 export default {
-  props: ['list'],
+  props: {
+    list: {
+      type: Array,
+      default: null
+    }
+  },
   data() {
     return {
       originData: this.list,

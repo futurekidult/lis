@@ -8,9 +8,7 @@
     >
       <average-chart
         :data="averageStatistics"
-        :form="form"
         :empty="emptyList"
-        :dimension="dimension"
       />
 
       <el-table
@@ -45,7 +43,7 @@
               <el-button
                 text
                 type="primary"
-                @click="viewSingleAverage(scope.row.id)"
+                @click="viewSingleAverage(scope.row.id, scope.row.count)"
               >
                 {{ scope.row.count }}
               </el-button>
@@ -131,25 +129,29 @@ export default {
         }
       }
     },
-    async viewSingleAverage(id) {
-      let params = this.form;
-      params.statistical_dimension_id = id;
-      try {
-        await this.$store.dispatch('statistics/getAverageDetail', { params });
-        this.averageDetail = this.$store.state.statistics.averageDetail;
-        this.table = {
-          tableData: this.averageDetail,
-          tableFields: [
-            {
-              label: `${this.lastLabel}名称`,
-              prop: 'name'
-            }
-          ].concat(this.$global.commonListFields)
-        };
-        this.title = this.lastLabel.substring(0, this.lastLabel.length - 2);
-        this.averageVisible = true;
-      } catch (err) {
-        return;
+    async viewSingleAverage(id, count) {
+      if (count !== '-' && count !== 0) {
+        let params = this.form;
+        params.statistical_dimension_id = id;
+        try {
+          await this.$store.dispatch('statistics/getAverageDetail', { params });
+          this.averageDetail = this.$store.state.statistics.averageDetail;
+          this.table = {
+            tableData: this.averageDetail,
+            tableFields: [
+              {
+                label: `${this.lastLabel}名称`,
+                prop: 'name'
+              }
+            ].concat(this.$global.commonListFields)
+          };
+          this.title = this.lastLabel.substring(0, this.lastLabel.length - 2);
+          this.averageVisible = true;
+        } catch (err) {
+          return;
+        }
+      } else {
+        this.$message.warning('当前无数据可查看');
       }
     }
   }

@@ -66,7 +66,8 @@
 import {
   timeToTimestamp,
   changeRateColor,
-  transposeArray
+  transposeArray,
+  getEmptyList
 } from '../../../../../utils/index.js';
 import StatisticsTable from '../statistics-table.vue';
 
@@ -124,13 +125,7 @@ export default {
           this.originTitle
         );
       }
-      if (this.empty.length) {
-        let emptyArr = [];
-        for (const index in this.empty) {
-          emptyArr.push(this.empty[index].name);
-        }
-        this.emptyStr = `${emptyArr.join('、')}无数据`;
-      }
+      this.emptyStr = getEmptyList(this.empty);
       this.originTitle.pop();
     },
     async viewLogisticSupplier(id, val, item) {

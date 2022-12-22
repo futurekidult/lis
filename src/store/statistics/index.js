@@ -16,7 +16,8 @@ export default {
       averageEmptyList: [],
       averageLoading: true,
       averageList: [],
-      averageDetail: []
+      averageDetail: [],
+      isDateChange: false
     };
   },
   mutations: {
@@ -35,7 +36,7 @@ export default {
     },
     setAverageStatistics(state, payload) {
       state.averageStatistics = payload.list;
-      state.emptyList = payload.empty_list;
+      state.averageEmptyList = payload.empty_list;
       state.averageList = payload.average_statistics;
     },
     setAverageTableVisible(state, payload) {
@@ -46,6 +47,9 @@ export default {
     },
     setAverageDetail(state, payload) {
       state.averageDetail = payload;
+    },
+    setDateChange(state, payload) {
+      state.isDateChange = payload;
     }
   },
   actions: {

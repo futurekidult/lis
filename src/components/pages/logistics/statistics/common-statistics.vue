@@ -26,6 +26,7 @@
         :inline="true"
         width="130px"
         @get-warehouse="getWarehouse"
+        @get-date="getDate"
       >
         <el-button
           type="primary"
@@ -88,8 +89,17 @@ export default {
     }
   },
   methods: {
+    getDate(val) {
+      if (val) {
+        this.chooseForm.shipping_time = val;
+        this.$store.commit('statistics/setDateChange', true);
+      }
+    },
     handleChoose() {
       if (this.type === 'daily') {
+        if (!this.$store.state.statistics.isDateChange) {
+          this.chooseForm.shipping_time = this.lastMonth();
+        }
         handleDateRange(this.chooseForm, 'shipping_time');
       }
       let params = JSON.parse(JSON.stringify(this.chooseForm));
@@ -138,6 +148,7 @@ export default {
       this.warehouse = [];
       if (this.type === 'daily') {
         this.chooseForm.shipping_time = this.lastMonth();
+        this.$store.commit('statistics/setDateChange', false);
       } else {
         this.chooseForm.shipping_time_unit = 'w';
         let date = new Date();
@@ -165,7 +176,10 @@ export default {
         if (this.type === 'daily') {
           await this.$store.dispatch('statistics/exportDailyStatistics', body);
         } else {
-           await this.$store.dispatch('statistics/exportAverageStatistics', body);
+          await this.$store.dispatch(
+            'statistics/exportAverageStatistics',
+            body
+          );
         }
       } catch (err) {
         return;

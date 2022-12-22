@@ -189,3 +189,14 @@ export const setYearOption = () => {
   }
   return option;
 };
+
+//图表无数据
+export const getEmptyList = (val) => {
+  if (val.length) {
+    let emptyArr = [];
+    for (const index in val) {
+      emptyArr.push(val[index].name);
+    }
+    return `${emptyArr.join('、')}无数据`;
+  }
+};

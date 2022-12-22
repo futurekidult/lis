@@ -1,31 +1,40 @@
 <template>
-  <el-scrollbar>
+  <div>
     <div
-      v-loading="$store.state.statistics.averageLoading"
-      class="chart-layout"
+      v-if="empty.length"
+      style="color: #ea1d1d; margin: 10px"
     >
-      <section
-        v-for="(item, index) in $store.state.statistics.averageStatistics"
-        :key="index"
-        style="margin-left: 20px"
-      >
-        <div
-          :id="`chart${index + 1}`"
-          class="chart"
-        />
-        <div>{{ item.table.name }}</div>
-        <el-scrollbar style="height: auto !important">
-          <average-table :list="item.table.data" />
-        </el-scrollbar>
-      </section>
+      提示：{{ emptyStr }}
     </div>
-  </el-scrollbar>
+    <el-scrollbar>
+      <div
+        v-loading="$store.state.statistics.averageLoading"
+        class="chart-layout"
+      >
+        <section
+          v-for="(item, index) in $store.state.statistics.averageStatistics"
+          :key="index"
+          style="margin-left: 20px"
+        >
+          <div
+            :id="`chart${index + 1}`"
+            class="chart"
+          />
+          <div>{{ item.table.name }}</div>
+          <el-scrollbar style="height: auto !important">
+            <average-table :list="item.table.data" />
+          </el-scrollbar>
+        </section>
+      </div>
+    </el-scrollbar>
+  </div>
 </template>
 
 <script>
 import * as echarts from 'echarts';
 import { markRaw } from 'vue';
 import AverageTable from './average-table.vue';
+import { getEmptyList } from '../../../../../utils/index.js';
 export default {
   components: {
     AverageTable
@@ -35,7 +44,7 @@ export default {
       type: Array,
       default: null
     },
-    headers: {
+    empty: {
       type: Array,
       default: null
     }
@@ -51,78 +60,91 @@ export default {
         dataZoom: [],
         yAxis: {},
         series: []
-      }
+      },
+      emptyStr: ''
     };
   },
-  mounted() {
-    let data = this.$store.state.statistics.averageStatistics;
-    // 初始化echarts实例
-    for (let i = 1; i <= data.length; i++) {
-      this.chart[i] = markRaw(
-        echarts.init(document.getElementById(`chart${i}`))
-      );
-      this.option[i] = {
-        title: {},
-        tooltip: {
-          // 触发类型
-          trigger: 'item',
-          axisPointer: {
-            type: 'cross',
-            // 坐标轴指示器的文本标签
-            label: {
-              backgroundColor: '#C0392B'
-            }
-          },
-          // 提示框浮层内容格式器
-          formatter: '{b0}: {c0}%'
-        },
-        xAxis: {},
-        legend: {
-          icon: 'rect'
-        },
-        dataZoom: [
-          {
-            type: 'inside'
-          }
-        ],
-        yAxis: {
-          type: 'value',
-          axisTick: {
-            //y轴刻度线
-            show: false
-          },
-          splitLine: {
-            //网格线
-            show: false
-          },
-          axisLabel: {
-            formatter: '{value}%'
-          },
-          min: (val) => {
-            return Math.floor(val.min);
-          },
-          max: 100
-        },
-        series: []
-      };
-      this.option[i].title.text = data[i - 1].chart.name;
-      let nameList = this.$global.rate;
-      let positionList = data[i - 1].chart.data.map((item) => {
-        return item;
-      });
-      this.option[i].legend.data = nameList;
-      this.option[i].xAxis.data = data[i - 1].chart.date;
-      for (let index in nameList) {
-        this.option[i].series.push({
-          name: nameList[index],
-          type: 'line',
-          data: positionList[index]
-        });
-      }
-      this.chart[i].setOption(this.option[i]);
+  watch: {
+    empty(val) {
+      this.emptyStr = getEmptyList(val);
+    },
+    data: {
+      handler(val) {
+        this.getChart(val);
+      },
+      deep: true
     }
   },
-  methods: {}
+  methods: {
+    getChart(val) {
+      let data = val;
+      // 初始化echarts实例
+      for (let i = 1; i <= data.length; i++) {
+        let chart = document.getElementById(`chart${i}`);
+        echarts.dispose(chart);
+        this.chart[i] = markRaw(echarts.init(chart));
+        this.option[i] = {
+          title: {},
+          tooltip: {
+            // 触发类型
+            trigger: 'item',
+            axisPointer: {
+              type: 'cross',
+              // 坐标轴指示器的文本标签
+              label: {
+                backgroundColor: '#C0392B'
+              }
+            },
+            // 提示框浮层内容格式器
+            formatter: '{b0}: {c0}%'
+          },
+          xAxis: {},
+          legend: {
+            icon: 'rect'
+          },
+          dataZoom: [
+            {
+              type: 'inside'
+            }
+          ],
+          yAxis: {
+            type: 'value',
+            axisTick: {
+              //y轴刻度线
+              show: false
+            },
+            splitLine: {
+              //网格线
+              show: false
+            },
+            axisLabel: {
+              formatter: '{value}%'
+            },
+            min: (val) => {
+              return Math.floor(val.min);
+            },
+            max: 100
+          },
+          series: []
+        };
+        this.option[i].title.text = data[i - 1].chart.name;
+        let nameList = this.$global.rate;
+        let positionList = data[i - 1].chart.data.map((item) => {
+          return item;
+        });
+        this.option[i].legend.data = nameList;
+        this.option[i].xAxis.data = data[i - 1].chart.date;
+        for (let index in nameList) {
+          this.option[i].series.push({
+            name: nameList[index],
+            type: 'line',
+            data: positionList[index]
+          });
+        }
+        this.chart[i].setOption(this.option[i]);
+      }
+    }
+  }
 };
 </script>
 
