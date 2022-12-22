@@ -19,10 +19,23 @@ export default defineComponent({
     };
   },
   mounted() {
-    try {
-      this.$store.dispatch('getAdminInfo');
-    } catch (err) {
-      return;
+    this.getAdminInfo();
+  },
+  methods: {
+    async getCsrfToken() {
+      try {
+        await this.$store.dispatch('getCsrfToken');
+      } catch (err) {
+        return;
+      }
+    },
+    async getAdminInfo() {
+      try {
+        this.getCsrfToken();
+        await this.$store.dispatch('getAdminInfo');
+      } catch (err) {
+        return;
+      }
     }
   }
 });

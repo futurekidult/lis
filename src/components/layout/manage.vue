@@ -162,9 +162,13 @@ export default {
     };
   },
   watch: {
-    '$store.state.adminInfo'(val) {
-      this.menuList = val.menu.list;
-      this.defaultOpeneds = val.menu.openeds;
+    '$store.state.adminInfo': {
+      handler(val) {
+        this.menuList = val.menu.list;
+        this.defaultOpeneds = val.menu.openeds;
+      },
+      immediate: true,
+      deep: true
     }
   },
   methods: {

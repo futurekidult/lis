@@ -15,7 +15,12 @@ const store = createStore({
       warehouse: [],
       sku: [],
       order: [],
-      adminInfo: {},
+      adminInfo: {
+        menu: {
+          list: [],
+          openeds: []
+        }
+      },
       menuVisible: false
     };
   },
@@ -123,16 +128,7 @@ const store = createStore({
         }
       });
     },
-    // async login() {
-    //   await axios.post('login?id=14').then((res) => {
-    //     if (res.code === 200) {
-    //       ElMessage.success(res.message);
-    //     }
-    //   });
-    // },
     async getAdminInfo(context) {
-      context.dispatch('getCsrfToken');
-      // context.dispatch('login');
       await axios.get('admin-info').then((res) => {
         if (res.code === 200) {
           if (res.data.menu.list.length > 0) {
