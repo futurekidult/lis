@@ -77,7 +77,7 @@
         type="daterange"
         start-placeholder="年-月-日"
         end-placeholder="年-月-日"
-        @change="changeDate"
+        @change="(val) => changeDate(val, item.prop)"
       />
       <el-input
         v-if="item.type === 'textarea' && !item.range"
@@ -372,8 +372,11 @@ export default {
         }
       }
     },
-    changeDate(val) {
-      this.$emit('get-date', val);
+    changeDate(val, prop) {
+      this.$emit('get-date', {
+        val,
+        prop
+      });
     }
   }
 };

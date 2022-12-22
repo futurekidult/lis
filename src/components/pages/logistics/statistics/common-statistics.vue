@@ -89,11 +89,9 @@ export default {
     }
   },
   methods: {
-    getDate(val) {
-      if (val) {
-        this.chooseForm.shipping_time = val;
-        this.$store.commit('statistics/setDateChange', true);
-      }
+    getDate(obj) {
+      this.chooseForm.shipping_time = obj.val;
+      this.$store.commit('statistics/setDateChange', true);
     },
     handleChoose() {
       if (this.type === 'daily') {
