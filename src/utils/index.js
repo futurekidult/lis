@@ -109,11 +109,11 @@ export const download = (res, type, filename, suffix) => {
 export const changeRateColor = (val) => {
   let rate = parseFloat(val);
   if (rate < 97) {
-    return '#F78113';
+    return '#EA1D1D';
   } else if (rate > 98) {
     return '#379F0D';
   } else {
-    return '#EA1D1D';
+    return '#F78113';
   }
 };
 
@@ -147,4 +147,56 @@ export const transposeArray = (val, title) => {
     ];
   });
   return data;
+};
+
+//获取某年的所有周
+export const setWeekOption = () => {
+  let month = 12;
+  let year = new Date().getFullYear();
+  let last_month = month;
+  let new_year = year;
+  let new_month = last_month++;
+  if (month > 12) {
+    new_month -= 12;
+    new_year++;
+  }
+  let new_date = new Date(new_year, new_month, 1);
+  let day = new Date(new_date.getTime() - 1000 * 60 * 60 * 24).getDate();
+  let week = getWeek(year, month, day);
+  return week;
+};
+
+//获取当前周
+export const getWeek = (year, month, day) => {
+  let nowDate = new Date(`${year}-${month}-${day}`);
+  let firstDay = new Date(`${year}-${month}-${day}`);
+  firstDay.setMonth(0);
+  firstDay.setDate(1);
+  let diffDays = Math.ceil((nowDate - firstDay) / (24 * 60 * 60 * 1000));
+  let week = Math.ceil(diffDays / 7) + 1;
+  return week;
+};
+
+//获取年份
+export const setYearOption = () => {
+  let currentYear = new Date().getFullYear();
+  let option = [];
+  for (let year = 2018; year <= currentYear + 1; year++) {
+    option.push({
+      label: year,
+      value: year
+    });
+  }
+  return option;
+};
+
+//图表无数据
+export const getEmptyList = (val) => {
+  if (val.length) {
+    let emptyArr = [];
+    for (const index in val) {
+      emptyArr.push(val[index].name);
+    }
+    return `${emptyArr.join('、')}无数据`;
+  }
 };

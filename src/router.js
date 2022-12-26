@@ -10,6 +10,11 @@ const DailyStatistics = () => {
     './components/pages/logistics/statistics/daily/daily-statistics.vue'
   );
 };
+const AverageStatistics = () => {
+  return import(
+    './components/pages/logistics/statistics/average/average-statistics.vue'
+  );
+};
 const NotFound = () => {
   return import('./components/layout/not-found.vue');
 };
@@ -41,6 +46,19 @@ const router = createRouter({
               { title: '尾程物流管理' },
               { title: '物流时效统计' },
               { title: '每日物流时效统计' }
+            ]
+          }
+        },
+        {
+          path: '/logistics/statistics/average-statistics',
+          name: 'average statistics',
+          component: AverageStatistics,
+          meta: {
+            formVisible: true,
+            breadcrumb: [
+              { title: '尾程物流管理' },
+              { title: '物流时效统计' },
+              { title: '平均物流时效统计' }
             ]
           }
         }

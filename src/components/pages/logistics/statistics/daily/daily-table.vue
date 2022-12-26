@@ -53,30 +53,11 @@
       </div>
     </el-scrollbar>
 
-    <base-option v-model="logisticSupplierVisible">
-      <el-scrollbar height="400px">
-        <el-table
-          :data="table.tableData"
-          border
-        >
-          <el-table-column
-            v-for="item in table.tableFields"
-            :key="item.prop"
-            :label="item.label"
-            align="center"
-          >
-            <template #default="scope">
-              <span
-                :style="
-                  scope.row[item.prop].indexOf('%') > -1
-                    ? { color: changeRateColor(scope.row[item.prop]) }
-                    : {}
-                "
-              >{{ scope.row[item.prop] }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-scrollbar>
+    <base-option
+      v-model="logisticSupplierVisible"
+      :title="`${title}每日时效统计`"
+    >
+      <statistics-table :table="table" />
     </base-option>
   </section>
 </template>
@@ -85,10 +66,15 @@
 import {
   timeToTimestamp,
   changeRateColor,
-  transposeArray
+  transposeArray,
+  getEmptyList
 } from '../../../../../utils/index.js';
+import StatisticsTable from '../statistics-table.vue';
 
 export default {
+  components: {
+    StatisticsTable
+  },
   props: {
     list: {
       type: Array,
@@ -110,22 +96,13 @@ export default {
   data() {
     return {
       originData: this.list,
-      originTitle: [
-        '发货时间',
-        '2天首枪时效合格率',
-        '3天首枪时效合格率',
-        '送达时效合格率'
-      ],
-      titleMap: {
-        10: '仓库数量',
-        20: '物流商数量',
-        30: 'SKU数量',
-        40: '店铺数量'
-      },
+      originTitle: this.$global.dailyRate,
       logisticSupplierVisible: false,
       table: {},
       emptyStr: '',
-      chooseForm: this.form
+      chooseForm: this.form,
+      lastLabel: [],
+      title: ''
     };
   },
   watch: {
@@ -141,29 +118,21 @@ export default {
     changeRateColor,
     //数组转置
     handleArray() {
-      this.originTitle.push(this.titleMap[this.dimension]);
+      this.originTitle.push(this.$global.titleMap[this.dimension]);
       for (const index in this.originData) {
         this.originData[index].data = transposeArray(
           this.originData[index].data,
           this.originTitle
         );
       }
-      if (this.empty.length) {
-        let emptyArr = [];
-        for (const index in this.empty) {
-          emptyArr.push(this.empty[index].name);
-        }
-        this.emptyStr = `${emptyArr.join('、')}无数据`;
-      }
+      this.emptyStr = getEmptyList(this.empty);
       this.originTitle.pop();
     },
     async viewLogisticSupplier(id, val, item) {
       if (parseFloat(val) && val !== '-') {
         let params = JSON.parse(JSON.stringify(this.chooseForm));
-        params.statistical_dimension_type = params.statistical_dimension;
         params.shipping_time = timeToTimestamp(item);
         params.statistical_dimension_id = id;
-        delete params.statistical_dimension;
         delete params.end_shipping_time;
         delete params.start_shipping_time;
         try {
@@ -171,27 +140,17 @@ export default {
             params
           });
           this.logisticSupplier = this.$store.state.statistics.logisticSupplier;
+          this.lastLabel = this.$global.titleMap[this.dimension];
           this.table = {
             tableData: this.logisticSupplier,
             tableFields: [
               {
-                label: '物流商名称',
+                label: `${this.lastLabel}名称`,
                 prop: 'name'
-              },
-              {
-                label: '2天首枪时效合格率',
-                prop: 'receipt_2days_rate'
-              },
-              {
-                label: '3天首枪时效合格率',
-                prop: 'receipt_3days_rate'
-              },
-              {
-                label: '送达时效合格率',
-                prop: 'delivery_rate'
               }
-            ]
+            ].concat(this.$global.commonListFields)
           };
+          this.title = this.lastLabel.substring(0, this.lastLabel.length - 2);
           this.logisticSupplierVisible = true;
         } catch (err) {
           return;
