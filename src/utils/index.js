@@ -117,6 +117,16 @@ export const changeRateColor = (val) => {
   }
 };
 
+export const adminStateColor = (key) => {
+  if (key === 1) {
+    return '#379f0d';
+  } else if (key === 2) {
+    return '#ea1d1d';
+  } else {
+    return '#999999';
+  }
+};
+
 //百分号
 export const toPercent = (item, arr) => {
   arr.forEach((i) => {

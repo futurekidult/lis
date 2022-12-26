@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import logistics from './logistics/index.js';
 import statistics from './statistics/index.js';
+import system from './system/index.js';
 import axios from '../utils/axios.js';
 import { cache } from '../utils/index.js';
 import { ElMessage } from 'element-plus';
@@ -8,7 +9,8 @@ import { ElMessage } from 'element-plus';
 const store = createStore({
   modules: {
     logistics,
-    statistics
+    statistics,
+    system
   },
   state() {
     return {

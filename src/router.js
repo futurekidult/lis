@@ -18,6 +18,18 @@ const AverageStatistics = () => {
 const NotFound = () => {
   return import('./components/layout/not-found.vue');
 };
+const User = () => {
+  return import('./components/pages/system/user.vue');
+};
+const Role = () => {
+  return import('./components/pages/system/role.vue');
+};
+const Privilege = () => {
+  return import('./components/pages/system/privilege.vue');
+};
+const Organization = () => {
+  return import('./components/pages/system/organization.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -60,6 +72,38 @@ const router = createRouter({
               { title: '物流时效统计' },
               { title: '平均物流时效统计' }
             ]
+          }
+        },
+        {
+          path: '/system/user',
+          name: 'user',
+          component: User,
+          meta: {
+            breadcrumb: [{ title: '系统管理' }, { title: '用户管理' }]
+          }
+        },
+        {
+          path: '/system/role',
+          name: 'role',
+          component: Role,
+          meta: {
+            breadcrumb: [{ title: '系统管理' }, { title: '角色管理' }]
+          }
+        },
+        {
+          path: '/system/privilege',
+          name: 'privilege',
+          component: Privilege,
+          meta: {
+            breadcrumb: [{ title: '系统管理' }, { title: '权限管理' }]
+          }
+        },
+        {
+          path: '/system/organization',
+          name: 'organization',
+          component: Organization,
+          meta: {
+            breadcrumb: [{ title: '系统管理' }, { title: '组织管理' }]
           }
         }
       ]
