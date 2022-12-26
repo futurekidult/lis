@@ -32,7 +32,7 @@ const router = createRouter({
     {
       path: '/',
       component: Manage,
-      redirect: '/system/organization',
+      redirect: '/logistics/logistics-list',
       children: [
         {
           path: '/logistics/logistics-list',
