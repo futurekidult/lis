@@ -124,4 +124,10 @@ h2 {
   display: flex;
   justify-content: space-between;
 }
+
+.position-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
 </style>
