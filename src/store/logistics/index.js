@@ -184,8 +184,6 @@ export default {
     },
     async updateWaybill(_, payload) {
       let params = payload;
-      params.state_id = params.state;
-      params.city_id = params.city;
       params.shipping_time = timeToTimestamp(params.shipping_time);
       await axios.post('waybill/update', params).then((res) => {
         if (res.code === 200) {
