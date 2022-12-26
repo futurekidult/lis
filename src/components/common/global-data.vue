@@ -532,6 +532,56 @@ const statisticsCommonChooseOptions = [
   }
 ];
 
+//统计维度
+const statisticalDimension = [
+  {
+    label: '物流商',
+    value: 10
+  },
+  {
+    label: '仓库',
+    value: 20
+  },
+  {
+    label: '店铺',
+    value: 30
+  },
+  {
+    label: 'SKU',
+    value: 40
+  }
+];
+
+//下钻映射
+const titleMap = {
+  10: '仓库数量',
+  20: '物流商数量',
+  30: 'SKU数量',
+  40: '店铺数量'
+};
+
+//时效统计公共项
+const commonListFields = [
+  {
+    label: '2天首枪时效合格率',
+    prop: 'receipt_2days_rate'
+  },
+  {
+    label: '3天首枪时效合格率',
+    prop: 'receipt_3days_rate'
+  },
+  {
+    label: '送达时效合格率',
+    prop: 'delivery_rate'
+  }
+];
+
+//合格率类别
+const rate = ['2天首枪时效合格率', '3天首枪时效合格率', '送达时效合格率'];
+
+//每日时效
+const dailyRate = ['发货时间'].concat(rate);
+
 //每日时效统计筛选项
 const dailyChooseOptions = statisticsCommonChooseOptions.concat([
   {
@@ -541,14 +591,56 @@ const dailyChooseOptions = statisticsCommonChooseOptions.concat([
   }
 ]);
 
+//平均时效
+const averageRate = ['日期'].concat(rate);
+
+//平均时效统计筛选项
+const averageChooseOptions = statisticsCommonChooseOptions.concat([
+  {
+    label: '发货时间',
+    type: 'select',
+    prop: 'shipping_time_unit',
+    multiple: false,
+    options: [
+      {
+        value: '按周',
+        key: 'w'
+      },
+      {
+        value: '按月',
+        key: 'm'
+      },
+      {
+        value: '按年',
+        key: 'y'
+      }
+    ],
+    option_type: 'other'
+  },
+  {
+    label: '',
+    type: 'select',
+    prop1: 'start_shipping_time',
+    prop2: 'end_shipping_time',
+    range: true
+  }
+]);
+
 export default {
+  rate,
+  dailyRate,
+  titleMap,
   orderRules,
   transitState,
+  averageRate,
   errorTableFields,
+  commonListFields,
   createOrderFields,
   updateOrderFields,
   logisticsTableFields,
   dailyChooseOptions,
+  statisticalDimension,
+  averageChooseOptions,
   logisticsChooseOptions
 };
 </script>

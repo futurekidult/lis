@@ -7,6 +7,9 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AverageChart: typeof import('./src/components/pages/logistics/statistics/average/average-chart.vue')['default']
+    AverageStatistics: typeof import('./src/components/pages/logistics/statistics/average/average-statistics.vue')['default']
+    AverageTable: typeof import('./src/components/pages/logistics/statistics/average/average-table.vue')['default']
     BaseBreadcrumb: typeof import('./src/components/common/base-breadcrumb.vue')['default']
     BaseConfirmDialog: typeof import('./src/components/common/base-confirm-dialog.vue')['default']
     BaseForm: typeof import('./src/components/common/base-form.vue')['default']
@@ -74,6 +77,7 @@ declare module '@vue/runtime-core' {
     RoleForm: typeof import('./src/components/pages/system/common/role-form.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StatisticsTable: typeof import('./src/components/pages/logistics/statistics/statistics-table.vue')['default']
     UpdateWaybill: typeof import('./src/components/pages/logistics/update-waybill.vue')['default']
     User: typeof import('./src/components/pages/system/user.vue')['default']
     ViewWaybill: typeof import('./src/components/pages/logistics/view-waybill.vue')['default']

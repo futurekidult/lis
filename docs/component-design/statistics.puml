@@ -7,24 +7,33 @@ package "Parent Component" {
 
 package "Child Components" {
   [BaseForm]
-  [BaseChart]
+  [AverageChart]
   [DailyTable]
   [BaseBreadcrumb]
   [CommonStatistics]
+  [BaseOption]
+  [StatisticsTable]
 }
 
 package "Descendant Components" {
-  [BaseTable]
   [BaseForm]
+  [BaseOption]
+  [AverageTable]
+  [StatisticsTable]
 }
 
+[DailyStatistics]            -->       [DailyTable]
 [DailyStatistics]            -->       [BaseBreadcrumb]
 [DailyStatistics]            -->       [CommonStatistics]
-[AverageStatistics]       -->       [BaseForm]
+[AverageStatistics]       -->       [BaseOption]
+[AverageStatistics]       -->       [StatisticsTable]
 [AverageStatistics]       -->       [BaseBreadcrumb]
-[AverageStatistics]       -->       [BaseChart]
-[BaseChart]                  -->       [BaseTable]
-[CommonStatistics]      -->       [BaseForm]
+[AverageStatistics]       -->       [CommonStatistics]
+[AverageStatistics]       -->       [AverageChart]
+[DailyTable]                  -->       [BaseOption]
+[DailyTable]                  -->       [BaseOption]
+[AverageChart]            -->       [StatisticsTable]
+[CommonStatistics]     -->       [BaseForm]
 
 
 @enduml
