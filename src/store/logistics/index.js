@@ -1,5 +1,5 @@
 import axios from '../../utils/axios';
-import { handleTimestamp } from '../../utils/index';
+import { handleTimestamp, handleDays } from '../../utils/index';
 
 export default {
   namespaced: true,
@@ -51,9 +51,8 @@ export default {
               'current_event_time',
               'estimated_delivery_time'
             ]);
-            // 字符串拼接
-            item.receipt_days = `${item.receipt_days}天`;
-            item.delivery_days = `${item.delivery_days}天`;
+            // 时效显示处理
+            handleDays(['receipt_days', 'delivery_days'], item);
           });
           context.commit('setListData', res.data);
           context.commit('setListLoading', false);

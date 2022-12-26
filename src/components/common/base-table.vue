@@ -100,7 +100,11 @@
               }"
             >{{ scope.row[item.prop] }}</span>
             <span
-              v-else-if="item.prop === 'stay_time'"
+              v-else-if="
+                item.prop === 'stay_time' ||
+                  item.prop === 'receipt_days' ||
+                  item.prop === 'delivery_days'
+              "
               :style="{
                 color: changeContentColor(item.prop, scope.row[item.prop])
               }"
@@ -209,7 +213,9 @@ export default {
       if (
         (prop === 'exception_handling_desc' && val === 10) ||
         (prop === 'sync_state_desc' && val === 20) ||
-        (prop === 'stay_time' && parseFloat(val) > 5)
+        (prop === 'stay_time' && parseFloat(val) > 5) ||
+        (prop === 'receipt_days' && val === -1) ||
+        (prop === 'delivery_days' && val === -1)
       ) {
         return '#EA1D1D';
       } else if (prop === 'exception_handling_desc' && val === 0) {
