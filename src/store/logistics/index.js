@@ -3,7 +3,8 @@ import {
   handleTimestamp,
   timestampToTime,
   timeToTimestamp,
-  download
+  download,
+  handleDays
 } from '../../utils/index';
 import { ElMessage } from 'element-plus';
 
@@ -166,8 +167,7 @@ export default {
             'current_event_time',
             'estimated_delivery_time'
           ]);
-          res.data.receipt_days = `${res.data.receipt_days}天`;
-          res.data.delivery_days = `${res.data.delivery_days}天`;
+          handleDays(['receipt_days', 'delivery_days'], res.data);
           res.data.logistic_tracking.forEach((item) => {
             item.event_time = timestampToTime(item.event_time);
           });

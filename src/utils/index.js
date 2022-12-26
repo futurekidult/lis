@@ -48,6 +48,19 @@ export const handleTimestamp = (obj, propArr) => {
   });
 };
 
+//时效显示处理
+export const handleDays = (arr, obj) => {
+  arr.forEach((item) => {
+    if (obj[item] === 0) {
+      obj[item] = '';
+    } else if (obj[item] === -1) {
+      obj[item] = -1;
+    } else {
+      obj[item] = `${obj[item]}天`;
+    }
+  });
+};
+
 // 获取缓存下拉数据
 export const cache = (key, value, seconds) => {
   let timestamp = Date.parse(new Date()) / 1000;
