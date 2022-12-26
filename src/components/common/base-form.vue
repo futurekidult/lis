@@ -186,6 +186,7 @@ export default {
   },
   data() {
     return {
+      timeout: null,
       form: this.baseForm,
       optionLoading: true,
       remoteLoading: false
@@ -268,27 +269,30 @@ export default {
       this.remoteLoading = false;
     },
     remoteMethod(query, prop) {
-      if (query) {
-        this.remoteLoading = true;
-        try {
-          if (prop === 'sku_id') {
-            this.getSkuOrOrderOption('name', 'sku', query, prop, 'getSku');
-          } else {
-            this.getSkuOrOrderOption(
-              'order_no',
-              'order',
-              query,
-              prop,
-              'getOrder'
-            );
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        if (query) {
+          this.remoteLoading = true;
+          try {
+            if (prop === 'sku_id') {
+              this.getSkuOrOrderOption('name', 'sku', query, prop, 'getSku');
+            } else {
+              this.getSkuOrOrderOption(
+                'order_no',
+                'order',
+                query,
+                prop,
+                'getOrder'
+              );
+            }
+          } catch (err) {
+            return;
           }
-        } catch (err) {
-          return;
+        } else {
+          let selectObj = this.getOptionObj(prop);
+          selectObj.options = [];
         }
-      } else {
-        let selectObj = this.getOptionObj(prop);
-        selectObj.options = [];
-      }
+      });
     }
   }
 };
