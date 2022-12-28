@@ -222,6 +222,7 @@ export default {
         })
         .then((res) => {
           if (res.code === 200) {
+            context.commit('setError', {});
             ElMessage.success(res.message);
           } else if (res.code === 40015) {
             context.commit('setError', res.data);
