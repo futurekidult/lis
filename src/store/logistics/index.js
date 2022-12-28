@@ -3,7 +3,8 @@ import {
   handleTimestamp,
   timestampToTime,
   timeToTimestamp,
-  download
+  download,
+  handleDays
 } from '../../utils/index';
 import { ElMessage } from 'element-plus';
 
@@ -62,15 +63,16 @@ export default {
           res.data.list.forEach((item) => {
             // 最新轨迹停留时长计算
             if (
-              item.transit_state !== 70 ||
-              item.transit_state !== 80 ||
-              (item.transit_state === 60 && item.exception_handing === 10)
+              (item.transit_state < 60 && item.transit_state !== 0) ||
+              (item.transit_state === 60 && item.exception_handling !== 20)
             ) {
               let currentTime = new Date().getTime();
               let eventTime = item.current_event_time;
               let time = (currentTime - eventTime * 1000) / 1000 / 60 / 60 / 24;
               // 保留一位小数，并向上取整
               item.stay_time = `${Math.ceil(time.toFixed(1))}天`;
+            } else {
+              item.stay_time = '';
             }
             //时间戳转化
             handleTimestamp(item, [
@@ -80,9 +82,8 @@ export default {
               'current_event_time',
               'estimated_delivery_time'
             ]);
-            // 字符串拼接
-            item.receipt_days = `${item.receipt_days}天`;
-            item.delivery_days = `${item.delivery_days}天`;
+            // 时效显示处理
+            handleDays(['receipt_days', 'delivery_days'], item);
           });
           context.commit('setListData', res.data);
           context.commit('setListLoading', false);
