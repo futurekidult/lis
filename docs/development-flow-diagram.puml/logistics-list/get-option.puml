@@ -1,0 +1,21 @@
+@startuml
+title 以店铺为例
+
+start
+if(logisiticsShopOption 已存在?) then (yes)
+  :从localStorage中获取店铺(logisiticsShopOption)下拉选项;
+else (no)
+  :请求"/option/shop-list"接口;
+  if(请求 成功?) then (yes)
+    :本地存储logisiticsShopOption;
+    note right
+      有效期：24h
+    end note
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+endif
+end
+
+@enduml

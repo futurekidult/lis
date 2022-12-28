@@ -1,0 +1,43 @@
+@startuml
+
+start
+:获取数据;
+split
+  :点击修改，获取到该海外仓id和name;
+  :将该海外仓name赋给修改表单对象;
+  :弹出修改海外仓弹窗;
+split again
+  :点击新增海外仓按钮;
+  :弹出新增海外仓弹窗;
+end split
+ repeat
+    :输入/修改海外仓;
+  repeat while(表单校验 通过?) is (no) not (yes)
+  note right 
+    校验规则伪代码
+    ====
+    //允许中英文，数字，下划线，中划线
+    let reg = new RegExp
+    ("^[\u4E00-\u9FA5A-Za-z0-9_-]+$")
+    //true: 通过校验; false: 未通过校验
+    reg.test(str) 
+  end note
+  if(新增 ?) then (yes)
+    :请求"/system/base/oversea-location-create"接口;
+  else (no)
+    :请求"/system/base/oversea-location-update"接口;
+  endif
+  if(请求 成功?) then (yes)
+    if(新增 ?) then (yes)
+      :current_page = 1;
+      :删除overseaLocation变量;
+    endif
+    :删除overseaLocationOption缓存;
+    :获取数据;
+    :提示成功，关闭弹窗;
+  else (no)
+    :提示出错信息;
+  endif
+end
+
+@enduml

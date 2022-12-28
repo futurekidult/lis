@@ -17,6 +17,26 @@ export default defineComponent({
     return {
       locale: zhCn
     };
+  },
+  mounted() {
+    this.getAdminInfo();
+  },
+  methods: {
+    async getCsrfToken() {
+      try {
+        await this.$store.dispatch('getCsrfToken');
+      } catch (err) {
+        return;
+      }
+    },
+    async getAdminInfo() {
+      try {
+        this.getCsrfToken();
+        await this.$store.dispatch('getAdminInfo');
+      } catch (err) {
+        return;
+      }
+    }
   }
 });
 </script>
@@ -34,8 +54,16 @@ export default defineComponent({
   margin-bottom: 5px;
 }
 
-.el-input__wrapper {
+.el-input {
+  width: auto !important;
+}
+
+.el-input--suffix .el-input__wrapper {
   width: 220px !important;
+}
+
+.el-select--small .el-input--suffix .el-input__wrapper {
+  width: 80px !important;
 }
 
 .el-range-editor.el-input__wrapper {
@@ -54,5 +82,52 @@ export default defineComponent({
 
 .el-divider--vertical {
   border-left: 4px rgba(0, 102, 183, 1) solid !important;
+}
+
+.el-dialog__body {
+  padding-bottom: 45px !important;
+}
+
+.content-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 60px);
+  width: 100%;
+  font-size: 20px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.waybill-form .el-input__wrapper {
+  width: 200px !important;
+}
+
+.state-city_container {
+  display: flex;
+}
+
+.waybill-form .state-city_container .el-input__wrapper {
+  width: 90px !important;
+}
+
+.btn-position {
+  float: right;
+  padding-top: 15px;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.position-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
 }
 </style>

@@ -1,0 +1,56 @@
+@startuml
+
+start
+:物流管理员录入基础数据信息;
+fork
+repeat 
+  :导入发货/退货运单信息;
+  :系统校验;
+backward: 修改发货/退货运单信息;
+repeat while (校验通过?) is (no) not (yes)
+:运单信息的物流状态变更为待查询;
+fork again  
+  :定时同步物流信息;
+end fork
+:查看运单信息;
+fork 
+  if(运单的运输状态是否为投递失败/异常) then (yes)
+    :处理异常，完成后将运单的异常状态批量变更为已处理;
+  endif
+fork again
+  repeat 
+    :新增订单信息;
+    :系统校验;
+  backward: 修改订单信息;
+  repeat while (校验通过?) is (no) not (yes)
+fork again
+  if (运单信息是否有误) then (yes)
+    if(输入的订单号是否有误) then (yes)
+      repeat 
+        :修改订单号;
+      backward: 新增订单信息;
+      repeat while (输入的订单号不存在) is (yes) not (no)
+    endif
+    :修改运单信息;
+  endif
+  fork again 
+    if (订单信息是否有误) then (yes)
+    :修改订单信息;
+  endif
+fork again
+  :给运单添加标签;
+  if(运单标签是否有误) then (yes)
+      :删除错误标签;
+  endif
+  :勾选运单，将运单批量标记为对应的标签;
+fork again
+  if(运单对应的物流商是否有误) then (yes)
+    :批量修改供应商;
+  endif
+fork again 
+  :批量删除运单信息;
+end fork
+:根据不同维度查看物流时效图表，并导出;
+end
+
+@enduml

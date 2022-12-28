@@ -1,76 +1,18 @@
 <template>
-  <el-container>
-    <el-header class="container-header">
-      <section>
-        <el-tooltip
-          v-if="show"
-          :disabled="foldDisabled"
-          effect="light"
-          content="点击收缩"
-          placement="right-start"
-        >
-          <el-icon
-            :size="30"
-            color="#fff"
-            class="toggle-btn"
-            @click="openCollapse('fold')"
-          >
-            <Fold />
-          </el-icon>
-        </el-tooltip>
-        <el-tooltip
-          v-else
-          :disabled="expandDisabled"
-          effect="light"
-          content="点击展开"
-          placement="right-start"
-        >
-          <el-icon
-            :size="30"
-            color="#fff"
-            class="toggle-btn"
-            @click="openCollapse('expand')"
-          >
-            <Expand />
-          </el-icon>
-        </el-tooltip>
-        <div>
-          <img
-            src="xx"
-            alt="load fail"
-          >
-        </div>
-        <div class="container-project_name">
-          基础后台管理系统
-        </div>
-      </section>
-      <section>
-        <el-dropdown
-          style="color: #fff"
-          trigger="click"
-        >
-          <span class="user-msg">
-            欢迎您,管理员
-            <el-icon>
-              <arrow-down />
-            </el-icon>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item>退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </section>
-    </el-header>
-    <el-container>
+  <base-menu
+    type="manage"
+    :menu-list="menuList"
+    @get-collapse="getCollapse"
+  >
+    <el-container v-show="$store.state.menuVisible">
       <el-aside width="auto">
         <el-menu
           router
           text-color="#fff"
           class="el-menu-vertical"
           :default-active="$route.path"
-          :collapse="isCollapse"
+          :collapse="collapse"
+          :default-openeds="defaultOpeneds"
           background-color="#545c64"
         >
           <div
@@ -160,64 +102,78 @@
         <main-container />
       </el-main>
     </el-container>
-  </el-container>
+    <el-container v-show="!$store.state.menuVisible">
+      <no-privilege />
+    </el-container>
+  </base-menu>
 </template>
 
 <script>
 import {
-  Fold,
-  Expand,
-  ArrowDown,
+  Van,
+  Key,
+  User,
+  Place,
+  SetUp,
   Setting,
-  Notebook,
-  House
+  Tickets,
+  House,
+  Monitor,
+  Calendar,
+  DataLine,
+  Handbag,
+  CoffeeCup,
+  DataAnalysis,
+  TakeawayBox,
+  CollectionTag,
+  OfficeBuilding
 } from '@element-plus/icons-vue';
-import MainContainer from './main-container.vue';
+
+import BaseMenu from './menu.vue';
+import NoPrivilege from './no-privilege.vue';
 
 export default {
   components: {
-    Fold,
-    Expand,
-    ArrowDown,
-    Setting,
-    Notebook,
+    Van,
+    User,
+    Key,
+    Place,
+    SetUp,
     House,
-    MainContainer
+    Setting,
+    Tickets,
+    Monitor,
+    Calendar,
+    DataLine,
+    Handbag,
+    CoffeeCup,
+    BaseMenu,
+    NoPrivilege,
+    DataAnalysis,
+    TakeawayBox,
+    OfficeBuilding,
+    CollectionTag
   },
   data() {
     return {
-      show: true,
-      isCollapse: false,
-      foldDisabled: false,
-      expandDisabled: false,
-      menuList: [
-        {
-          name: 'Demo管理',
-          link: '/demo',
-          icon: 'Setting',
-          collapse: 0,
-          children: [
-            {
-              name: 'Demo列表',
-              link: '/demo-list',
-              icon: 'House',
-              collapse: 0,
-              children: []
-            }
-          ]
-        }
-      ]
+      collapse: false,
+      menuList: [],
+      defaultOpeneds: []
     };
   },
+  watch: {
+    '$store.state.adminInfo': {
+      handler(val) {
+        this.menuList = val.menu.list;
+        this.defaultOpeneds = val.menu.openeds;
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   methods: {
-    openCollapse(type) {
-      this.isCollapse = !this.isCollapse;
-      if (type === 'fold') {
-        this.foldDisabled = !this.foldDisabled;
-      } else {
-        this.expandDisabled = !this.expandDisabled;
-      }
-      this.show = !this.show;
+    getCollapse(val) {
+      this.collapse = val;
     }
   }
 };
@@ -269,17 +225,17 @@ export default {
 
 .toggle-btn:hover,
 .toggle-btn:focus {
-  color: #f8ba2b;
+  color: #409eff;
 }
 
 .el-menu-item.is-active {
   font-weight: 700;
-  color: #f8ba2b;
+  color: #409eff;
 }
 
 .el-sub-menu__title.is-active {
   font-weight: 700;
-  color: #f8ba2b;
+  color: #409eff;
 }
 
 .menu-icon {

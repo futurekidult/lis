@@ -1,0 +1,55 @@
+@startuml
+
+start
+fork
+  if(创建时间 已重选?) then (yes) 
+    :创建时间为选定时间;
+  else (no)
+    :创建时间为近3个月;
+  endif
+  :将时间通过时间转化函数，转成时间戳;
+fork again  
+  :获取
+  物流商(logisticsSupplier)、
+  海外仓(overseaLocationOption)、
+  仓库分布(warehouseAreaOption)、平台(logisiticsPlatformOption)、
+  店铺(logisticsShopOption)、标签(logisiticsLabelOption)下拉选项;
+  :从下拉选项中选择要查询的选项(可多选);
+fork again  
+  :传入海外仓id(oversea_location_id)，仓库分布id(warehouse_area_id);
+  :请求"/option/warehouse-list?oversea_location_id=&warehouse_area_id="接口;
+  if(请求 成功?) then (yes)
+    :从下拉选项中选择要查询的选项(可多选);
+  else (no)
+    :提示出错信息;
+  endif
+fork again
+  :输入 SKU;
+  :请求"/option/sku-list?name="接口;
+  if(请求  成功?) then (yes)
+    :实时展示包含输入字符串的选项;
+    :从下拉选项中选择要查询的选项(可多选);
+  else (no)
+    :提示出错信息;
+  endif
+fork again
+  :输入订单号;
+  :请求"/option/order-list?"接口;
+  if(请求  成功?) then (yes)
+    :实时展示包含输入字符串的选项;
+    :从下拉选项中选择要查询的选项(可多选);
+  else (no)
+    :提示出错信息;
+  endif
+fork again
+  :获取异常处理情况(exceptionHandlingOption)、
+  包裹类型(parcelTypeOption)下拉列表;
+  :从下拉选项中选择要查询的选项(单选);
+fork again  
+  :将选定的发货时间通过时间转化函数，转成时间戳;
+fork again
+  :输入要查询的运单号、最新轨迹停留时长;
+end fork
+end
+
+@enduml

@@ -1,0 +1,56 @@
+@startuml
+
+start
+:获取数据;
+split
+  :点击查看映射，获取到该物流商id;
+  :请求"/system/base/logistic-supplier-map-list"接口;
+  if(请求 成功?) then (yes)
+    :将返回的数据赋给物流商映射表格对象;
+    :弹出物流商映射列表弹窗;
+  else (no)
+    :提示出错信息;
+    stop
+  endif
+  :点击物流商映射列表中的某一个删除按钮，
+  获取到该物流商映射id;
+  :弹出删除确认弹窗;
+  split
+    :点击确认按钮;
+    :请求"/system/base/logistic-supplier-map-delete"接口;
+    if(请求 成功?) then (yes)
+      :请求"/system/base/logistic-supplier-map-list"接口，
+      更新该物流商映射列表;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  split again
+    :点击取消按钮;
+  end split
+  :关闭确认删除弹窗;
+split again
+  :点击新增映射按钮;
+  :弹出新增物流商映射弹窗;
+  repeat
+    :输入或更改映射;
+  repeat while(表单校验 通过?) is (no) not (yes)
+  note right 
+    校验规则伪代码
+    ====
+    //允许中英文，数字，下划线，中划线
+    let reg = new RegExp
+    ("^[\u4E00-\u9FA5A-Za-z0-9_-]+$")
+    //true: 通过校验; false: 未通过校验
+    reg.test(str) 
+  end note
+  :请求"/system/base/logistic-supplier-map-create"接口;
+  if(请求 成功?) then (yes)
+    :关闭新增物流商映射弹窗;
+  else (no)
+    :提示出错信息;
+  endif    
+end split
+end
+
+@enduml

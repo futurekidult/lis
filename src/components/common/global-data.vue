@@ -10,7 +10,10 @@ let logisticsChooseOptions = [
     label: '订单号',
     type: 'remote',
     prop: 'order_id',
-    options: []
+    multiple: true,
+    options: [],
+    option_type: 'order_no',
+    placeholder: '请输入内容'
   },
   {
     label: '物流商',
@@ -18,7 +21,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'logistic_supplier_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '海外仓',
@@ -26,7 +29,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'oversea_location_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '仓库分布',
@@ -34,7 +37,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'warehouse_area_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '仓库',
@@ -42,7 +45,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'warehouse_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '平台',
@@ -50,7 +53,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'platform_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '店铺',
@@ -58,13 +61,16 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'shop_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: 'SKU',
     type: 'remote',
     prop: 'sku_id',
-    options: []
+    multiple: true,
+    options: [],
+    option_type: 'name',
+    placeholder: '请输入内容'
   },
   {
     label: '标签',
@@ -72,7 +78,7 @@ let logisticsChooseOptions = [
     multiple: true,
     prop: 'label_id',
     options: [],
-    option_type: 'normal'
+    option_type: 'name'
   },
   {
     label: '包裹类型',
@@ -300,9 +306,341 @@ const transitState = [
   }
 ];
 
+//订单表单公共项
+const orderCommonFields = [
+  {
+    label: '平台',
+    type: 'select',
+    multiple: false,
+    prop: 'platform_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '店铺',
+    type: 'select',
+    multiple: false,
+    prop: 'shop_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '支付时间',
+    type: 'single-date',
+    prop: 'payment_time'
+  }
+];
+
+// 新增订单表单项
+const createOrderFields = [
+  {
+    label: '订单号',
+    type: 'input',
+    prop: 'order_no'
+  }
+].concat(orderCommonFields);
+
+// 修改订单表单项
+let updateOrderFields = [
+  {
+    label: '订单号',
+    type: 'remote',
+    prop: 'id',
+    multiple: false,
+    options: [],
+    option_type: 'order_no',
+    placeholder: '请输入内容'
+  }
+].concat(orderCommonFields);
+
+// 订单表单校验项
+const orderRules = {
+  id: [
+    {
+      required: true,
+      message: '请输入订单号',
+      trigger: 'blur'
+    }
+  ],
+  order_no: [
+    {
+      required: true,
+      message: '请输入订单号'
+    },
+    {
+      pattern: /^[A-Za-z0-9-]+$/,
+      message: '只允许输入英文、数字、中划线'
+    },
+    {
+      min: 1,
+      max: 25,
+      message: '最多只允许输入25位'
+    }
+  ],
+  platform_id: [
+    {
+      required: true,
+      message: '请选择平台'
+    }
+  ],
+  shop_id: [
+    {
+      required: true,
+      message: '请选择店铺'
+    }
+  ],
+  payment_time: [
+    {
+      type: 'date',
+      required: true,
+      message: '请选择支付时间'
+    }
+  ]
+};
+
+//导入错误列表
+const errorTableFields = [
+  {
+    label: '行号',
+    prop: 'index',
+    width: '55px'
+  },
+  {
+    label: '订单号',
+    prop: 'order_no'
+  },
+  {
+    label: '运单号',
+    prop: 'waybill_no'
+  },
+  {
+    label: '物流商',
+    prop: 'logistic_supplier'
+  },
+  {
+    label: '邮编',
+    prop: 'postcode'
+  },
+  {
+    label: '仓库',
+    prop: 'warehouse'
+  },
+  {
+    label: '平台',
+    prop: 'platform'
+  },
+  {
+    label: '店铺',
+    prop: 'shop'
+  },
+  {
+    label: 'SKU',
+    prop: 'sku'
+  },
+  {
+    label: '客户国家',
+    prop: 'country'
+  },
+  {
+    label: '客户州',
+    prop: 'state'
+  },
+  {
+    label: '客户城市',
+    prop: 'city'
+  },
+  {
+    label: '客户地址',
+    prop: 'address'
+  },
+  {
+    label: '客户电话',
+    prop: 'phone'
+  },
+  {
+    label: '客户姓名',
+    prop: 'customer_name'
+  },
+  {
+    label: '客户邮箱',
+    prop: 'email'
+  },
+  {
+    label: '支付时间',
+    prop: 'payment_time'
+  },
+  {
+    label: '发货时间',
+    prop: 'shipping_time'
+  },
+  {
+    label: '备注',
+    prop: 'remark'
+  }
+];
+
+//时效统计筛选公共项
+const statisticsCommonChooseOptions = [
+  {
+    label: '海外仓',
+    type: 'select',
+    multiple: true,
+    prop: 'oversea_location_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '仓库分布',
+    type: 'select',
+    multiple: true,
+    prop: 'warehouse_area_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '仓库',
+    type: 'select',
+    multiple: true,
+    prop: 'warehouse_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '物流商',
+    type: 'select',
+    multiple: true,
+    prop: 'logistic_supplier_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: 'SKU',
+    type: 'remote',
+    prop: 'sku_id',
+    multiple: true,
+    options: [],
+    option_type: 'name',
+    placeholder: '请输入内容'
+  },
+  {
+    label: '店铺',
+    type: 'select',
+    multiple: true,
+    prop: 'shop_id',
+    options: [],
+    option_type: 'name'
+  }
+];
+
+//统计维度
+const statisticalDimension = [
+  {
+    label: '物流商',
+    value: 10
+  },
+  {
+    label: '仓库',
+    value: 20
+  },
+  {
+    label: '店铺',
+    value: 30
+  },
+  {
+    label: 'SKU',
+    value: 40
+  }
+];
+
+//下钻映射
+const titleMap = {
+  10: '仓库数量',
+  20: '物流商数量',
+  30: 'SKU数量',
+  40: '店铺数量'
+};
+
+//时效统计公共项
+const commonListFields = [
+  {
+    label: '2天首枪时效合格率',
+    prop: 'receipt_2days_rate'
+  },
+  {
+    label: '3天首枪时效合格率',
+    prop: 'receipt_3days_rate'
+  },
+  {
+    label: '送达时效合格率',
+    prop: 'delivery_rate'
+  }
+];
+
+//合格率类别
+const rate = ['2天首枪时效合格率', '3天首枪时效合格率', '送达时效合格率'];
+
+//每日时效
+const dailyRate = ['发货时间'].concat(rate);
+
+//每日时效统计筛选项
+const dailyChooseOptions = statisticsCommonChooseOptions.concat([
+  {
+    label: '发货时间',
+    type: 'date',
+    prop: 'shipping_time'
+  }
+]);
+
+//平均时效
+const averageRate = ['日期'].concat(rate);
+
+//平均时效统计筛选项
+const averageChooseOptions = statisticsCommonChooseOptions.concat([
+  {
+    label: '发货时间',
+    type: 'select',
+    prop: 'shipping_time_unit',
+    multiple: false,
+    options: [
+      {
+        value: '按周',
+        key: 'w'
+      },
+      {
+        value: '按月',
+        key: 'm'
+      },
+      {
+        value: '按年',
+        key: 'y'
+      }
+    ],
+    option_type: 'other'
+  },
+  {
+    label: '',
+    type: 'select',
+    prop1: 'start_shipping_time',
+    prop2: 'end_shipping_time',
+    range: true
+  }
+]);
+
 export default {
+  rate,
+  dailyRate,
+  titleMap,
+  orderRules,
   transitState,
+  averageRate,
+  errorTableFields,
+  commonListFields,
+  createOrderFields,
+  updateOrderFields,
   logisticsTableFields,
+  dailyChooseOptions,
+  statisticalDimension,
+  averageChooseOptions,
   logisticsChooseOptions
 };
 </script>

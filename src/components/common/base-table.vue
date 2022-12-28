@@ -1,6 +1,7 @@
 <template>
   <section>
     <el-dropdown
+      v-if="iconVisible"
       trigger="click"
       style="float: right; margin-top: -40px"
     >
@@ -24,9 +25,7 @@
               @node-drop="dropOk"
             >
               <template #default="{ node, data }">
-                <el-icon>
-                  <Menu />
-                </el-icon>
+                <el-icon><Grid /></el-icon>
                 <span class="column"> {{ node.label }}</span>
                 <el-switch
                   v-model="data.show"
@@ -56,17 +55,25 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column
+        v-if="selectionVisible"
         type="selection"
         width="55"
+      />
+      <el-table-column
+        v-if="indexVisible"
+        label="序号"
+        type="index"
+        align="center"
+        width="80px"
       />
       <template v-for="item in table.tableFields">
         <el-table-column
           v-if="item.show"
-          :key="item.id"
+          :key="item.prop"
           :prop="item.prop"
           :label="item.label"
           :fixed="item.fixed"
-          :width="item.width ? item.width : '200px'"
+          :width="getWidth(item.width)"
           align="center"
         >
           <template
@@ -79,6 +86,7 @@
               closable
               effect="plain"
               style="width: 80px"
+              @close="deleteLabel(label.id, scope.row.id)"
             >
               {{ label.name }}
             </el-tag>
@@ -114,6 +122,7 @@
         </el-table-column>
       </template>
       <el-table-column
+        v-if="operationVisible"
         fixed="right"
         label="操作"
         width="150px"
@@ -123,7 +132,10 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="position-right">
+    <div
+      v-if="paginationVisible"
+      class="position-right"
+    >
       <el-pagination
         v-if="dataTotal > listPagination.page_size"
         :current-page="listPagination.current_page"
@@ -142,21 +154,24 @@
 
 <script>
 import {
+  Grid,
   Operation,
-  Menu,
   ArrowLeft,
   ArrowRight
 } from '@element-plus/icons-vue';
 
 export default {
   components: {
-    Menu,
+    Grid,
     Operation,
     ArrowLeft,
     ArrowRight
   },
-  inject: ['getTable'],
   props: {
+    table: {
+      type: Object,
+      default: null
+    },
     pagination: {
       type: Object,
       default: null
@@ -164,9 +179,33 @@ export default {
     total: {
       type: Number,
       default: 0
+    },
+    iconVisible: {
+      type: Boolean,
+      default: true
+    },
+    indexVisible: {
+      type: Boolean,
+      default: false
+    },
+    selectionVisible: {
+      type: Boolean,
+      default: true
+    },
+    operationVisible: {
+      type: Boolean,
+      default: true
+    },
+    paginationVisible: {
+      type: Boolean,
+      default: true
+    },
+    type: {
+      type: String,
+      default: ''
     }
   },
-  emits: ['change-pagination'],
+  emits: ['change-pagination', 'get-selected-ids', 'get-deleted-id'],
   data() {
     return {
       tableKey: 1,
@@ -174,13 +213,9 @@ export default {
         label: 'label'
       },
       dataTotal: this.total,
-      listPagination: this.pagination
+      listPagination: this.pagination,
+      ids: []
     };
-  },
-  computed: {
-    table() {
-      return this.getTable();
-    }
   },
   watch: {
     pagination(val) {
@@ -200,8 +235,12 @@ export default {
     changeStatus(arr) {
       localStorage.setItem('logistics-column', JSON.stringify(arr));
     },
-    handleSelectionChange() {
-      //执行选中之后的操作
+    // 获取选中的row
+    handleSelectionChange(val) {
+      this.ids = val.map((item) => {
+        return item.id;
+      });
+      this.$emit('get-selected-ids', this.ids);
     },
     // 固定表格列
     toFixedPosition(str, node, table) {
@@ -230,6 +269,22 @@ export default {
       this.listPagination.page_size = val;
       this.listPagination.current_page = 1;
       this.$emit('change-pagination', this.pagination);
+    },
+    deleteLabel(labelId, waybillId) {
+      this.$emit('get-deleted-id', {
+        id: waybillId,
+        label_id: labelId
+      });
+    },
+    getWidth(width) {
+      if (this.type) {
+        return '';
+      }
+      if (width) {
+        return width;
+      } else {
+        return '200px';
+      }
     }
   }
 };
