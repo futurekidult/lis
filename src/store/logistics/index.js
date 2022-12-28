@@ -171,8 +171,7 @@ export default {
             'current_event_time',
             'estimated_delivery_time'
           ]);
-          res.data.receipt_days = `${res.data.receipt_days}天`;
-          res.data.delivery_days = `${res.data.delivery_days}天`;
+          handleDays(['receipt_days', 'delivery_days'], res.data);
           res.data.logistic_tracking.forEach((item) => {
             item.event_time = timestampToTime(item.event_time);
           });
@@ -189,8 +188,6 @@ export default {
     },
     async updateWaybill(_, payload) {
       let params = payload;
-      params.state_id = params.state;
-      params.city_id = params.city;
       params.shipping_time = timeToTimestamp(params.shipping_time);
       await axios.post('waybill/update', params).then((res) => {
         if (res.code === 200) {
