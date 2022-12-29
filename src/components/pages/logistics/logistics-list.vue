@@ -428,7 +428,7 @@ export default {
           tableFields: this.tableFields,
           tableData: this.listData
         };
-          this.labelList = JSON.parse(cache('label'));
+        this.labelList = JSON.parse(cache('label'));
       } catch (err) {
         this.$store.commit('logistics/setListLoading', false);
         return;
@@ -697,6 +697,7 @@ export default {
           waybill_id: this.waybillId
         });
         this.viewWaybill(this.waybillId, this.stayTime, false);
+        this.getListData(this.activeTabKey);
       } catch (err) {
         return;
       }
