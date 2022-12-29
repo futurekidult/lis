@@ -722,6 +722,7 @@ export default {
           waybill_id: this.waybillId
         });
         this.viewWaybill(this.waybillId, this.stayTime, false);
+        this.getListData(this.activeTabKey);
       } catch (err) {
         return;
       }

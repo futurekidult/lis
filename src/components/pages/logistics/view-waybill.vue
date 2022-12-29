@@ -381,6 +381,11 @@ export default {
         tableFields
       };
     }
+  },
+  watch: {
+    form(val) {
+      this.waybillForm = val;
+    }
   }
 };
 </script>
