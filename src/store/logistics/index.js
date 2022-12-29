@@ -63,7 +63,9 @@ export default {
           res.data.list.forEach((item) => {
             // 最新轨迹停留时长计算
             if (
-              (item.transit_state < 60 && item.transit_state !== 0) ||
+              (item.transit_state < 60 &&
+                item.transit_state !== 0 &&
+                item.transit_state !== 10) ||
               (item.transit_state === 60 && item.exception_handling !== 20)
             ) {
               let currentTime = new Date().getTime();
