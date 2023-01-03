@@ -354,11 +354,6 @@ export default {
             message: '请输入客户地址'
           },
           {
-            pattern: /^[A-Za-z0-9- .&%#,()\/]+$/,
-            message:
-              '只允许输入英文、数字、中划线、空格、点、/、& 、%、#、英文逗号、()英文括号'
-          },
-          {
             min: 1,
             max: 50,
             message: '最多只允许输入50位'
@@ -368,11 +363,6 @@ export default {
           {
             required: true,
             message: '请输入客户姓名'
-          },
-          {
-            pattern: /^[A-Za-z0-9- .&%#,()\/]+$/,
-            message:
-              '只允许输入英文、数字、中划线、空格、点、/、& 、%、#、英文逗号、()英文括号'
           },
           {
             min: 1,
@@ -385,8 +375,8 @@ export default {
             required: false
           },
           {
-            pattern: /^[A-Za-z0-9-.+ ]+$/,
-            message: '只允许输入数字、英文、＋、空格、中划线、点'
+            pattern: /^[A-Za-z0-9-.+ ()\/]+$/,
+            message: '只允许输入数字、英文、＋、空格、中划线、点、/、()英文括号'
           },
           {
             min: 1,
