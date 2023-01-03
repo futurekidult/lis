@@ -389,7 +389,7 @@ export default {
             required: false
           },
           {
-            pattern: /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
+            pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
             message: '输入的邮箱不合法'
           }
         ],
