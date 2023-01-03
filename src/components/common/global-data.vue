@@ -620,6 +620,15 @@ const averageChooseOptions = statisticsCommonChooseOptions.concat([
   {
     label: '',
     type: 'select',
+    prop: 'year',
+    options: [],
+    placeholder: '  ',
+    multiple: false,
+    option_type: 'other'
+  },
+  {
+    label: '',
+    type: 'select',
     prop1: 'start_shipping_time',
     prop2: 'end_shipping_time',
     range: true

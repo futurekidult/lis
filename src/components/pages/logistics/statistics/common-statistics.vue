@@ -24,7 +24,7 @@
         :properties="properties"
         :base-form="chooseForm"
         :inline="true"
-        width="130px"
+        width="100px"
         @get-warehouse="getWarehouse"
         @get-date="getDate"
       >

@@ -6,7 +6,7 @@
     >
       提示：{{ emptyStr }}
     </div>
-    <el-scrollbar height="600px">
+    <el-scrollbar :height="originData.length ? '600px' : ''">
       <div
         v-for="(data, i) in originData"
         :key="i"
