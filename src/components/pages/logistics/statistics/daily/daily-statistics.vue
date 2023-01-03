@@ -38,10 +38,10 @@ export default {
       this.form = obj.params;
       this.dimension = obj.params.statistical_dimension;
       if (obj.request) {
-        this.$store.commit('statistics/setDailyLoading', true);
         if (!this.form.start_shipping_time || !this.form.end_shipping_time) {
           this.$message.warning('发货时间为必填项');
         } else {
+          this.$store.commit('statistics/setDailyLoading', true);
           try {
             await this.$store.dispatch('statistics/getDailyStatistics', {
               params: obj.params

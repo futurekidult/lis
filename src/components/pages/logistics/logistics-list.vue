@@ -441,12 +441,12 @@ export default {
       }
     },
     async getListData(transitState = '') {
-      this.$store.commit('logistics/setListLoading', true);
       let params = this.handleChoose(transitState);
       if (!params.start_create_time || !params.end_create_time) {
         this.$message.warning('创建时间为必填项');
       } else {
         try {
+          this.$store.commit('logistics/setListLoading', true);
           await this.$store.dispatch('logistics/getListData', { params });
           this.listData = this.$store.state.logistics.listData;
           this.table = {
