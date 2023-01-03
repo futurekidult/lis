@@ -368,8 +368,8 @@ const orderRules = {
       message: '请输入订单号'
     },
     {
-      pattern: /^[A-Za-z0-9-]+$/,
-      message: '只允许输入英文、数字、中划线'
+      pattern: /^[A-Za-z0-9-#]+$/,
+      message: '只允许输入英文、数字、中划线、#'
     },
     {
       min: 1,
