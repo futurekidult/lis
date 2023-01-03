@@ -93,14 +93,12 @@ export default {
         data: payload,
         responseType: 'blob'
       }).then((res) => {
-        if (res.type !== 'application/json') {
-          download(
-            res,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            '每日物流时效表',
-            'xlsx'
-          );
-        }
+        download(
+          res,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          '每日物流时效表',
+          'xlsx'
+        );
       });
     },
     async getAverageStatistics(context, payload) {
@@ -149,14 +147,12 @@ export default {
         data: payload,
         responseType: 'blob'
       }).then((res) => {
-        if (res.type !== 'application/json') {
-          download(
-            res,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            '平均物流时效表',
-            'xlsx'
-          );
-        }
+        download(
+          res,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          '平均物流时效表',
+          'xlsx'
+        );
       });
     }
   }

@@ -20,65 +20,75 @@ http.interceptors.request.use((config) => {
 let isRefreshing = false;
 let requests = [];
 
-http.interceptors.response.use(
-  async (res) => {
-    if (res.data.type === 'application/json') {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const { message } = JSON.parse(reader.result);
-        ElMessage.error(message);
+const handleExport = async (res) => {
+  if (res.data.type === 'application/json') {
+    const reader = new FileReader();
+    reader.readAsText(res.data);
+    return new Promise((resolve) => {
+      reader.onloadend = () => {
+        resolve(JSON.parse(reader.result));
       };
-      reader.readAsText(res.data);
-    }
-    let { code } = res.data;
-    if (code) {
-      if (code !== 200 && code !== 40015) {
-        if (code === 401) {
-          localStorage.removeItem('logistics-token');
-          if (process.env.NODE_ENV === 'development') {
-            await devLogin();
-            return http(res.config);
-          } else {
-            window.location.href = res.data.data.auth_url;
-          }
-        } else if (code === 403) {
-          ElMessage.error('无权限访问');
-        } else if (code === 405) {
-          //token过期时，重新获取token并执行刚暂停的请求
-          let { config } = res;
-          if (!isRefreshing) {
-            isRefreshing = true;
-            return await refreshToken()
-              .then((response) => {
-                let token = response.csrftoken;
-                config.headers['X-CSRFToken'] = token;
-                localStorage.setItem('logistics-token', token);
-                config.baseURL = '/api';
-                requests.forEach((cb) => {
-                  cb(token);
-                });
-                requests = [];
-                return http(config);
-              })
-              .finally(() => {
-                isRefreshing = false;
-              });
-          } else {
-            return new Promise((resolve) => {
-              requests.push((token) => {
-                config.baseURL = '/api';
-                config.headers['X-CSRFToken'] = token;
-                resolve(http(config));
-              });
-            });
-          }
-        } else {
-          ElMessage.error(res.data.message);
-        }
-        throw new Error(code);
-      }
-    }
+    });
+  } else {
     return res.data;
+  }
+};
+
+http.interceptors.response.use(
+  async (response) => {
+    let result = response;
+    result = await handleExport(response).then(async (res) => {
+      let { code } = res;
+      if (code) {
+        if (code !== 200 && code !== 40015) {
+          if (code === 401) {
+            localStorage.removeItem('logistics-token');
+            if (process.env.NODE_ENV === 'development') {
+              await devLogin();
+              return http(response.config);
+            } else {
+              window.location.href = res.data.auth_url;
+            }
+          } else if (code === 403) {
+            ElMessage.error('无权限访问');
+          } else if (code === 405) {
+            //token过期时，重新获取token并执行刚暂停的请求
+            let { config } = response;
+            if (!isRefreshing) {
+              isRefreshing = true;
+              return await refreshToken()
+                .then((data) => {
+                  let token = data.csrftoken;
+                  config.headers['X-CSRFToken'] = token;
+                  localStorage.setItem('logistics-token', token);
+                  config.baseURL = '/api';
+                  requests.forEach((cb) => {
+                    cb(token);
+                  });
+                  requests = [];
+                  return http(config);
+                })
+                .finally(() => {
+                  isRefreshing = false;
+                });
+            } else {
+              return new Promise((resolve) => {
+                requests.push((token) => {
+                  config.baseURL = '/api';
+                  config.headers['X-CSRFToken'] = token;
+                  resolve(http(config));
+                });
+              });
+            }
+          } else {
+            ElMessage.error(res.message);
+          }
+          throw new Error(code);
+        }
+      }
+      return res;
+    });
+    return result;
   },
   (err) => {
     //http code处理
