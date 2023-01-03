@@ -58,7 +58,11 @@
 </template>
 
 <script>
-import { handleDateRange, getWeek } from '../../../../utils/index.js';
+import {
+  handleDateRange,
+  getWeek,
+  defaultTime
+} from '../../../../utils/index.js';
 
 export default {
   props: {
@@ -85,7 +89,7 @@ export default {
   },
   mounted() {
     if (this.type === 'daily') {
-      this.chooseForm.shipping_time = this.lastMonth();
+      this.chooseForm.shipping_time = defaultTime(31);
     }
   },
   methods: {
@@ -96,7 +100,7 @@ export default {
     handleChoose() {
       if (this.type === 'daily') {
         if (!this.$store.state.statistics.isDateChange) {
-          this.chooseForm.shipping_time = this.lastMonth();
+          this.chooseForm.shipping_time = defaultTime(31);
         }
         handleDateRange(this.chooseForm, 'shipping_time');
       }
@@ -110,12 +114,6 @@ export default {
         }
       }
       return params;
-    },
-    lastMonth() {
-      let end = new Date();
-      let start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 31);
-      return [start, end];
     },
     getWarehouse(val) {
       if (this.chooseForm.warehouse_id.length === 0) {
@@ -145,7 +143,7 @@ export default {
       };
       this.warehouse = [];
       if (this.type === 'daily') {
-        this.chooseForm.shipping_time = this.lastMonth();
+        this.chooseForm.shipping_time = defaultTime(31);
         this.$store.commit('statistics/setDateChange', false);
       } else {
         this.chooseForm.shipping_time_unit = 'w';

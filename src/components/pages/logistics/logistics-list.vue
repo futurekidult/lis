@@ -340,7 +340,8 @@ import {
   handleDateRange,
   timeToTimestamp,
   cache,
-  getCountryIso3
+  getCountryIso3,
+  defaultTime
 } from '../../../utils/index.js';
 import { getState, getCity } from '../../../utils/state-city.js';
 
@@ -392,7 +393,7 @@ export default {
     };
   },
   mounted() {
-    this.chooseForm.create_time = this.lastThreeMonth();
+    this.chooseForm.create_time = defaultTime(90);
     let column = JSON.parse(localStorage.getItem('logistics-column'));
     if (column) {
       this.tableFields = column;
@@ -412,7 +413,7 @@ export default {
     },
     handleChoose(transitState) {
       if (!this.$store.state.logistics.isDateChange) {
-        this.chooseForm.create_time = this.lastThreeMonth();
+        this.chooseForm.create_time = defaultTime(90);
       }
       handleDateRange(this.chooseForm, 'shipping_time');
       handleDateRange(this.chooseForm, 'create_time');
@@ -468,7 +469,7 @@ export default {
         warehouse_id: []
       };
       this.warehouse = [];
-      this.chooseForm.create_time = this.lastThreeMonth();
+      this.chooseForm.create_time = defaultTime(90);
       this.$store.commit('logistics/setDateChange', false);
       this.getListData();
     },
@@ -481,12 +482,6 @@ export default {
     changePagination(val) {
       this.pagination = val;
       this.getListData(this.activeTabKey);
-    },
-    lastThreeMonth() {
-      let end = new Date();
-      let start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-      return [start, end];
     },
     showOrderForm(type) {
       this.orderFormType = type;

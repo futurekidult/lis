@@ -37,7 +37,8 @@ export const timeToTimestamp = (time) => {
 export const handleDateRange = (form, prop) => {
   if (form[prop]) {
     form[`start_${prop}`] = timeToTimestamp(form[prop][0]);
-    form[`end_${prop}`] = timeToTimestamp(form[prop][1]);
+    let endDate = new Date(timestampToTime(form[prop][1] / 1000));
+    form[`end_${prop}`] = timeToTimestamp(endDate.setHours(23, 59, 59));
   } else {
     form[`start_${prop}`] = '';
     form[`end_${prop}`] = '';
@@ -222,4 +223,13 @@ export const getEmptyList = (val) => {
     }
     return `${emptyArr.join('、')}无数据`;
   }
+};
+
+//设置时间的起始和结束时分秒
+export const defaultTime = (days) => {
+  let date = new Date();
+  let start = date.setHours(0, 0, 0);
+  let end = date.setHours(23, 59, 59);
+  start = start - 3600 * 1000 * 24 * days;
+  return [start, end];
 };
