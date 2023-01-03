@@ -12,6 +12,7 @@
       />
 
       <el-table
+        v-if="averageList.length"
         :data="averageList"
         border
       >
@@ -91,6 +92,9 @@ export default {
       dimension: null
     };
   },
+  mounted() {
+    this.$store.commit('statistics/setAverageTableVisible', false);
+  },
   methods: {
     changeRateColor,
     async getForm(obj) {
@@ -98,34 +102,53 @@ export default {
       this.dimension = obj.params.statistical_dimension;
       if (obj.request) {
         this.$store.commit('statistics/setAverageLoading', true);
-        try {
-          await this.$store.dispatch('statistics/getAverageStatistics', {
-            params: obj.params
-          });
-          this.averageStatistics =
-            this.$store.state.statistics.averageStatistics;
-          this.emptyList = this.$store.state.statistics.averageEmptyList;
-          this.averageList = this.$store.state.statistics.averageList;
-          this.firstLabel = this.$global.statisticalDimension.find((item) => {
-            return item.value === this.dimension;
-          }).label;
-          this.lastLabel = this.$global.titleMap[this.dimension];
-          this.listFields = [
-            {
-              label: this.firstLabel,
-              prop: 'name'
+        if (this.form.shipping_time_unit !== 'y' && !this.form.year) {
+          this.$message.warning('发货时间在选择按周/按月时，年份是必填的');
+        } else if (!this.form.shipping_time_unit) {
+          this.$message.warning('发货时间单位为必填项');
+        } else if (
+          !this.form.start_shipping_time ||
+          !this.form.end_shipping_time
+        ) {
+          this.$message.warning('发货时间区间为必填项');
+        } else {
+          try {
+            await this.$store.dispatch('statistics/getAverageStatistics', {
+              params: obj.params
+            });
+            this.averageStatistics =
+              this.$store.state.statistics.averageStatistics;
+            this.emptyList = this.$store.state.statistics.averageEmptyList;
+            this.averageList = this.$store.state.statistics.averageList;
+            this.firstLabel = this.$global.statisticalDimension.find((item) => {
+              return item.value === this.dimension;
+            }).label;
+            this.lastLabel = this.$global.titleMap[this.dimension];
+            this.listFields = [
+              {
+                label: this.firstLabel,
+                prop: 'name'
+              }
+            ].concat(this.$global.commonListFields);
+            this.listFields = this.listFields.concat([
+              {
+                label: this.lastLabel,
+                prop: 'count'
+              }
+            ]);
+            if (
+              !this.averageStatistics.length &&
+              !this.emptyList.length &&
+              !this.averageList.length
+            ) {
+              this.$store.commit('statistics/setAverageTableVisible', false);
+              this.$message.warning('当前查询结果为空');
             }
-          ].concat(this.$global.commonListFields);
-          this.listFields = this.listFields.concat([
-            {
-              label: this.lastLabel,
-              prop: 'count'
-            }
-          ]);
-          this.$store.commit('statistics/setAverageLoading', false);
-        } catch (err) {
-          this.$store.commit('statistics/setAverageLoading', false);
-          return;
+            this.$store.commit('statistics/setAverageLoading', false);
+          } catch (err) {
+            this.$store.commit('statistics/setAverageLoading', false);
+            return;
+          }
         }
       }
     },

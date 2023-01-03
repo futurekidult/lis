@@ -207,8 +207,8 @@ export const setYearOption = () => {
   let option = [];
   for (let year = 2018; year <= currentYear + 1; year++) {
     option.push({
-      label: year,
-      value: year
+      value: year,
+      key: year
     });
   }
   return option;

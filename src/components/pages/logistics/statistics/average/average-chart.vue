@@ -6,7 +6,7 @@
     >
       提示：{{ emptyStr }}
     </div>
-    <el-scrollbar>
+    <el-scrollbar v-if="$store.state.statistics.averageStatistics.length">
       <div
         v-loading="$store.state.statistics.averageLoading"
         class="chart-layout"

@@ -32,8 +32,11 @@
         :collapse-tags-tooltip="item.multiple"
         :remote-method="(str) => remoteMethod(str, item.prop, item.type)"
         :style="
-          item.prop === 'shipping_time_unit' ? 'width: 90px !important' : ''
+          item.prop === 'shipping_time_unit' || item.prop === 'year'
+            ? 'width: 90px !important'
+            : ''
         "
+        :disabled="item.prop === 'year' && showYear"
         @change="
           (val) => getRelatedInfo(val, item.multiple, item.prop, item.type)
         "
@@ -118,9 +121,9 @@
             <div v-else>
               <el-option
                 v-for="i in option"
-                :key="i.value"
-                :label="i.label"
-                :value="i.value"
+                :key="i.key"
+                :label="i.value"
+                :value="i.key"
               />
             </div>
           </el-select>
@@ -160,7 +163,7 @@
               <el-option
                 v-for="i in option"
                 :key="i.value"
-                :label="i.label"
+                :label="i.value"
                 :value="i.value"
               />
             </div>
@@ -215,7 +218,8 @@ export default {
       remoteLoading: false,
       warehouse: [],
       option: null,
-      date: new Date()
+      date: new Date(),
+      showYear: false
     };
   },
   watch: {
@@ -227,12 +231,17 @@ export default {
         if (val === 'w') {
           this.option = setWeekOption();
           this.getCurrentWeek();
+          this.form.year = this.date.getFullYear();
+          this.showYear = false;
         } else if (val === 'y') {
           this.option = setYearOption();
           this.getCurrentYear();
+          this.showYear = true;
         } else {
           this.option = 12;
           this.getCurrentMonth();
+          this.form.year = this.date.getFullYear();
+          this.showYear = false;
         }
       },
       immediate: true,
@@ -267,6 +276,7 @@ export default {
       let year = this.date.getFullYear();
       this.form.start_shipping_time = year;
       this.form.end_shipping_time = year;
+      this.form.year = '';
     },
     getOptionObj(prop) {
       return this.properties.find((item) => {
@@ -277,7 +287,11 @@ export default {
       this.optionLoading = true;
       let selectObj = this.getOptionObj(prop);
       try {
-        if (prop !== 'exception_handling' && prop !== 'parcel_type') {
+        if (
+          prop !== 'exception_handling' &&
+          prop !== 'parcel_type' &&
+          prop !== 'year'
+        ) {
           let newProp = prop.replace('_id', '');
           let arr = [];
           arr = newProp.split('_');
@@ -290,11 +304,13 @@ export default {
             await this.$store.dispatch(`get${arr.join('')}`);
           }
           selectObj.options = JSON.parse(cache(newProp));
-        } else {
+        } else if (prop !== 'year') {
           if (!cache(prop)) {
             await this.$store.dispatch('getSystemParameter');
           }
           selectObj.options = JSON.parse(cache(prop));
+        } else {
+          selectObj.options = setYearOption();
         }
         this.optionLoading = false;
       } catch (err) {
@@ -385,4 +401,3 @@ export default {
   }
 };
 </script>
-
