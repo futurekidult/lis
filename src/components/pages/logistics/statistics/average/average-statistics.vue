@@ -101,7 +101,6 @@ export default {
       this.form = obj.params;
       this.dimension = obj.params.statistical_dimension;
       if (obj.request) {
-        this.$store.commit('statistics/setAverageLoading', true);
         if (this.form.shipping_time_unit !== 'y' && !this.form.year) {
           this.$message.warning('发货时间在选择按周/按月时，年份是必填的');
         } else if (!this.form.shipping_time_unit) {
@@ -112,6 +111,7 @@ export default {
         ) {
           this.$message.warning('发货时间区间为必填项');
         } else {
+          this.$store.commit('statistics/setAverageLoading', true);
           try {
             await this.$store.dispatch('statistics/getAverageStatistics', {
               params: obj.params
