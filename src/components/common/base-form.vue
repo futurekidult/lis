@@ -215,7 +215,7 @@ export default {
       timeout: null,
       form: this.baseForm,
       optionLoading: false,
-      remoteLoading: false,
+      remoteLoading: true,
       warehouse: [],
       option: null,
       date: new Date(),
@@ -358,7 +358,7 @@ export default {
             let selectObj = this.getOptionObj(prop);
             selectObj.options = [];
           }
-        }, 1000);
+        }, 500);
       }
     },
     async getRelatedInfo(id, flag, prop, type) {
