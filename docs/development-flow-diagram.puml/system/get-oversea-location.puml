@@ -28,13 +28,8 @@ end split
     :请求"/system/base/oversea-location-update"接口;
   endif
   if(请求 成功?) then (yes)
-    if(新增 ?) then (yes)
-      :current_page = 1;
-      :删除overseaLocation变量;
-    endif
-    :删除overseaLocationOption缓存;
-    :获取数据;
     :提示成功，关闭弹窗;
+    :更新列表;
   else (no)
     :提示出错信息;
   endif

@@ -647,13 +647,13 @@ const LogisticSupplierTableFields = [
     label: '物流商中文名称',
     prop: 'name_cn',
     show: true,
-    width: '300px'
+    width: '350px'
   },
   {
     label: '物流商英文名称',
     prop: 'name_en',
     show: true,
-    width: '300px'
+    width: '350px'
   },
   {
     label: '物流商简码',
