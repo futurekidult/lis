@@ -66,6 +66,7 @@ declare module '@vue/runtime-core' {
     ErrorTable: typeof import('./src/components/common/error-table.vue')['default']
     GlobalData: typeof import('./src/components/common/global-data.vue')['default']
     LogisticsList: typeof import('./src/components/pages/logistics/logistics-list.vue')['default']
+    LogisticSupplier: typeof import('./src/components/pages/system/base/logistic-supplier.vue')['default']
     MainContainer: typeof import('./src/components/layout/main-container.vue')['default']
     Manage: typeof import('./src/components/layout/manage.vue')['default']
     Menu: typeof import('./src/components/layout/menu.vue')['default']

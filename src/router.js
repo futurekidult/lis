@@ -30,6 +30,9 @@ const Privilege = () => {
 const Organization = () => {
   return import('./components/pages/system/organization.vue');
 };
+const LogisticSupplier = () => {
+  return import('./components/pages/system/base/logistic-supplier.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -104,6 +107,18 @@ const router = createRouter({
           component: Organization,
           meta: {
             breadcrumb: [{ title: '系统管理' }, { title: '组织管理' }]
+          }
+        },
+        {
+          path: '/system/base/logistic-supplier',
+          name: 'logistic supplier',
+          component: LogisticSupplier,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '物流商列表' }
+            ]
           }
         }
       ]

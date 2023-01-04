@@ -1,8 +1,12 @@
 import axios from '../../utils/axios.js';
 import { ElMessage } from 'element-plus';
+import base from './base/index.js';
 
 export default {
   namespaced: true,
+  modules: {
+    base
+  },
   state() {
     return {
       organizationList: [],

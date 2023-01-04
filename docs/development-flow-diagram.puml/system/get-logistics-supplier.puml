@@ -1,7 +1,7 @@
 @startuml
 
 start
-:获取数据;
+:获取列表数据;
 split
   :点击查看映射，获取到该物流商id;
   :请求"/system/base/logistic-supplier-map-list"接口;

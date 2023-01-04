@@ -635,6 +635,40 @@ const averageChooseOptions = statisticsCommonChooseOptions.concat([
   }
 ]);
 
+//物流商列表项
+const LogisticSupplierTableFields = [
+  {
+    label: 'ID',
+    prop: 'id',
+    width: '90px',
+    show: true
+  },
+  {
+    label: '物流商中文名称',
+    prop: 'name_cn',
+    show: true,
+    width: '300px'
+  },
+  {
+    label: '物流商英文名称',
+    prop: 'name_en',
+    show: true,
+    width: '300px'
+  },
+  {
+    label: '物流商简码',
+    prop: 'shortcode',
+    show: true,
+    width: '400px'
+  },
+  {
+    label: '物流商官网链接',
+    prop: 'homepage',
+    show: true,
+    width: '400px'
+  }
+];
+
 export default {
   rate,
   dailyRate,
@@ -650,6 +684,7 @@ export default {
   dailyChooseOptions,
   statisticalDimension,
   averageChooseOptions,
-  logisticsChooseOptions
+  logisticsChooseOptions,
+  LogisticSupplierTableFields
 };
 </script>

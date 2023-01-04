@@ -130,4 +130,8 @@ h2 {
   justify-content: flex-end;
   margin-top: 14px;
 }
+
+.icon-click {
+  cursor: pointer;
+}
 </style>
