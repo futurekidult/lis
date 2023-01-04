@@ -74,6 +74,7 @@ declare module '@vue/runtime-core' {
     NotFound: typeof import('./src/components/layout/not-found.vue')['default']
     Organization: typeof import('./src/components/pages/system/organization.vue')['default']
     OverseaLocation: typeof import('./src/components/pages/system/base/oversea-location.vue')['default']
+    Platform: typeof import('./src/components/pages/system/base/platform.vue')['default']
     Privilege: typeof import('./src/components/pages/system/privilege.vue')['default']
     Role: typeof import('./src/components/pages/system/role.vue')['default']
     RoleForm: typeof import('./src/components/pages/system/common/role-form.vue')['default']
@@ -83,7 +84,7 @@ declare module '@vue/runtime-core' {
     UpdateWaybill: typeof import('./src/components/pages/logistics/update-waybill.vue')['default']
     User: typeof import('./src/components/pages/system/user.vue')['default']
     ViewWaybill: typeof import('./src/components/pages/logistics/view-waybill.vue')['default']
-    Warehouse_area: typeof import('./src/components/pages/system/base/warehouse_area.vue')['default']
+    WarehouseArea: typeof import('./src/components/pages/system/base/warehouse-area.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

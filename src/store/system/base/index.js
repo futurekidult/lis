@@ -12,7 +12,9 @@ export default {
       overseaLocation: [],
       overseaLocationLength: 0,
       warehouseArea: [],
-      warehouseAreaLength: 0
+      warehouseAreaLength: 0,
+      platform: [],
+      platformLength: 0
     };
   },
   mutations: {
@@ -30,6 +32,10 @@ export default {
     setWarehouseArea(state, payload) {
       state.warehouseArea = payload.list;
       state.warehouseAreaLength = payload.total;
+    },
+    setPlatform(state, payload) {
+      state.platform = payload.list;
+      state.platformLength = payload.total;
     }
   },
   actions: {
@@ -137,6 +143,33 @@ export default {
             ElMessage.success(res.message);
           }
         });
+    },
+    async getPlatform(context, payload) {
+      await axios.get('system/base/platform-list', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.list.forEach((item) => {
+            item.create_time = timestampToTime(item.create_time);
+          });
+          context.commit('setPlatform', {
+            list: res.data.list,
+            total: res.data.total
+          });
+        }
+      });
+    },
+    async createPlatform(_, payload) {
+      await axios.post('system/base/platform-create', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async updatePlatform(_, payload) {
+      await axios.post('system/base/platform-update', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
     }
   }
 };

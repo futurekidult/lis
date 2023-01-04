@@ -39,6 +39,9 @@ const overseaLocation = () => {
 const warehouseArea = () => {
   return import('./components/pages/system/base/warehouse-area.vue');
 };
+const platform = () => {
+  return import('./components/pages/system/base/platform.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -148,6 +151,18 @@ const router = createRouter({
               { title: '系统管理' },
               { title: '基础数据' },
               { title: '仓库分布列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/platform',
+          name: 'platform',
+          component: platform,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '平台列表' }
             ]
           }
         }

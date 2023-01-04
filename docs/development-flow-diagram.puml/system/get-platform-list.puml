@@ -2,4 +2,4 @@
 ' 校验规则伪代码
 ' ====
 ' //允许英文
-' var reg = new RegExp('^[A-Za-z_-]+$')  
+' var reg = new RegExp('^[A-Za-z]+$')  
