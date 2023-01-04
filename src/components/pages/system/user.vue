@@ -97,17 +97,6 @@
           <el-table-column label="操作">
             <template #default="scope">
               <el-button
-                :disabled="scope.row.state === 3"
-                :type="scope.row.state === 1 ? 'danger' : 'primary'"
-                @click="
-                  scope.row.state === 1
-                    ? blockAdmin(scope.row.id)
-                    : unblockAdmin(scope.row.id)
-                "
-              >
-                {{ scope.row.state === 1 ? '封禁账号' : '解除封禁' }}
-              </el-button>
-              <el-button
                 type="warning"
                 :disabled="scope.row.state !== 1"
                 @click="showRoleForm(scope.row.id)"
@@ -296,22 +285,6 @@ export default {
           this.updateAdminRole(this.roleForm);
         }
       });
-    },
-    async blockAdmin(id) {
-      try {
-        await this.$store.dispatch('system/blockAdmin', { id });
-        this.getAdminList();
-      } catch (err) {
-        return;
-      }
-    },
-    async unblockAdmin(id) {
-      try {
-        await this.$store.dispatch('system/unblockAdmin', { id });
-        this.getAdminList();
-      } catch (err) {
-        return;
-      }
     },
     resetForm() {
       this.chooseForm = {};
