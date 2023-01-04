@@ -248,7 +248,10 @@
           clearable
         />
       </el-form-item>
-      <el-form-item label="备注信息">
+      <el-form-item
+        label="备注信息"
+        prop="remark"
+      >
         <el-input
           v-model="waybillForm.remark"
           type="textarea"
