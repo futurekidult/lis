@@ -33,6 +33,9 @@ const Organization = () => {
 const LogisticSupplier = () => {
   return import('./components/pages/system/base/logistic-supplier.vue');
 };
+const overseaLocation = () => {
+  return import('./components/pages/system/base/oversea-location.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -118,6 +121,18 @@ const router = createRouter({
               { title: '系统管理' },
               { title: '基础数据' },
               { title: '物流商列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/oversea-location',
+          name: 'oversea-location',
+          component: overseaLocation,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '海外仓列表' }
             ]
           }
         }

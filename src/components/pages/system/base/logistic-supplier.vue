@@ -147,7 +147,6 @@ export default {
       mapId: 0,
       deleteId: 0,
       keyword: '',
-      logisticSupplier: [],
       viewMapVisible: false,
       createMapVisible: false,
       deleteMapVisible: false,

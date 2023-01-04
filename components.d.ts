@@ -73,6 +73,7 @@ declare module '@vue/runtime-core' {
     NoPrivilege: typeof import('./src/components/layout/no-privilege.vue')['default']
     NotFound: typeof import('./src/components/layout/not-found.vue')['default']
     Organization: typeof import('./src/components/pages/system/organization.vue')['default']
+    OverseaLocation: typeof import('./src/components/pages/system/base/oversea-location.vue')['default']
     Privilege: typeof import('./src/components/pages/system/privilege.vue')['default']
     Role: typeof import('./src/components/pages/system/role.vue')['default']
     RoleForm: typeof import('./src/components/pages/system/common/role-form.vue')['default']

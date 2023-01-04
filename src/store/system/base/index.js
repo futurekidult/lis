@@ -1,5 +1,6 @@
 import { ElMessage } from 'element-plus';
 import axios from '../../../utils/axios.js';
+import { timestampToTime } from '../../../utils/index.js';
 
 export default {
   namespaced: true,
@@ -7,7 +8,9 @@ export default {
     return {
       logisticSupplier: [],
       listLength: 0,
-      mapList: []
+      mapList: [],
+      overseaLocation: [],
+      overseaLocationLength: 0
     };
   },
   mutations: {
@@ -17,6 +20,10 @@ export default {
     },
     setMapList(state, payload) {
       state.mapList = payload;
+    },
+    setOverseaLocation(state, payload) {
+      state.overseaLocation = payload.list;
+      state.overseaLocationLength = payload.total;
     }
   },
   actions: {
@@ -53,6 +60,39 @@ export default {
     async deleteMap(_, payload) {
       await axios
         .post('system/base/logistic-supplier-map-delete', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            ElMessage.success(res.message);
+          }
+        });
+    },
+    async getOverseaLocation(context, payload) {
+      await axios
+        .get('system/base/oversea-location-list', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            res.data.list.forEach((item) => {
+              item.create_time = timestampToTime(item.create_time);
+            });
+            context.commit('setOverseaLocation', {
+              list: res.data.list,
+              total: res.data.total
+            });
+          }
+        });
+    },
+    async createOverseaLocation(_, payload) {
+      await axios
+        .post('system/base/oversea-location-create', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            ElMessage.success(res.message);
+          }
+        });
+    },
+    async updateOverseaLocation(_, payload) {
+      await axios
+        .post('system/base/oversea-location-update', payload)
         .then((res) => {
           if (res.code === 200) {
             ElMessage.success(res.message);
