@@ -42,6 +42,9 @@ const warehouseArea = () => {
 const platform = () => {
   return import('./components/pages/system/base/platform.vue');
 };
+const label = () => {
+  return import('./components/pages/system/base/label.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -163,6 +166,18 @@ const router = createRouter({
               { title: '系统管理' },
               { title: '基础数据' },
               { title: '平台列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/label',
+          name: 'label',
+          component: label,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '标签列表' }
             ]
           }
         }

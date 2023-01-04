@@ -14,7 +14,9 @@ export default {
       warehouseArea: [],
       warehouseAreaLength: 0,
       platform: [],
-      platformLength: 0
+      platformLength: 0,
+      label: [],
+      labelLength: 0
     };
   },
   mutations: {
@@ -36,6 +38,10 @@ export default {
     setPlatform(state, payload) {
       state.platform = payload.list;
       state.platformLength = payload.total;
+    },
+    setLabel(state, payload) {
+      state.label = payload.list;
+      state.labelLength = payload.total;
     }
   },
   actions: {
@@ -166,6 +172,33 @@ export default {
     },
     async updatePlatform(_, payload) {
       await axios.post('system/base/platform-update', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async getLabel(context, payload) {
+      await axios.get('system/base/label-list', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.list.forEach((item) => {
+            item.create_time = timestampToTime(item.create_time);
+          });
+          context.commit('setLabel', {
+            list: res.data.list,
+            total: res.data.total
+          });
+        }
+      });
+    },
+    async createLabel(_, payload) {
+      await axios.post('system/base/label-create', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async updateLabel(_, payload) {
+      await axios.post('system/base/label-update', payload).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.message);
         }
