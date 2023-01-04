@@ -83,6 +83,7 @@ declare module '@vue/runtime-core' {
     UpdateWaybill: typeof import('./src/components/pages/logistics/update-waybill.vue')['default']
     User: typeof import('./src/components/pages/system/user.vue')['default']
     ViewWaybill: typeof import('./src/components/pages/logistics/view-waybill.vue')['default']
+    Warehouse_area: typeof import('./src/components/pages/system/base/warehouse_area.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

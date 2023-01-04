@@ -2,13 +2,13 @@
   <section class="section-border">
     <div class="flex-between">
       <div class="select-title">
-        <el-divider direction="vertical" /> 海外仓列表
+        <el-divider direction="vertical" /> 仓库分布列表
       </div>
       <div>
         <el-input
           v-model="keyword"
           clearable
-          placeholder="海外仓搜索"
+          placeholder="仓库分布搜索"
         >
           <template #suffix>
             <el-icon
@@ -22,7 +22,7 @@
         <el-button
           type="primary"
           style="margin-left: 20px"
-          @click="showOverseaLocationDialog('create')"
+          @click="showWarehouseAreaDialog('create')"
         >
           新增
         </el-button>
@@ -45,7 +45,7 @@
           size="small"
           style="width: 40px; margin-left: 20px"
           @click="
-            showOverseaLocationDialog(
+            showWarehouseAreaDialog(
               'update',
               slotProps.row.id,
               slotProps.row.name
@@ -56,13 +56,13 @@
         </el-button>
       </template>
     </base-table>
-    <!-- 海外仓弹窗 -->
+    <!-- 仓库分布弹窗 -->
     <base-option
-      v-if="overseaLocationVisible"
-      v-model="overseaLocationVisible"
-      :title="overseaLocationType === 'create' ? '新增海外仓' : '修改海外仓'"
+      v-if="warehouseAreaVisible"
+      v-model="warehouseAreaVisible"
+      :title="warehouseAreaType === 'create' ? '新增仓库分布' : '修改仓库分布'"
       width="25%"
-      @close-dialog="closeOverseaLocation"
+      @close-dialog="closeWarehouseArea"
     >
       <el-form
         ref="form"
@@ -70,7 +70,9 @@
         :rules="formRules"
       >
         <el-form-item
-          :label="overseaLocationType === 'create' ? '海外仓' : '新海外仓名'"
+          :label="
+            warehouseAreaType === 'create' ? '仓库分布名' : '新仓库分布名'
+          "
           prop="name"
         >
           <el-input
@@ -80,12 +82,12 @@
           />
         </el-form-item>
         <el-form-item style="float: right; margin-top: 40px">
-          <el-button @click="closeOverseaLocation">
+          <el-button @click="closeWarehouseArea">
             取消
           </el-button>
           <el-button
             type="primary"
-            @click="submitOverseaLocation"
+            @click="submitWarehouseArea"
           >
             确定
           </el-button>
@@ -114,9 +116,9 @@ export default {
       total: 0,
       form: {},
       keyword: '',
-      overseaLocationId: 0,
-      overseaLocationType: '',
-      overseaLocationVisible: false,
+      warehouseAreaId: 0,
+      warehouseAreaType: '',
+      warehouseAreaVisible: false,
       formRules: {
         name: [
           {
@@ -124,8 +126,8 @@ export default {
             message: '请输入'
           },
           {
-            pattern: /^[\u4E00-\u9FA5A-Za-z0-9_-]+$/,
-            message: '只允许中英文，数字，下划线，中划线'
+            pattern: /^[A-Za-z0-9_-]+$/,
+            message: '只允许英文，数字，下划线，中划线'
           },
           {
             min: 1,
@@ -144,21 +146,21 @@ export default {
     }
   },
   mounted() {
-    this.getOverseaLocation();
+    this.getWarehouseArea();
   },
   methods: {
-    async getOverseaLocation() {
+    async getWarehouseArea() {
       try {
-        await this.$store.dispatch('system/base/getOverseaLocation', {
+        await this.$store.dispatch('system/base/getWarehouseArea', {
           params: {
             current_page: this.pagination.current_page,
             page_size: this.pagination.page_size,
             name: this.keyword
           }
         });
-        let overseaLocation = this.$store.state.system.base;
+        let warehouseArea = this.$store.state.system.base;
         this.table = {
-          tableData: overseaLocation.overseaLocation,
+          tableData: warehouseArea.warehouseArea,
           tableFields: [
             {
               label: 'ID',
@@ -167,7 +169,7 @@ export default {
               show: true
             },
             {
-              label: '海外仓名称',
+              label: '仓库分布名称',
               prop: 'name',
               width: '1030px',
               show: true
@@ -180,73 +182,73 @@ export default {
             }
           ]
         };
-        this.total = overseaLocation.overseaLocationLength;
+        this.total = warehouseArea.warehouseAreaLength;
       } catch (err) {
         return;
       }
     },
     queryList() {
       this.pagination.current_page = 1;
-      this.getOverseaLocation();
+      this.getWarehouseArea();
     },
     clearAll() {
       this.pagination = {
         current_page: 1,
         page_size: 10
       };
-      this.getOverseaLocation();
+      this.getWarehouseArea();
     },
     changePagination(val) {
       this.pagination = val;
-      this.getOverseaLocation();
+      this.getWarehouseArea();
     },
-    showOverseaLocationDialog(type, id, name) {
-      this.overseaLocationType = type;
+    showWarehouseAreaDialog(type, id, name) {
+      this.warehouseAreaType = type;
       if (type === 'update') {
-        this.overseaLocationId = id;
+        this.warehouseAreaId = id;
         this.form.name = name;
       } else {
         this.form.name = '';
       }
-      this.overseaLocationVisible = true;
+      this.warehouseAreaVisible = true;
     },
-    closeOverseaLocation() {
-      this.overseaLocationVisible = false;
+    closeWarehouseArea() {
+      this.warehouseAreaVisible = false;
       this.$refs.form.resetFields();
     },
-    async createOverseaLocation() {
+    async createWarehouseArea() {
       try {
-        await this.$store.dispatch('system/base/createOverseaLocation', {
+        await this.$store.dispatch('system/base/createWarehouseArea', {
           name: this.form.name
         });
-        this.overseaLocationVisible = false;
+        this.warehouseAreaVisible = false;
         this.$refs.form.resetFields();
         this.pagination.current_page = 1;
-        this.getOverseaLocation();
+        this.getWarehouseArea();
       } catch (err) {
         return;
       }
     },
-    async updateOverseaLocation() {
+    async updateWarehouseArea() {
       try {
-        await this.$store.dispatch('system/base/updateOverseaLocation', {
-          id: this.overseaLocationId,
+        await this.$store.dispatch('system/base/updateWarehouseArea', {
+          id: this.warehouseAreaId,
           name: this.form.name
         });
-        this.overseaLocationVisible = false;
+        this.warehouseAreaVisible = false;
         this.$refs.form.resetFields();
-        this.getOverseaLocation();
+        this.getWarehouseArea();
       } catch (err) {
         return;
       }
     },
-    async submitOverseaLocation() {
+    async submitWarehouseArea() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.overseaLocationType === 'create') {
-            this.createOverseaLocation();
+          if (this.warehouseAreaType === 'create') {
+            this.createWarehouseArea();
           } else {
-            this.updateOverseaLocation();
+            this.updateWarehouseArea();
           }
         }
       });

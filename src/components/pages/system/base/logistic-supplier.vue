@@ -8,7 +8,6 @@
         v-model="keyword"
         clearable
         placeholder="物流商英文名称搜索"
-        @clear="clear"
       >
         <template #suffix>
           <el-icon
@@ -169,6 +168,13 @@ export default {
       }
     };
   },
+  watch: {
+    keyword(val) {
+      if (val === '') {
+        this.clearAll();
+      }
+    }
+  },
   mounted() {
     this.getLogisticSupplier();
   },
@@ -196,7 +202,7 @@ export default {
       this.pagination.current_page = 1;
       this.getLogisticSupplier();
     },
-    clear() {
+    clearAll() {
       this.pagination = {
         current_page: 1,
         page_size: 10

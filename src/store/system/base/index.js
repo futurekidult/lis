@@ -10,7 +10,9 @@ export default {
       listLength: 0,
       mapList: [],
       overseaLocation: [],
-      overseaLocationLength: 0
+      overseaLocationLength: 0,
+      warehouseArea: [],
+      warehouseAreaLength: 0
     };
   },
   mutations: {
@@ -24,6 +26,10 @@ export default {
     setOverseaLocation(state, payload) {
       state.overseaLocation = payload.list;
       state.overseaLocationLength = payload.total;
+    },
+    setWarehouseArea(state, payload) {
+      state.warehouseArea = payload.list;
+      state.warehouseAreaLength = payload.total;
     }
   },
   actions: {
@@ -93,6 +99,39 @@ export default {
     async updateOverseaLocation(_, payload) {
       await axios
         .post('system/base/oversea-location-update', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            ElMessage.success(res.message);
+          }
+        });
+    },
+    async getWarehouseArea(context, payload) {
+      await axios
+        .get('system/base/warehouse-area-list', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            res.data.list.forEach((item) => {
+              item.create_time = timestampToTime(item.create_time);
+            });
+            context.commit('setWarehouseArea', {
+              list: res.data.list,
+              total: res.data.total
+            });
+          }
+        });
+    },
+    async createWarehouseArea(_, payload) {
+      await axios
+        .post('system/base/warehouse-area-create', payload)
+        .then((res) => {
+          if (res.code === 200) {
+            ElMessage.success(res.message);
+          }
+        });
+    },
+    async updateWarehouseArea(_, payload) {
+      await axios
+        .post('system/base/warehouse-area-update', payload)
         .then((res) => {
           if (res.code === 200) {
             ElMessage.success(res.message);
