@@ -20,7 +20,7 @@
           :show-header="false"
         >
           <el-table-column
-            v-for="(item, index) in data.data[i].length"
+            v-for="(item, index) in data.data[0].length"
             :key="index"
             :class-name="index === 0 ? 'column-header' : ''"
             align="center"
