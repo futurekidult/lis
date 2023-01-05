@@ -111,7 +111,6 @@ export default {
       },
       total: 0,
       form: {},
-      keyword: '',
       warehouseId: 0,
       warehouseType: '',
       warehouseVisible: false,
@@ -147,13 +146,6 @@ export default {
       chooseForm: {}
     };
   },
-  watch: {
-    keyword(val) {
-      if (val === '') {
-        this.clearAll();
-      }
-    }
-  },
   mounted() {
     this.getWarehouse();
   },
@@ -188,13 +180,6 @@ export default {
       this.pagination.current_page = 1;
       this.pagination.page_size = 10;
       this.chooseForm = {};
-      this.getWarehouse();
-    },
-    clearAll() {
-      this.pagination = {
-        current_page: 1,
-        page_size: 10
-      };
       this.getWarehouse();
     },
     changePagination(val) {
