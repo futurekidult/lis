@@ -163,7 +163,7 @@ export default {
               show: true
             },
             {
-              label: '平台名称',
+              label: '标签名称',
               prop: 'name',
               width: '1030px',
               show: true
