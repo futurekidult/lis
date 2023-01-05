@@ -218,6 +218,7 @@ export default {
         this.labelVisible = false;
         this.$refs.form.resetFields();
         this.pagination.current_page = 1;
+        localStorage.removeItem('label');
         this.getLabel();
       } catch (err) {
         return;
@@ -231,6 +232,7 @@ export default {
         });
         this.labelVisible = false;
         this.$refs.form.resetFields();
+        localStorage.removeItem('label');
         this.getLabel();
       } catch (err) {
         return;

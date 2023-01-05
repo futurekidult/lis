@@ -218,6 +218,7 @@ export default {
         this.warehouseVisible = false;
         this.$refs.warehouseForm.$refs.form.resetFields();
         this.pagination.current_page = 1;
+        localStorage.removeItem('warehouse');
         this.getWarehouse();
       } catch (err) {
         return;
@@ -230,6 +231,7 @@ export default {
         await this.$store.dispatch('system/base/updateWarehouse', body);
         this.warehouseVisible = false;
         this.$refs.warehouseForm.$refs.form.resetFields();
+        localStorage.removeItem('warehouse');
         this.getWarehouse();
       } catch (err) {
         return;

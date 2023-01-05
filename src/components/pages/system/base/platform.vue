@@ -218,6 +218,7 @@ export default {
         this.platformVisible = false;
         this.$refs.form.resetFields();
         this.pagination.current_page = 1;
+        localStorage.removeItem('platform');
         this.getPlatform();
       } catch (err) {
         return;
@@ -231,6 +232,7 @@ export default {
         });
         this.platformVisible = false;
         this.$refs.form.resetFields();
+         localStorage.removeItem('platform');
         this.getPlatform();
       } catch (err) {
         return;

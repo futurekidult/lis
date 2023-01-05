@@ -224,6 +224,7 @@ export default {
         this.warehouseAreaVisible = false;
         this.$refs.form.resetFields();
         this.pagination.current_page = 1;
+        localStorage.removeItem('warehouse_area');
         this.getWarehouseArea();
       } catch (err) {
         return;
@@ -237,6 +238,7 @@ export default {
         });
         this.warehouseAreaVisible = false;
         this.$refs.form.resetFields();
+        localStorage.removeItem('warehouse_area');
         this.getWarehouseArea();
       } catch (err) {
         return;
