@@ -1,4 +1,5 @@
 import { checkPattern } from './zipcode.js';
+import store from '../store/index.js';
 
 //时间戳转换成时间格式
 export const timestampToTime = (timestamp, isShow = true) => {
@@ -173,32 +174,17 @@ export const transposeArray = (val, title) => {
   return data;
 };
 
-//获取某年的所有周
-export const setWeekOption = () => {
-  let month = 12;
-  let year = new Date().getFullYear();
-  let last_month = month;
-  let new_year = year;
-  let new_month = last_month++;
-  if (month > 12) {
-    new_month -= 12;
-    new_year++;
+//获取周
+export const getWeek = async (year) => {
+  if (year) {
+    try {
+      await store.dispatch('statistics/getWeek', year);
+      let week = store.state.statistics.week;
+      return week;
+    } catch (err) {
+      return;
+    }
   }
-  let new_date = new Date(new_year, new_month, 1);
-  let day = new Date(new_date.getTime() - 1000 * 60 * 60 * 24).getDate();
-  let week = getWeek(year, month, day);
-  return week;
-};
-
-//获取当前周
-export const getWeek = (year, month, day) => {
-  let nowDate = new Date(`${year}-${month}-${day}`);
-  let firstDay = new Date(`${year}-${month}-${day}`);
-  firstDay.setMonth(0);
-  firstDay.setDate(1);
-  let diffDays = Math.ceil((nowDate - firstDay) / (24 * 60 * 60 * 1000));
-  let week = Math.ceil(diffDays / 7) + 1;
-  return week;
 };
 
 //获取年份

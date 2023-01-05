@@ -17,7 +17,8 @@ export default {
       averageLoading: true,
       averageList: [],
       averageDetail: [],
-      isDateChange: false
+      isDateChange: false,
+      week: {}
     };
   },
   mutations: {
@@ -50,6 +51,9 @@ export default {
     },
     setDateChange(state, payload) {
       state.isDateChange = payload;
+    },
+    setWeek(state, payload) {
+      state.week = payload;
     }
   },
   actions: {
@@ -153,6 +157,13 @@ export default {
           '平均物流时效表',
           'xlsx'
         );
+      });
+    },
+    async getWeek(context, payload) {
+      await axios.get('statistics/week-get', payload).then((res) => {
+        if (res.code === 200) {
+          context.commit('setWeek', res.data);
+        }
       });
     }
   }
