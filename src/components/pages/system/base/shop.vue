@@ -82,7 +82,7 @@
           v-if="shopType === 'create'"
           class="cue-context"
         >
-          一行一个店铺，每个店铺长度不超过30字符，只能输入英文数字，中划线，下划线，空格
+          提示：一行一个店铺，每个店铺长度不超过30字符，只能输入英文数字，中划线，下划线，空格
         </div>
         <el-form-item style="float: right; margin-top: 40px">
           <el-button @click="closeShop">
