@@ -6,21 +6,15 @@ package "Parent Component" {
 }
 
 package "Child Components" {
-  [BaseForm]
   [BaseTable]
-  [BaseChoose]
+  [BaseConfirm]
   [BaseOptionDialog]
 }
 
-package "Descendant Components" {
-  [BaseTable]
-}
 
-[LogisticSupplierList]                     -->       [BaseForm]
 [LogisticSupplierList]                     -->       [BaseTable]
-[LogisticSupplierList]                     -->       [BaseChoose]
+[LogisticSupplierList]                     -->       [BaseConfirm]
 [LogisticSupplierList]                     -->       [BaseOptionDialog]
-[BaseChoose]                                -->       [BaseTable]
 
 @enduml
 
@@ -32,25 +26,43 @@ package "Parent Component" {
 }
 
 package "Child Components" {
-  [BaseForm]
-  [BaseChoose]
+  [BaseTable]
   [BaseOptionDialog]
 }
 
-package "Descendant Components" {
-  [BaseTable]
+
+[overseaLocationList]                     -->       [BaseTable]
+[overseaLocationList]                     -->       [BaseOptionDialog]
+
+note right 
+  warehouseAreaList,platformList,labelList与海外仓列表类似
+end note
+
+@enduml
+
+title 仓库列表
+
+package "Parent Component" {
+  [warehouseList]
 }
 
-[overseaLocationList]                     -->       [BaseChoose]
-[overseaLocationList]                     -->       [BaseOptionDialog]
+package "Child Components" {
+  [BaseForm]
+  [BaseTable]
+  [BaseOptionDialog]
+}
+
+
 [overseaLocationList]                     -->       [BaseForm]
-[BaseChoose]                                 -->       [BaseTable]
+[overseaLocationList]                     -->       [BaseTable]
+[overseaLocationList]                     -->       [BaseOptionDialog]
 
 note right 
   warehouseAreaList,warehouseList,platformList,labelList与海外仓列表类似
 end note
 
 @enduml
+
 
 @startuml
 title 店铺列表
@@ -60,21 +72,18 @@ package "Parent Component" {
 }
 
 package "Child Components" {
-  [BaseChoose]
-  [BaseOptionDialog]
-  [BaseForm]
+  [Error]
   [BaseTable]
+  [BaseOptionDialog]
 }
 
 package "Descendant Components" {
   [BaseTable]
 }
 
-[shopList]                     -->       [BaseChoose]
-[shopList]                     -->       [BaseOptionDialog]
-[shopList]                     -->       [BaseForm]
+[shopList]                     -->       [Error]
 [shopList]                     -->       [BaseTable]
-[BaseChoose]              -->       [BaseTable]
+[shopList]                     -->       [BaseOptionDialog]
 
 note right
   skuList与shopList类似
