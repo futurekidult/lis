@@ -48,7 +48,7 @@ module.exports = {
     'no-var': 'error',
     eqeqeq: 'error',
     'no-cond-assign': 'error',
-    // 'no-console': 'error',
+    'no-console': 'error',
     'no-dupe-args': 'error',
     'no-dupe-keys': 'error',
     'no-duplicate-case': 'error',
