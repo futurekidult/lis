@@ -20,9 +20,9 @@ end split
   note right 
     校验规则伪代码
     ====
-    //允许英文，数字，下划线，中划线
+    //允许英文，数字，下划线，中划线，空格
     var reg = new RegExp
-    ('^[A-Za-z0-9_-]+$')  
+    ('^[A-Za-z0-9 _-]+$')  
     //true: 通过校验; false: 未通过校验
     reg.test(str)  
   end note

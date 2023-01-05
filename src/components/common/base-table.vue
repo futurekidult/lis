@@ -126,6 +126,7 @@
         fixed="right"
         label="操作"
         width="150px"
+        align="center"
       >
         <template #default="scope">
           <slot :row="scope.row" />

@@ -635,6 +635,99 @@ const averageChooseOptions = statisticsCommonChooseOptions.concat([
   }
 ]);
 
+//物流商列表项
+const LogisticSupplierTableFields = [
+  {
+    label: 'ID',
+    prop: 'id',
+    width: '90px',
+    show: true
+  },
+  {
+    label: '物流商中文名称',
+    prop: 'name_cn',
+    show: true,
+    width: '350px'
+  },
+  {
+    label: '物流商英文名称',
+    prop: 'name_en',
+    show: true,
+    width: '350px'
+  },
+  {
+    label: '物流商简码',
+    prop: 'shortcode',
+    show: true,
+    width: '400px'
+  },
+  {
+    label: '物流商官网链接',
+    prop: 'homepage',
+    show: true,
+    width: '400px'
+  }
+];
+
+// 仓库列表项
+const warehouseTableFields = [
+  {
+    label: 'ID',
+    prop: 'id',
+    width: '90px',
+    show: true
+  },
+  {
+    label: '仓库',
+    prop: 'warehouse_name',
+    show: true,
+    width: '350px'
+  },
+  {
+    label: '仓库分布',
+    prop: 'warehouse_area_name',
+    show: true,
+    width: '350px'
+  },
+  {
+    label: '海外仓',
+    prop: 'oversea_location_name',
+    show: true,
+    width: '400px'
+  },
+  {
+    label: '创建时间',
+    prop: 'create_time',
+    show: true,
+    width: '400px'
+  }
+];
+
+//仓库筛选项
+const warehouseChooseOptions = [
+  {
+    label: '海外仓',
+    type: 'select',
+    multiple: false,
+    prop: 'oversea_location_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '仓库分布',
+    type: 'select',
+    multiple: false,
+    prop: 'warehouse_area_id',
+    options: [],
+    option_type: 'name'
+  },
+  {
+    label: '仓库',
+    type: 'input',
+    prop: 'name'
+  }
+];
+
 export default {
   rate,
   dailyRate,
@@ -649,7 +742,10 @@ export default {
   logisticsTableFields,
   dailyChooseOptions,
   statisticalDimension,
+  warehouseTableFields,
   averageChooseOptions,
-  logisticsChooseOptions
+  logisticsChooseOptions,
+  warehouseChooseOptions,
+  LogisticSupplierTableFields
 };
 </script>

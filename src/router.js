@@ -30,6 +30,30 @@ const Privilege = () => {
 const Organization = () => {
   return import('./components/pages/system/organization.vue');
 };
+const LogisticSupplier = () => {
+  return import('./components/pages/system/base/logistic-supplier.vue');
+};
+const overseaLocation = () => {
+  return import('./components/pages/system/base/oversea-location.vue');
+};
+const warehouseArea = () => {
+  return import('./components/pages/system/base/warehouse-area.vue');
+};
+const platform = () => {
+  return import('./components/pages/system/base/platform.vue');
+};
+const label = () => {
+  return import('./components/pages/system/base/label.vue');
+};
+const shop = () => {
+  return import('./components/pages/system/base/shop.vue');
+};
+const sku = () => {
+  return import('./components/pages/system/base/sku.vue');
+};
+const warehouse = () => {
+  return import('./components/pages/system/base/warehouse.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -104,6 +128,102 @@ const router = createRouter({
           component: Organization,
           meta: {
             breadcrumb: [{ title: '系统管理' }, { title: '组织管理' }]
+          }
+        },
+        {
+          path: '/system/base/logistic-supplier',
+          name: 'logistic supplier',
+          component: LogisticSupplier,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '物流商列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/oversea-location',
+          name: 'oversea-location',
+          component: overseaLocation,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '海外仓列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/warehouse-area',
+          name: 'warehouse-area',
+          component: warehouseArea,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '仓库分布列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/platform',
+          name: 'platform',
+          component: platform,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '平台列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/label',
+          name: 'label',
+          component: label,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '标签列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/shop',
+          name: 'shop',
+          component: shop,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '店铺列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/sku',
+          name: 'sku',
+          component: sku,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: 'SKU列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/warehouse',
+          name: 'warehouse',
+          component: warehouse,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '仓库列表' }
+            ]
           }
         }
       ]
