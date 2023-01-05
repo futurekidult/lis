@@ -257,6 +257,7 @@ export default {
         } else {
           this.errorVisible = true;
         }
+        localStorage.removeItem('shop');
         this.getShop();
       } catch (err) {
         return;
@@ -270,6 +271,7 @@ export default {
         });
         this.shopVisible = false;
         this.$refs.form.resetFields();
+        localStorage.removeItem('shop');
         this.getShop();
       } catch (err) {
         return;

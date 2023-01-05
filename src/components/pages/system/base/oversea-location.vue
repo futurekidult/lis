@@ -222,6 +222,7 @@ export default {
         this.overseaLocationVisible = false;
         this.$refs.form.resetFields();
         this.pagination.current_page = 1;
+        localStorage.removeItem('oversea_location');
         this.getOverseaLocation();
       } catch (err) {
         return;
@@ -235,6 +236,7 @@ export default {
         });
         this.overseaLocationVisible = false;
         this.$refs.form.resetFields();
+        localStorage.removeItem('oversea_location');
         this.getOverseaLocation();
       } catch (err) {
         return;
