@@ -36,7 +36,7 @@
             ? 'width: 90px !important'
             : ''
         "
-        :disabled="item.prop === 'year' && showYear"
+        :disabled="disabled(item.prop, item.disabled)"
         @change="
           (val) => getRelatedInfo(val, item.multiple, item.prop, item.type)
         "
@@ -397,6 +397,15 @@ export default {
         val,
         prop
       });
+    },
+    disabled(prop, disabled) {
+      if (
+        (prop === 'year' && this.showYear) ||
+        (prop === 'oversea_location_id' && disabled) ||
+        (prop === 'warehouse_area_id' && disabled)
+      ) {
+        return true;
+      }
     }
   }
 };

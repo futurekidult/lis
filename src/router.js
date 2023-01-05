@@ -51,6 +51,9 @@ const shop = () => {
 const sku = () => {
   return import('./components/pages/system/base/sku.vue');
 };
+const warehouse = () => {
+  return import('./components/pages/system/base/warehouse.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -208,6 +211,18 @@ const router = createRouter({
               { title: '系统管理' },
               { title: '基础数据' },
               { title: 'SKU列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/warehouse',
+          name: 'warehouse',
+          component: warehouse,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '仓库列表' }
             ]
           }
         }

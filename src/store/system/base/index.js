@@ -13,6 +13,8 @@ export default {
       overseaLocationLength: 0,
       warehouseArea: [],
       warehouseAreaLength: 0,
+      warehouse: [],
+      warehouseLength: 0,
       platform: [],
       platformLength: 0,
       label: [],
@@ -62,6 +64,10 @@ export default {
     },
     setSkuError(state, payload) {
       state.skuError = payload;
+    },
+    setWarehouse(state, payload) {
+      state.warehouse = payload.list;
+      state.warehouseLength = payload.total;
     }
   },
   actions: {
@@ -279,6 +285,33 @@ export default {
     },
     async updateSku(_, payload) {
       await axios.post('system/base/sku-update', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async getWarehouse(context, payload) {
+      await axios.get('system/base/warehouse-list', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.list.forEach((item) => {
+            item.create_time = timestampToTime(item.create_time);
+          });
+          context.commit('setWarehouse', {
+            list: res.data.list,
+            total: res.data.total
+          });
+        }
+      });
+    },
+    async createWarehouse(_, payload) {
+      await axios.post('system/base/warehouse-create', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async updateWarehouse(_, payload) {
+      await axios.post('system/base/warehouse-update', payload).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.message);
         }
