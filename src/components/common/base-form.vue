@@ -230,8 +230,8 @@ export default {
       handler(val) {
         if (val === 'w') {
           this.option = setWeekOption();
-          this.getCurrentWeek();
           this.form.year = this.date.getFullYear();
+          this.getCurrentWeek();
           this.showYear = false;
         } else if (val === 'y') {
           this.option = setYearOption();
@@ -240,7 +240,6 @@ export default {
         } else {
           this.option = 12;
           this.getCurrentMonth();
-          this.form.year = this.date.getFullYear();
           this.showYear = false;
         }
       },
@@ -261,7 +260,7 @@ export default {
   },
   methods: {
     getCurrentWeek() {
-      let year = this.date.getFullYear();
+      let year = this.form.year;
       let month = this.date.getMonth() + 1;
       let day = this.date.getDate();
       this.form.start_shipping_time = getWeek(year, month, day);
@@ -389,6 +388,16 @@ export default {
       } else if (type === 'remote') {
         if (!flag) {
           this.$emit('get-info', id);
+        }
+      } else if (prop === 'year') {
+        switch (this.form.shipping_time_unit) {
+          case 'w':
+            this.getCurrentWeek();
+            break;
+          case 'm':
+            this.getCurrentMonth();
+            break;
+          default:
         }
       }
     },

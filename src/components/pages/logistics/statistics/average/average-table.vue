@@ -43,8 +43,15 @@ export default {
       originTitle: this.$global.averageRate
     };
   },
-  mounted() {
-    this.transposeArray();
+  watch: {
+    list: {
+      handler(val) {
+        this.originData = val;
+        this.transposeArray();
+      },
+      deep: true,
+      immediate: true
+    }
   },
   methods: {
     changeRateColor,
