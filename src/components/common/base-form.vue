@@ -223,6 +223,7 @@ export default {
     },
     'form.shipping_time_unit': {
       handler(val) {
+        this.option = [];
         if (val === 'w') {
           this.form.year = this.date.getFullYear();
           this.getWeek();
