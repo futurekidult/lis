@@ -252,10 +252,10 @@ export default {
           this.skuVisible = false;
           this.$refs.form.resetFields();
           this.pagination.current_page = 1;
-          this.getSku();
         } else {
           this.errorVisible = true;
         }
+        this.getSku();
       } catch (err) {
         return;
       }

@@ -254,10 +254,10 @@ export default {
           this.shopVisible = false;
           this.$refs.form.resetFields();
           this.pagination.current_page = 1;
-          this.getShop();
         } else {
           this.errorVisible = true;
         }
+        this.getShop();
       } catch (err) {
         return;
       }
