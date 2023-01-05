@@ -58,11 +58,7 @@
 </template>
 
 <script>
-import {
-  handleDateRange,
-  getWeek,
-  defaultTime
-} from '../../../../utils/index.js';
+import { handleDateRange, defaultTime } from '../../../../utils/index.js';
 
 export default {
   props: {
@@ -148,12 +144,6 @@ export default {
         this.$store.commit('statistics/setDateChange', false);
       } else {
         this.chooseForm.shipping_time_unit = 'w';
-        this.chooseForm.year = new Date().getFullYear();
-        getWeek(this.chooseForm.year).then((res) => {
-          this.defaultOption = res.week_num;
-          this.chooseForm.start_shipping_time = res.current_week;
-          this.chooseForm.end_shipping_time = res.current_week;
-        });
       }
       this.$emit('get-form', {
         params,
