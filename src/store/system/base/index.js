@@ -16,7 +16,10 @@ export default {
       platform: [],
       platformLength: 0,
       label: [],
-      labelLength: 0
+      labelLength: 0,
+      shop: [],
+      shopLength: 0,
+      shopError: {}
     };
   },
   mutations: {
@@ -42,6 +45,13 @@ export default {
     setLabel(state, payload) {
       state.label = payload.list;
       state.labelLength = payload.total;
+    },
+    setShop(state, payload) {
+      state.shop = payload.list;
+      state.shopLength = payload.total;
+    },
+    setShopError(state, payload) {
+      state.shopError = payload;
     }
   },
   actions: {
@@ -199,6 +209,36 @@ export default {
     },
     async updateLabel(_, payload) {
       await axios.post('system/base/label-update', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async getShop(context, payload) {
+      await axios.get('system/base/shop-list', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.list.forEach((item) => {
+            item.create_time = timestampToTime(item.create_time);
+          });
+          context.commit('setShop', {
+            list: res.data.list,
+            total: res.data.total
+          });
+        }
+      });
+    },
+    async createShop(context, payload) {
+      await axios.post('system/base/shop-create', payload).then((res) => {
+        if (res.code === 200) {
+          context.commit('setShopError', {});
+          ElMessage.success(`${res.data.success_count}条数据新增成功`);
+        } else if (res.code === 40015) {
+          context.commit('setShopError', res.data);
+        }
+      });
+    },
+    async updateShop(_, payload) {
+      await axios.post('system/base/shop-update', payload).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.message);
         }

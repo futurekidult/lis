@@ -45,6 +45,9 @@ const platform = () => {
 const label = () => {
   return import('./components/pages/system/base/label.vue');
 };
+const shop = () => {
+  return import('./components/pages/system/base/shop.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -178,6 +181,18 @@ const router = createRouter({
               { title: '系统管理' },
               { title: '基础数据' },
               { title: '标签列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/shop',
+          name: 'shop',
+          component: shop,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: '店铺列表' }
             ]
           }
         }
