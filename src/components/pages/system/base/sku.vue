@@ -2,13 +2,13 @@
   <section class="section-border">
     <div class="flex-between">
       <div class="select-title">
-        <el-divider direction="vertical" /> 店铺列表
+        <el-divider direction="vertical" /> SKU列表
       </div>
       <div>
         <el-input
           v-model="keyword"
           clearable
-          placeholder="店铺搜索"
+          placeholder="SKU搜索"
         >
           <template #suffix>
             <el-icon
@@ -22,7 +22,7 @@
         <el-button
           type="primary"
           style="margin-left: 20px"
-          @click="showShopDialog('create')"
+          @click="showSkuDialog('create')"
         >
           新增
         </el-button>
@@ -44,9 +44,7 @@
           type="primary"
           size="small"
           style="width: 40px; margin-left: 20px"
-          @click="
-            showShopDialog('update', slotProps.row.id, slotProps.row.name)
-          "
+          @click="showSkuDialog('update', slotProps.row.id, slotProps.row.name)"
         >
           修改
         </el-button>
@@ -54,11 +52,11 @@
     </base-table>
     <!-- 平台弹窗 -->
     <base-option
-      v-if="shopVisible"
-      v-model="shopVisible"
-      :title="shopType === 'create' ? '新增店铺' : '修改店铺'"
+      v-if="skuVisible"
+      v-model="skuVisible"
+      :title="skuType === 'create' ? '新增SKU' : '修改SKU'"
       width="25%"
-      @close-dialog="closeShop"
+      @close-dialog="closeSku"
     >
       <el-form
         ref="form"
@@ -67,30 +65,30 @@
         label-width="80px"
       >
         <el-form-item
-          :label="shopType === 'create' ? '店铺' : '新店铺名'"
+          :label="skuType === 'create' ? 'SKU' : '新SKU名'"
           prop="name"
         >
           <el-input
             v-model="form.name"
             placeholder="请输入内容"
             clearable
-            :type="shopType === 'create' ? 'textarea' : 'text'"
+            :type="skuType === 'create' ? 'textarea' : 'text'"
             rows="6"
           />
         </el-form-item>
         <div
-          v-if="shopType === 'create'"
+          v-if="skuType === 'create'"
           class="cue-context"
         >
-          一行一个店铺，每个店铺长度不超过30字符，只能输入英文数字，中划线，下划线，空格
+          提示：一行一个SKU，每个SKU长度不超过30字符，只能输入英文数字，中划线，下划线
         </div>
         <el-form-item style="float: right; margin-top: 40px">
-          <el-button @click="closeShop">
+          <el-button @click="closeSku">
             取消
           </el-button>
           <el-button
             type="primary"
-            @click="submitShop"
+            @click="submitSku"
           >
             确定
           </el-button>
@@ -106,7 +104,7 @@
     >
       <error
         :error="error"
-        label="店铺"
+        label="SKU"
       />
     </base-option>
   </section>
@@ -133,9 +131,9 @@ export default {
       total: 0,
       form: {},
       keyword: '',
-      shopId: 0,
-      shopType: '',
-      shopVisible: false,
+      skuId: 0,
+      skuType: '',
+      skuVisible: false,
       errorVisible: false,
       formRules: {
         name: [
@@ -156,21 +154,21 @@ export default {
     }
   },
   mounted() {
-    this.getShop();
+    this.getSku();
   },
   methods: {
-    async getShop() {
+    async getSku() {
       try {
-        await this.$store.dispatch('system/base/getShop', {
+        await this.$store.dispatch('system/base/getSku', {
           params: {
             current_page: this.pagination.current_page,
             page_size: this.pagination.page_size,
             name: this.keyword
           }
         });
-        let shop = this.$store.state.system.base;
+        let sku = this.$store.state.system.base;
         this.table = {
-          tableData: shop.shop,
+          tableData: sku.sku,
           tableFields: [
             {
               label: 'ID',
@@ -179,7 +177,7 @@ export default {
               show: true
             },
             {
-              label: '店铺名称',
+              label: 'SKU名称',
               prop: 'name',
               width: '1030px',
               show: true
@@ -192,34 +190,34 @@ export default {
             }
           ]
         };
-        this.total = shop.shopLength;
+        this.total = sku.skuLength;
       } catch (err) {
         return;
       }
     },
     queryList() {
       this.pagination.current_page = 1;
-      this.getShop();
+      this.getSku();
     },
     clearAll() {
       this.pagination = {
         current_page: 1,
         page_size: 10
       };
-      this.getShop();
+      this.getSku();
     },
     changePagination(val) {
       this.pagination = val;
-      this.getShop();
+      this.getSku();
     },
-    showShopDialog(type, id, name) {
-      this.shopType = type;
+    showSkuDialog(type, id, name) {
+      this.skuType = type;
       if (type === 'update') {
-        this.shopId = id;
+        this.skuId = id;
         this.form.name = name;
         this.formRules.name[1] = {
-          pattern: /^[A-Za-z0-9 _-]+$/,
-          message: '只允许英文，数字，下划线，中划线，空格'
+          pattern: /^[A-Za-z0-9_-]+$/,
+          message: '只允许英文，数字，下划线，中划线'
         };
         this.formRules.name[2] = {
           min: 1,
@@ -234,27 +232,27 @@ export default {
           message: '最多只允许输入1000位'
         };
       }
-      this.shopVisible = true;
+      this.skuVisible = true;
     },
-    closeShop() {
-      this.shopVisible = false;
+    closeSku() {
+      this.skuVisible = false;
       this.$refs.form.resetFields();
     },
     closeError() {
       this.errorVisible = false;
     },
-    async createShop() {
+    async createSku() {
       try {
-        await this.$store.dispatch('system/base/createShop', {
+        await this.$store.dispatch('system/base/createSku', {
           name: this.form.name
         });
-        this.error = this.$store.state.system.base.shopError;
+        this.error = this.$store.state.system.base.skuError;
         if (JSON.stringify(this.error) === '{}') {
           this.errorVisible = false;
-          this.shopVisible = false;
+          this.skuVisible = false;
           this.$refs.form.resetFields();
           this.pagination.current_page = 1;
-          this.getShop();
+          this.getSku();
         } else {
           this.errorVisible = true;
         }
@@ -262,30 +260,30 @@ export default {
         return;
       }
     },
-    async updateShop() {
+    async updateSku() {
       try {
-        await this.$store.dispatch('system/base/updateShop', {
-          id: this.shopId,
+        await this.$store.dispatch('system/base/updateSku', {
+          id: this.skuId,
           name: this.form.name
         });
-        this.shopVisible = false;
+        this.skuVisible = false;
         this.$refs.form.resetFields();
-        this.getShop();
+        this.getSku();
       } catch (err) {
         return;
       }
     },
-    async submitShop() {
+    async submitSku() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.shopType === 'create') {
+          if (this.skuType === 'create') {
             if (this.form.name.length === 1000) {
               this.$message.warning('超出规定字数，请检查最后一项是否被截断');
             } else {
-              this.createShop();
+              this.createSku();
             }
           } else {
-            this.updateShop();
+            this.updateSku();
           }
         }
       });

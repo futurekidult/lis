@@ -19,7 +19,10 @@ export default {
       labelLength: 0,
       shop: [],
       shopLength: 0,
-      shopError: {}
+      shopError: {},
+      sku: [],
+      skuLength: 0,
+      skuError: {}
     };
   },
   mutations: {
@@ -52,6 +55,13 @@ export default {
     },
     setShopError(state, payload) {
       state.shopError = payload;
+    },
+    setSku(state, payload) {
+      state.sku = payload.list;
+      state.skuLength = payload.total;
+    },
+    setSkuError(state, payload) {
+      state.skuError = payload;
     }
   },
   actions: {
@@ -239,6 +249,36 @@ export default {
     },
     async updateShop(_, payload) {
       await axios.post('system/base/shop-update', payload).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+        }
+      });
+    },
+    async getSku(context, payload) {
+      await axios.get('system/base/sku-list', payload).then((res) => {
+        if (res.code === 200) {
+          res.data.list.forEach((item) => {
+            item.create_time = timestampToTime(item.create_time);
+          });
+          context.commit('setSku', {
+            list: res.data.list,
+            total: res.data.total
+          });
+        }
+      });
+    },
+    async createSku(context, payload) {
+      await axios.post('system/base/sku-create', payload).then((res) => {
+        if (res.code === 200) {
+          context.commit('setSkuError', {});
+          ElMessage.success(`${res.data.success_count}条数据新增成功`);
+        } else if (res.code === 40015) {
+          context.commit('setSkuError', res.data);
+        }
+      });
+    },
+    async updateSku(_, payload) {
+      await axios.post('system/base/sku-update', payload).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.message);
         }

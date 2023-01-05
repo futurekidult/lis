@@ -48,6 +48,9 @@ const label = () => {
 const shop = () => {
   return import('./components/pages/system/base/shop.vue');
 };
+const sku = () => {
+  return import('./components/pages/system/base/sku.vue');
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -193,6 +196,18 @@ const router = createRouter({
               { title: '系统管理' },
               { title: '基础数据' },
               { title: '店铺列表' }
+            ]
+          }
+        },
+        {
+          path: '/system/base/sku',
+          name: 'sku',
+          component: sku,
+          meta: {
+            breadcrumb: [
+              { title: '系统管理' },
+              { title: '基础数据' },
+              { title: 'SKU列表' }
             ]
           }
         }

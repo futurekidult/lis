@@ -134,4 +134,10 @@ h2 {
 .icon-click {
   cursor: pointer;
 }
+
+.cue-context {
+  margin-left: 80px;
+  color: #a3a3a3;
+  font-size: 14px;
+}
 </style>
