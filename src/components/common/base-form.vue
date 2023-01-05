@@ -179,12 +179,7 @@
 </template>
 
 <script>
-import {
-  cache,
-  setWeekOption,
-  setYearOption,
-  getWeek
-} from '../../utils/index.js';
+import { cache, setYearOption, getWeek } from '../../utils/index.js';
 
 export default {
   props: {
@@ -229,9 +224,8 @@ export default {
     'form.shipping_time_unit': {
       handler(val) {
         if (val === 'w') {
-          this.option = setWeekOption();
           this.form.year = this.date.getFullYear();
-          this.getCurrentWeek();
+          this.getWeek();
           this.showYear = false;
         } else if (val === 'y') {
           this.option = setYearOption();
@@ -254,17 +248,19 @@ export default {
       }
       if (item.prop === 'shipping_time_unit') {
         this.form.shipping_time_unit = 'w';
-        this.getCurrentWeek();
+        this.getWeek();
       }
     });
   },
   methods: {
-    getCurrentWeek() {
-      let year = this.form.year;
-      let month = this.date.getMonth() + 1;
-      let day = this.date.getDate();
-      this.form.start_shipping_time = getWeek(year, month, day);
-      this.form.end_shipping_time = getWeek(year, month, day);
+    async getWeek() {
+      getWeek(this.form.year).then((res) => {
+        if (res) {
+          this.option = res.week_num;
+          this.form.start_shipping_time = res.current_week;
+          this.form.end_shipping_time = res.current_week;
+        }
+      });
     },
     getCurrentMonth() {
       let month = this.date.getMonth() + 1;
@@ -392,7 +388,7 @@ export default {
       } else if (prop === 'year') {
         switch (this.form.shipping_time_unit) {
           case 'w':
-            this.getCurrentWeek();
+            this.getWeek();
             break;
           case 'm':
             this.getCurrentMonth();

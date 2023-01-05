@@ -84,7 +84,8 @@ export default {
     return {
       chooseForm: {},
       dimension: null,
-      warehouse: []
+      warehouse: [],
+      defaultOption: null
     };
   },
   mounted() {
@@ -147,12 +148,12 @@ export default {
         this.$store.commit('statistics/setDateChange', false);
       } else {
         this.chooseForm.shipping_time_unit = 'w';
-        let date = new Date();
-        let year = date.getFullYear();
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-        this.chooseForm.start_shipping_time = getWeek(year, month, day);
-        this.chooseForm.end_shipping_time = getWeek(year, month, day);
+        this.chooseForm.year = new Date().getFullYear();
+        getWeek(this.chooseForm.year).then((res) => {
+          this.defaultOption = res.week_num;
+          this.chooseForm.start_shipping_time = res.current_week;
+          this.chooseForm.end_shipping_time = res.current_week;
+        });
       }
       this.$emit('get-form', {
         params,
