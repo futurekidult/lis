@@ -490,7 +490,6 @@ export default {
         return item.name === tab.props.name;
       }).key;
       this.pagination.current_page = 1;
-      this.pagination.page_size = 10;
       this.getListData(this.activeTabKey);
     },
     changePagination(val) {
