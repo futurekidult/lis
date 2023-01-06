@@ -38,9 +38,11 @@
         <el-tab-pane
           v-for="tag in $global.transitState"
           :key="tag.key"
-          :label="`${tag.label}(${
-            $store.state.logistics.transitStateStatistics[tag.name]
-          })`"
+          :label="
+            JSON.stringify(transitState) === '{}'
+              ? tag.label
+              : `${tag.label}(${transitState[tag.name]})`
+          "
           :name="tag.name"
         >
           <div class="position-right btn-right">
@@ -389,8 +391,14 @@ export default {
       importWaybillVisible: false,
       waybillType: '',
       error: {},
-      warehouse: []
+      warehouse: [],
+      transitState: this.$store.state.logistics.transitStateStatistics
     };
+  },
+  watch: {
+    '$store.state.logistics.transitStateStatistics'(val) {
+      this.transitState = val;
+    }
   },
   mounted() {
     this.chooseForm.create_time = defaultTime(90);
@@ -481,6 +489,8 @@ export default {
       this.activeTabKey = this.$global.transitState.find((item) => {
         return item.name === tab.props.name;
       }).key;
+      this.pagination.current_page = 1;
+      this.pagination.page_size = 10;
       this.getListData(this.activeTabKey);
     },
     changePagination(val) {
