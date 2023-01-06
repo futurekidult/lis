@@ -178,7 +178,11 @@ export const transposeArray = (val, title) => {
 export const getWeek = async (year) => {
   if (year) {
     try {
-      await store.dispatch('statistics/getWeek', year);
+      await store.dispatch('statistics/getWeek', {
+        params: {
+          year
+        }
+      });
       let week = store.state.statistics.week;
       return week;
     } catch (err) {
