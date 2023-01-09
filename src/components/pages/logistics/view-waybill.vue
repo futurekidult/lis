@@ -385,6 +385,9 @@ export default {
   watch: {
     form(val) {
       this.waybillForm = val;
+    },
+    stayTime(val) {
+      this.time = val;
     }
   }
 };
