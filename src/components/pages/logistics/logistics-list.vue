@@ -343,7 +343,8 @@ import {
   timeToTimestamp,
   cache,
   getCountryIso3,
-  defaultTime
+  defaultTime,
+  checkStayTime
 } from '../../../utils/index.js';
 import { getState, getCity } from '../../../utils/state-city.js';
 
@@ -469,8 +470,13 @@ export default {
       }
     },
     queryList() {
-      this.pagination.current_page = 1;
-      this.getListData(this.activeTabKey);
+      let form = JSON.parse(JSON.stringify(this.chooseForm));
+      let startStayTimeValid = checkStayTime(form.start_event_day);
+      let endStayTimeValid = checkStayTime(form.end_event_day);
+      if (startStayTimeValid && endStayTimeValid) {
+        this.pagination.current_page = 1;
+        this.getListData(this.activeTabKey);
+      }
     },
     resetForm() {
       this.activeTab = 'all';

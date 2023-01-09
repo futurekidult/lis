@@ -253,7 +253,7 @@ export default {
       if (
         (prop === 'exception_handling_desc' && val === 10) ||
         (prop === 'sync_state_desc' && val === 20) ||
-        (prop === 'stay_time' && parseFloat(val) > 5) ||
+        (prop === 'stay_time' && parseFloat(val) >= 5) ||
         (prop === 'receipt_days' && val === -1) ||
         (prop === 'delivery_days' && val === -1)
       ) {

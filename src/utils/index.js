@@ -1,5 +1,6 @@
 import { checkPattern } from './zipcode.js';
 import store from '../store/index.js';
+import { ElMessage } from 'element-plus';
 
 //时间戳转换成时间格式
 export const timestampToTime = (timestamp, isShow = true) => {
@@ -45,6 +46,17 @@ export const handleDateRange = (form, prop) => {
     form[`end_${prop}`] = '';
   }
   return form;
+};
+
+//最新轨迹时长输入校验
+export const checkStayTime = (number) => {
+  let reg = /^[1-9]+$/;
+  if (!reg.test(number) && number) {
+    ElMessage.warning('最新轨迹停留时长必须为正整数');
+    return false;
+  } else {
+    return true;
+  }
 };
 
 //统一处理日期
