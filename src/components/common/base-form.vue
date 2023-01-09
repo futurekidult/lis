@@ -94,14 +94,12 @@
         style="display: flex; width: 220px"
       >
         <el-col :span="10">
-          <el-input-number
+          <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop1]"
             placeholder="请输入"
-            auto-complete="off"
-            :precision="1"
-            :controls="false"
             style="width: 90px !important"
+            @input="checkStayTime(form[item.prop1])"
           />
           <el-select
             v-if="item.type === 'select'"
@@ -135,14 +133,12 @@
           <span>至</span>
         </el-col>
         <el-col :span="10">
-          <el-input-number
+          <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop2]"
             placeholder="请输入"
-            auto-complete="off"
-            :precision="1"
-            :controls="false"
             style="width: 90px !important"
+            @input="checkStayTime(form[item.prop2])"
           />
           <el-select
             v-if="item.type === 'select'"
@@ -179,7 +175,12 @@
 </template>
 
 <script>
-import { cache, setYearOption, getWeek } from '../../utils/index.js';
+import {
+  cache,
+  setYearOption,
+  getWeek,
+  checkStayTime
+} from '../../utils/index.js';
 
 export default {
   props: {
@@ -255,6 +256,7 @@ export default {
     });
   },
   methods: {
+    checkStayTime,
     async getWeek() {
       getWeek(this.form.year).then((res) => {
         if (res) {
