@@ -27,11 +27,11 @@ fork again
     note right
       伪代码
       ====
-      let currentTime = new Date().getTime();
+      let currentTime = new Date();
       let eventTime = xxxxx;
-      let time = (currentTime - eventTime * 1000)/1000/60/60/24;
-      //保留小数点后一位，向上取整
-      let  stayTime = Math.ceil(time.toFixed(1)) + "天";
+      let time = (currentTime.setHours(23, 59, 59, 999) - eventTime * 1000)/1000/60/60/24;
+      //向上取整
+      let  stayTime = Math.ceil(time) + "天";
     end note
      if(最新轨迹停留时长 > 5) then (yes)
     :文字颜色变红;
