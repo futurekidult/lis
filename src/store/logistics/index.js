@@ -76,8 +76,8 @@ export default {
                 60 /
                 60 /
                 24;
-              // 向上取整
-              item.stay_time = `${Math.ceil(time)}天`;
+              // 向下取整
+              item.stay_time = `${Math.floor(time)}天`;
             } else {
               item.stay_time = '';
             }
