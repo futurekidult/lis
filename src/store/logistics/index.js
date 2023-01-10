@@ -68,11 +68,16 @@ export default {
                 item.transit_state !== 10) ||
               (item.transit_state === 60 && item.exception_handling !== 20)
             ) {
-              let currentTime = new Date().getTime();
+              let currentTime = new Date();
               let eventTime = item.current_event_time;
-              let time = (currentTime - eventTime * 1000) / 1000 / 60 / 60 / 24;
-              // 保留一位小数，并向上取整
-              item.stay_time = `${Math.ceil(time.toFixed(1))}天`;
+              let time =
+                (currentTime.setHours(23, 59, 59, 999) - eventTime * 1000) /
+                1000 /
+                60 /
+                60 /
+                24;
+              // 向上取整
+              item.stay_time = `${Math.ceil(time)}天`;
             } else {
               item.stay_time = '';
             }
