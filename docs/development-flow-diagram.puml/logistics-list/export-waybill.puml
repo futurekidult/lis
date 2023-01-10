@@ -1,0 +1,30 @@
+@startuml
+
+start
+:获取筛选条件的下拉选项;
+:传递运单的运输状态字段，
+请求"/waybill/export"接口;
+if(请求 成功?) then (yes)
+  if(返回的数据类型是json?) then (yes)
+    :提示超出下载限制的提示;
+  else (no)
+    :创建Blob对象，设置数据的MIME类型(text/csv);
+    :将设置好的blob对象读取为一个URL;
+    :创建a标签，设置a标签的href和download属性;
+  endif
+  note right
+      伪代码
+      ====
+      let blob = new Blob([res], { type: "text/csv" });
+      let url = URL.createObjectURL(blob);
+      let filename = '物流运单列表' +当前日期 + '.csv';
+      let a = document.createElement("a");
+      a.setAttribute("href", url);
+      a.setAttribute("download", filename);
+      a.click();
+    end note
+else (no)
+  :提示出错信息;
+endif
+end
+@enduml

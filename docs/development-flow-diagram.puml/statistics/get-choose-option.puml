@@ -1,0 +1,67 @@
+@startuml
+
+start
+:选择统计维度;
+if(有选筛选条件?) then (yes)
+  fork
+    :获取
+    物流商(logisticSupplier)、
+    海外仓(overseaLocationOption)、
+    仓库分布(warehouseAreaOption)、
+    店铺(logisticsShopOption)下拉选项;
+  fork again
+    :选定海外仓/仓库分布(可多选);
+    :请求"/option/warehouse-list"接口;
+    if(请求 成功?) then (yes)
+      :将返回的数据赋给仓库名称下拉列表;
+      :选定仓库(可多选);
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+  fork again
+    if(平均时效 ?) then (yes)
+      split 
+        :(周)循环遍历，获取周下拉选项;
+        note right 
+          伪代码
+          ====
+              <el-select>
+                <el-option
+                  v-for="i in xx"
+                  :key="i"
+                  :label="i"
+                  :value="i"
+                />
+              </el-select>
+              xx为当前所在年份的总周数
+            end note
+        :默认值为本周;
+      split again 
+        :(月)循环遍历，获取月份下拉选项;
+        :默认值为本月;
+      split again
+        :(年)获取当前年;
+        :将2018至明年赋值给年份下拉选项;
+        note right
+          伪代码
+          ====
+            let currentYear = new Date().getFullYear();
+            let option = [];
+            for (let year = 2018; year <= currentYear + 1; year++) {
+              option.push({
+                label: year,
+                value: year
+              });
+            }
+        end note
+        :默认值为当前年;
+      end split
+    else (no)
+      :将发货时间通过时间转换函数，转换成时间戳;
+    endif
+  end fork
+endif
+end
+
+@enduml

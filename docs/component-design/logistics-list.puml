@@ -1,0 +1,27 @@
+@startuml
+
+package "Parent Component" {
+  [LogisticsList]
+}
+
+package "Child Components" {
+  [BaseTable]
+  [BaseForm]
+  [ErrorTable]
+  [ViewWaybill]
+  [UpdateWaybill]
+  [BaseBreadcrumb]
+  [BaseOptionDialog]
+  [BaseConfirmDialog]
+}
+
+[LogisticsList]             -->       [BaseForm]
+[LogisticsList]             -->       [BaseTable]
+[LogisticsList]             -->       [ErrorTable]
+[LogisticsList]             -->       [ViewWaybill]
+[LogisticsList]             -->       [UpdateWaybill]
+[LogisticsList]             -->       [BaseBreadcrumb]
+[LogisticsList]             -->       [BaseOptionDialog]
+[LogisticsList]             -->       [BaseConfirmDialog]
+
+@enduml

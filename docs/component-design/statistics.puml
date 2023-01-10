@@ -1,0 +1,39 @@
+@startuml
+
+package "Parent Component" {
+  [DailyStatistics]
+  [AverageStatistics]
+}
+
+package "Child Components" {
+  [BaseForm]
+  [AverageChart]
+  [DailyTable]
+  [BaseBreadcrumb]
+  [CommonStatistics]
+  [BaseOption]
+  [StatisticsTable]
+}
+
+package "Descendant Components" {
+  [BaseForm]
+  [BaseOption]
+  [AverageTable]
+  [StatisticsTable]
+}
+
+[DailyStatistics]            -->       [DailyTable]
+[DailyStatistics]            -->       [BaseBreadcrumb]
+[DailyStatistics]            -->       [CommonStatistics]
+[AverageStatistics]       -->       [BaseOption]
+[AverageStatistics]       -->       [StatisticsTable]
+[AverageStatistics]       -->       [BaseBreadcrumb]
+[AverageStatistics]       -->       [CommonStatistics]
+[AverageStatistics]       -->       [AverageChart]
+[DailyTable]                  -->       [BaseOption]
+[DailyTable]                  -->       [BaseOption]
+[AverageChart]            -->       [StatisticsTable]
+[CommonStatistics]     -->       [BaseForm]
+
+
+@enduml

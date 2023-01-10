@@ -2,7 +2,7 @@
   <el-dialog
     v-model="visible"
     title="提示"
-    width="30%"
+    width="25%"
     align-center
     center
     :close-on-click-modal="false"
