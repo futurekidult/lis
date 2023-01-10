@@ -50,9 +50,9 @@ export const handleDateRange = (form, prop) => {
 
 //最新轨迹时长输入校验
 export const checkStayTime = (number) => {
-  let reg = /^[1-9]+$/;
+  let reg = /^[0-9]+$/;
   if (!reg.test(number) && number) {
-    ElMessage.warning('最新轨迹停留时长必须为正整数');
+    ElMessage.warning('最新轨迹停留时长必须为整数');
     return false;
   } else {
     return true;
