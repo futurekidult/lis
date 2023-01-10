@@ -1,0 +1,31 @@
+@startuml
+
+start
+:获取筛选条件;
+:点击导出;
+ if(平均时效 ?) then (yes)
+  :请求"/statistics/average-export"接口;
+else (no)
+  :请求"/statistics/daily-export"接口;
+endif
+if(请求 成功?) then (yes)
+  if(返回的数据类型是json?) then (yes)
+    :提示超出下载限制的提示;
+  else (no)
+    :创建Blob对象，设置数据的MIME类型
+    (application/vnd.openxmlformats-officedocument.spreadsheetml.sheet);
+    :将设置好的blob对象读取为一个URL;
+    :创建a标签，设置a标签的href和download属性;
+    note right
+        导出的文件名：
+          1. 每日统计：每日物流时效表 + 当前日期
+          2. 平均统计：平均物流时效表 + 当前日期
+          (具体实现可参考export-waybill)
+    end note
+  endif
+else (no)
+  :提示出错信息;
+endif
+end
+
+@enduml

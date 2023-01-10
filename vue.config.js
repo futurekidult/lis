@@ -3,6 +3,7 @@ const Components = require('unplugin-vue-components/webpack');
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers');
 
 module.exports = {
+  // 按需自动引入ElementPlus
   configureWebpack: {
     plugins: [
       AutoImport({
@@ -13,15 +14,24 @@ module.exports = {
       })
     ]
   },
+  chainWebpack: (config) => {
+    config.plugin('html').tap((args) => {
+      args[0].title = '物流管理系统';
+      return args;
+    });
+  },
   //配置代理
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://xxx/api',
+        target: 'http://lis.test.heymenology.cn/api/',
         ws: true,
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
+        },
+        cookieDomainRewrite: {
+          '.test.heymenology.cn': 'localhost'
         }
       }
     }

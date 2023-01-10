@@ -1,0 +1,153 @@
+@startuml
+title 根据筛选条件获取不同运输状态下的运单数据
+
+start
+:获取筛选条件的下拉选项;
+:传递运单的运输状态字段，
+请求"/waybill/list"接口;
+if(请求 成功?) then (yes)
+  :循环处理返回的数据，并处理后的数据渲染到表格;
+else (no)
+  :提示出错信息;
+  stop
+endif
+end
+
+start
+note right
+  渲染前的数据处理
+end note
+fork
+  :将发货时间、最新轨迹时间、获取时间、
+    创建时间通过时间戳转化函数，转换成时间;
+fork again
+  if((运输状态为"已签收"或"已过期")或(运输状态为"异常"且异常处理情况为"已处理")) then (no) 
+    :获取最新轨迹停留时长(当前时间 - 最新轨迹时间)，
+    同时给算出来的时间加上"天"字符串;
+    note right
+      伪代码
+      ====
+      let currentTime = new Date();
+      let eventTime = xxxxx;
+      let time = (currentTime.setHours(23, 59, 59, 999) - eventTime * 1000)/1000/60/60/24;
+      //向下取整
+      let  stayTime = Math.floor(time) + "天";
+    end note
+     if(最新轨迹停留时长 > 5) then (yes)
+    :文字颜色变红;
+    note right
+      伪代码
+      ====
+      if(parseFloat(最新轨迹停留时长) > 5) {
+        return '#EA1D1D'
+      }
+    end note
+  else (no)
+    stop
+  endif
+  endif
+fork again
+  :将首枪时效，送达时效添加字符串"天";
+fork again
+  if(异常处理情况 === "待处理") then (yes)
+    :文字颜色变红;
+  else (no)
+    stop
+  endif
+fork again
+  if(获取状态 === "失败") then (yes)
+    :文字颜色变红;
+  else (no)
+    stop
+  endif
+fork again
+  :循环遍历标签数组;
+  note right
+    伪代码
+    ====
+    <template #default="scope">
+      <el-tag 
+        v-for="tag in scope.row.tags"
+        :key="tag.id"
+        closable
+        type="info"
+        @close="handleClose(tag.id)"
+      </el-tag>
+    </template>
+  end note
+end fork
+end
+
+@enduml
+
+@startuml
+title 分页处理
+
+start
+if(运单总数 > 设置的 page_size) then (yes)
+  :显示分页组件;
+  fork
+    :切换当前页 current_page;
+    :设置 current_page 为当前选定值;
+  fork again
+    :切换每页显示条数 page_size;
+    :设置 page_size 为当前选定值;
+    :设置 current_page =  1;
+  end fork
+  :带上之前选定的筛选条件，重新请求"/waybill/list"接口;
+    if(请求 成功?) then (yes)
+      :渲染当前页的数据;
+    else (no)
+      :提示出错信息;
+      stop
+    endif
+else (no)
+  :隐藏分页组件;
+  stop
+endif
+end
+
+@enduml
+
+@startuml
+title 自定义显示列
+
+start
+if(localStorage waybill column 已存在?) then (yes)
+  :从 localStorage 获取 waybill column;
+  :将 waybill column 赋给显示列组件;
+  if(显示列组件中字段显示情况 有更新?) then (yes)
+    :更新本地存储的 waybill column;
+  else (no)
+    stop
+  endif
+else (no)
+  :从全局存储组件(global-data)中获取 waybill column;
+  note right 
+      global-data是存取全局变量的组件
+  end note
+  :本地存储 waybill column;
+endif
+end
+
+@enduml
+
+@startuml
+title 重置数据
+
+start
+fork
+  :创建时间重置为近三个月;
+fork again
+  :筛选表单除创建时间外其它置空;
+end fork
+:请求"/waybill/list/"接口;
+if(请求 成功?) then (yes)
+  :渲染数据;
+else (no)
+  :提示出错信息;
+  stop
+endif
+end
+
+@enduml

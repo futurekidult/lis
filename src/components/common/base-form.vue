@@ -3,103 +3,166 @@
     ref="form"
     :inline="inline"
     :model="form"
-    :label-width="width"
     :rules="baseRules"
-    size="small"
   >
     <el-form-item
       v-for="(item, index) in properties"
       :key="index"
       :label="item.label"
       :prop="item.prop"
+      :label-width="item.label === '最新轨迹停留时长(天)' ? '150px' : width"
     >
       <el-input
         v-if="item.type === 'input' && !item.range"
         v-model="form[item.prop]"
-        placeholder="enter a value"
+        placeholder="请输入内容"
         clearable
       />
       <el-select
-        v-if="item.type === 'select' && !item.range"
+        v-if="(item.type === 'select' || item.type === 'remote') && !item.range"
         v-model="form[item.prop]"
-        placeholder="select a value"
         clearable
-        style="width: 100%"
+        filterable
+        :placeholder="item.placeholder ? item.placeholder : '请选择'"
+        :remote="item.type === 'remote'"
+        :reserve-keyword="item.type === 'remote'"
+        :loading="item.type === 'remote' ? remoteLoading : false"
+        :multiple="item.multiple"
+        :collapse-tags="item.multiple"
+        :collapse-tags-tooltip="item.multiple"
+        :remote-method="(str) => remoteMethod(str, item.prop, item.type)"
+        :style="
+          item.prop === 'shipping_time_unit' || item.prop === 'year'
+            ? 'width: 90px !important'
+            : ''
+        "
+        :disabled="disabled(item.prop, item.disabled)"
+        @change="
+          (val) => getRelatedInfo(val, item.multiple, item.prop, item.type)
+        "
       >
-        <el-option
-          v-for="option in item.options"
-          :key="option.value"
-          :label="option.label"
-          :value="option.value"
-        />
+        <div v-loading="optionLoading">
+          <div v-if="item.option_type === 'name'">
+            <el-option
+              v-for="option in item.options"
+              :key="option.id"
+              :label="option.name"
+              :value="option.id"
+            />
+          </div>
+          <div v-else-if="item.option_type === 'other'">
+            <el-option
+              v-for="option in item.options"
+              :key="option.key"
+              :label="option.value"
+              :value="option.key"
+            />
+          </div>
+          <div v-else>
+            <el-option
+              v-for="option in item.options"
+              :key="option.id"
+              :label="option.order_no"
+              :value="option.id"
+            />
+          </div>
+        </div>
       </el-select>
+      <el-date-picker
+        v-if="item.type === 'single-date' && !item.range"
+        v-model="form[item.prop]"
+        type="datetime"
+        placeholder="请选择支付时间"
+      />
       <el-date-picker
         v-if="item.type === 'date' && !item.range"
         v-model="form[item.prop]"
-        type="datetimerange"
-        start-placeholder="Start date"
-        end-placeholder="End date"
+        type="daterange"
+        start-placeholder="年-月-日"
+        end-placeholder="年-月-日"
+        @change="(val) => changeDate(val, item.prop)"
       />
       <el-input
         v-if="item.type === 'textarea' && !item.range"
         v-model="form[item.prop]"
         type="textarea"
-        placeholder="enter a value"
+        placeholder="请输入内容"
         clearable
       />
       <div
         v-if="item.range"
-        style="display: flex"
+        style="display: flex; width: 220px"
       >
-        <el-col :span="5">
+        <el-col :span="10">
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop1]"
-            placeholder=""
-            clearable
+            placeholder="请输入"
+            style="width: 90px !important"
+            @input="checkStayTime(form[item.prop1])"
           />
           <el-select
             v-if="item.type === 'select'"
             v-model="form[item.prop1]"
-            placeholder=""
+            placeholder="请选择"
             clearable
-            style="width: 100%"
+            style="width: 90px !important"
           >
-            <el-option
-              v-for="option in item.options"
-              :key="option.value"
-              :label="option.label"
-              :value="option.value"
-            />
+            <div v-if="form.shipping_time_unit !== 'y'">
+              <el-option
+                v-for="i in option"
+                :key="i"
+                :label="i"
+                :value="i"
+              />
+            </div>
+            <div v-else>
+              <el-option
+                v-for="i in option"
+                :key="i.key"
+                :label="i.value"
+                :value="i.key"
+              />
+            </div>
           </el-select>
         </el-col>
         <el-col
-          :span="2"
+          :span="4"
           style="text-align: center"
         >
           <span>至</span>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="10">
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop2]"
-            placeholder=""
-            clearable
-            style="width: 100%"
+            placeholder="请输入"
+            style="width: 90px !important"
+            @input="checkStayTime(form[item.prop2])"
           />
           <el-select
             v-if="item.type === 'select'"
             v-model="form[item.prop2]"
-            placeholder=""
+            placeholder="请选择"
             clearable
-            style="width: 100%"
+            style="width: 90px !important"
           >
-            <el-option
-              v-for="option in item.options"
-              :key="option.value"
-              :label="option.label"
-              :value="option.value"
-            />
+            <div v-if="form.shipping_time_unit !== 'y'">
+              <el-option
+                v-for="i in option"
+                :key="i"
+                :label="i"
+                :value="i"
+              />
+            </div>
+            <div v-else>
+              <el-option
+                v-for="i in option"
+                :key="i.value"
+                :label="i.value"
+                :value="i.value"
+              />
+            </div>
           </el-select>
         </el-col>
       </div>
@@ -112,6 +175,13 @@
 </template>
 
 <script>
+import {
+  cache,
+  setYearOption,
+  getWeek,
+  checkStayTime
+} from '../../utils/index.js';
+
 export default {
   props: {
     properties: {
@@ -135,21 +205,217 @@ export default {
       default: null
     }
   },
+  emits: ['get-info', 'get-warehouse', 'get-date'],
   data() {
     return {
-      form: this.baseForm
+      timeout: null,
+      form: this.baseForm,
+      optionLoading: false,
+      remoteLoading: true,
+      warehouse: [],
+      option: null,
+      date: new Date(),
+      showYear: false
     };
   },
   watch: {
     baseForm(val) {
       this.form = val;
+    },
+    'form.shipping_time_unit': {
+      handler(val) {
+        this.option = [];
+        if (val === 'w') {
+          this.form.year = this.date.getFullYear();
+          this.getWeek();
+          this.showYear = false;
+        } else if (val === 'y') {
+          this.option = setYearOption();
+          this.getCurrentYear();
+          this.showYear = true;
+        } else {
+          this.option = 12;
+          this.form.year = this.date.getFullYear();
+          this.getCurrentMonth();
+          this.showYear = false;
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  mounted() {
+    this.properties.forEach((item) => {
+      if (item.type === 'select' && item.prop !== 'shipping_time_unit') {
+        this.getOption(item.prop);
+      }
+      if (item.prop === 'shipping_time_unit') {
+        this.form.shipping_time_unit = 'w';
+        this.getWeek();
+      }
+    });
+  },
+  methods: {
+    checkStayTime,
+    async getWeek() {
+      getWeek(this.form.year).then((res) => {
+        if (res) {
+          this.option = res.week_num;
+          this.form.start_shipping_time = res.current_week;
+          this.form.end_shipping_time = res.current_week;
+        }
+      });
+    },
+    getCurrentMonth() {
+      let month = this.date.getMonth() + 1;
+      this.form.start_shipping_time = month;
+      this.form.end_shipping_time = month;
+    },
+    getCurrentYear() {
+      let year = this.date.getFullYear();
+      this.form.start_shipping_time = year;
+      this.form.end_shipping_time = year;
+      this.form.year = '';
+    },
+    getOptionObj(prop) {
+      return this.properties.find((item) => {
+        return item.prop === prop;
+      });
+    },
+    async getOption(prop) {
+      this.optionLoading = true;
+      let selectObj = this.getOptionObj(prop);
+      try {
+        if (
+          prop !== 'exception_handling' &&
+          prop !== 'parcel_type' &&
+          prop !== 'year'
+        ) {
+          let newProp = prop.replace('_id', '');
+          let arr = [];
+          arr = newProp.split('_');
+          // 将获取到的属性的首字母大写
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] =
+              arr[i].slice(0, 1).toUpperCase() + arr[i].slice(1).toLowerCase();
+          }
+          if (!cache(newProp)) {
+            await this.$store.dispatch(`get${arr.join('')}`);
+          }
+          selectObj.options = JSON.parse(cache(newProp));
+        } else if (prop !== 'year') {
+          if (!cache(prop)) {
+            await this.$store.dispatch('getSystemParameter');
+          }
+          selectObj.options = JSON.parse(cache(prop));
+        } else {
+          selectObj.options = setYearOption();
+        }
+        this.optionLoading = false;
+      } catch (err) {
+        this.optionLoading = false;
+        return;
+      }
+    },
+    async getSkuOrOrderOption(label, str, query, prop, fn) {
+      let selectObj = this.getOptionObj(prop);
+      selectObj.options = [];
+      try {
+        await this.$store.dispatch(fn, {
+          params: {
+            [label]: query
+          }
+        });
+        selectObj.options = this.$store.state[str];
+        this.remoteLoading = false;
+      } catch (err) {
+        return;
+      }
+    },
+    remoteMethod(query, prop, type) {
+      if (type === 'remote') {
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+          if (query) {
+            this.remoteLoading = true;
+            try {
+              if (prop === 'sku_id') {
+                this.getSkuOrOrderOption('name', 'sku', query, prop, 'getSku');
+              } else {
+                this.getSkuOrOrderOption(
+                  'order_no',
+                  'order',
+                  query,
+                  prop,
+                  'getOrder'
+                );
+              }
+            } catch (err) {
+              return;
+            }
+          } else {
+            let selectObj = this.getOptionObj(prop);
+            selectObj.options = [];
+          }
+        }, 500);
+      }
+    },
+    async getRelatedInfo(id, flag, prop, type) {
+      if (prop === 'warehouse_area_id' || prop === 'oversea_location_id') {
+        try {
+          let params = {
+            oversea_location_id: this.form.oversea_location_id.join(','),
+            warehouse_area_id: this.form.warehouse_area_id.join(',')
+          };
+          await this.$store.dispatch('getWarehouse', { params });
+          let selectObj = this.getOptionObj('warehouse_id');
+          selectObj.options = this.$store.state.warehouse;
+          if (this.form.warehouse_id.length === 0) {
+            this.warehouse = selectObj.options.map((item) => {
+              return item.id;
+            });
+            if (
+              this.form.warehouse_area_id.length === 0 &&
+              this.form.oversea_location_id.length === 0
+            ) {
+              this.warehouse = [];
+            }
+            this.$emit('get-warehouse', this.warehouse);
+          }
+        } catch (err) {
+          return;
+        }
+      } else if (type === 'remote') {
+        if (!flag) {
+          this.$emit('get-info', id);
+        }
+      } else if (prop === 'year') {
+        switch (this.form.shipping_time_unit) {
+          case 'w':
+            this.getWeek();
+            break;
+          case 'm':
+            this.getCurrentMonth();
+            break;
+          default:
+        }
+      }
+    },
+    changeDate(val, prop) {
+      this.$emit('get-date', {
+        val,
+        prop
+      });
+    },
+    disabled(prop, disabled) {
+      if (
+        (prop === 'year' && this.showYear) ||
+        (prop === 'oversea_location_id' && disabled) ||
+        (prop === 'warehouse_area_id' && disabled)
+      ) {
+        return true;
+      }
     }
   }
 };
 </script>
-
-<style scoped>
-.btn-position {
-  float: right;
-}
-</style>

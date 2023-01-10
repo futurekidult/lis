@@ -1,0 +1,17 @@
+@startuml
+
+start
+:勾选需要修改添加标签的运单;
+:点击标记为按钮;
+:获取标签(labelOption)下拉列表;
+:从下拉列表中选定某个选项;
+:请求"/waybill/label-update"接口;
+if(请求 成功?) then (yes)
+  :提示更新成功;
+  :请求"/waybill/list"接口，更新运单列表;
+else (no)
+  :提示出错信息;
+endif
+end
+
+@enduml

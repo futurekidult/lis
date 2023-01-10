@@ -1,0 +1,13 @@
+@startuml
+title 以海外仓为例
+
+start
+:请求list接口;
+if(请求 成功?) then (yes)
+  :将返回的数据渲染到表格;
+else (no)
+  :提示出错信息;
+endif
+end
+
+@enduml

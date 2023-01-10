@@ -1,0 +1,92 @@
+@startuml
+title 物流商列表
+
+package "Parent Component" {
+  [LogisticSupplierList]
+}
+
+package "Child Components" {
+  [BaseTable]
+  [BaseConfirm]
+  [BaseOptionDialog]
+}
+
+
+[LogisticSupplierList]                     -->       [BaseTable]
+[LogisticSupplierList]                     -->       [BaseConfirm]
+[LogisticSupplierList]                     -->       [BaseOptionDialog]
+
+@enduml
+
+@startuml
+title 海外仓列表
+
+package "Parent Component" {
+  [overseaLocationList]
+}
+
+package "Child Components" {
+  [BaseTable]
+  [BaseOptionDialog]
+}
+
+
+[overseaLocationList]                     -->       [BaseTable]
+[overseaLocationList]                     -->       [BaseOptionDialog]
+
+note right 
+  warehouseAreaList,platformList,labelList与海外仓列表类似
+end note
+
+@enduml
+
+title 仓库列表
+
+package "Parent Component" {
+  [warehouseList]
+}
+
+package "Child Components" {
+  [BaseForm]
+  [BaseTable]
+  [BaseOptionDialog]
+}
+
+
+[overseaLocationList]                     -->       [BaseForm]
+[overseaLocationList]                     -->       [BaseTable]
+[overseaLocationList]                     -->       [BaseOptionDialog]
+
+note right 
+  warehouseAreaList,warehouseList,platformList,labelList与海外仓列表类似
+end note
+
+@enduml
+
+
+@startuml
+title 店铺列表
+
+package "Parent Component" {
+  [shopList]
+}
+
+package "Child Components" {
+  [Error]
+  [BaseTable]
+  [BaseOptionDialog]
+}
+
+package "Descendant Components" {
+  [BaseTable]
+}
+
+[shopList]                     -->       [Error]
+[shopList]                     -->       [BaseTable]
+[shopList]                     -->       [BaseOptionDialog]
+
+note right
+  skuList与shopList类似
+end note
+
+@enduml
