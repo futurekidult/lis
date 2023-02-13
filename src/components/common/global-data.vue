@@ -132,13 +132,15 @@ const logisticsTableFields = [
     label: '物流商',
     prop: 'logistic_supplier',
     width: '85px',
-    show: true
+    show: true,
+    show_overflow_tooltip: true
   },
   {
     label: '仓库',
     prop: 'warehouse',
     show: true,
-    width: '85px'
+    width: '85px',
+    show_overflow_tooltip: true
   },
   {
     label: '平台',
@@ -181,13 +183,13 @@ const logisticsTableFields = [
     label: '首枪时效',
     prop: 'receipt_days',
     show: true,
-    width: '140px'
+    width: '85px'
   },
   {
     label: '送达时效',
     prop: 'delivery_days',
     show: true,
-    width: '140px'
+    width: '85px'
   },
   {
     label: '预计送达时间',
@@ -226,7 +228,8 @@ const logisticsTableFields = [
     label: '最新轨迹详情',
     prop: 'current_event_detail',
     width: '300px',
-    show: true
+    show: true,
+    show_overflow_tooltip: true
   },
   {
     label: '获取状态',
@@ -253,7 +256,8 @@ const logisticsTableFields = [
   {
     label: '备注',
     prop: 'remark',
-    show: true
+    show: true,
+    show_overflow_tooltip: true
   },
   {
     label: '运输状态',
