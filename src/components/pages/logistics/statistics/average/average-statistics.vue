@@ -10,49 +10,52 @@
         :data="averageStatistics"
         :empty="emptyList"
       />
-
-      <el-table
-        v-if="averageList.length"
-        :data="averageList"
-        border
-      >
-        <template
-          v-for="item in listFields"
-          :key="item.prop"
+      <div style="margin: 20px">
+        <div class="table-title">
+          {{ `${firstLabel}时效合格率统计表` }}
+        </div>
+        <el-table
+          v-if="averageList.length"
+          :data="averageList"
+          border
         >
-          <el-table-column
-            v-if="item.prop !== 'count'"
-            :label="item.label"
-            align="center"
+          <template
+            v-for="item in listFields"
+            :key="item.prop"
           >
-            <template #default="scope">
-              <span
-                :style="
-                  scope.row[item.prop].indexOf('%') > -1
-                    ? { color: changeRateColor(scope.row[item.prop]) }
-                    : {}
-                "
-              >{{ scope.row[item.prop] }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            v-else
-            :label="item.label"
-            align="center"
-          >
-            <template #default="scope">
-              <el-button
-                text
-                type="primary"
-                @click="viewSingleAverage(scope.row.id, scope.row.count)"
-              >
-                {{ scope.row.count }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </template>
-      </el-table>
-
+            <el-table-column
+              v-if="item.prop !== 'count'"
+              :label="item.label"
+              align="center"
+            >
+              <template #default="scope">
+                <span
+                  :style="
+                    scope.row[item.prop].indexOf('%') > -1
+                      ? { color: changeRateColor(scope.row[item.prop]) }
+                      : {}
+                  "
+                >{{ scope.row[item.prop] }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              v-else
+              :label="item.label"
+              align="center"
+            >
+              <template #default="scope">
+                <el-button
+                  text
+                  type="primary"
+                  @click="viewSingleAverage(scope.row.id, scope.row.count)"
+                >
+                  {{ scope.row.count }}
+                </el-button>
+              </template>
+            </el-table-column>
+          </template>
+        </el-table>
+      </div>
       <base-option
         v-model="averageVisible"
         :title="`${title}平均时效统计`"
