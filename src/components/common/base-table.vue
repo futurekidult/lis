@@ -32,14 +32,20 @@
                   @change="changeStatus(table.tableFields)"
                 />
                 <el-icon
+                  :style="{
+                    color: getIconColor(data, 'left')
+                  }"
                   @click="toFixedPosition('left', node, table.tableFields)"
                 >
-                  <ArrowLeft />
+                  <ArrowLeftBold />
                 </el-icon>
                 <el-icon
+                  :style="{
+                    color: getIconColor(data, 'right')
+                  }"
                   @click="toFixedPosition('right', node, table.tableFields)"
                 >
-                  <ArrowRight />
+                  <ArrowRightBold />
                 </el-icon>
               </template>
             </el-tree>
@@ -157,16 +163,16 @@
 import {
   Grid,
   Operation,
-  ArrowLeft,
-  ArrowRight
+  ArrowLeftBold,
+  ArrowRightBold
 } from '@element-plus/icons-vue';
 
 export default {
   components: {
     Grid,
     Operation,
-    ArrowLeft,
-    ArrowRight
+    ArrowLeftBold,
+    ArrowRightBold
   },
   props: {
     table: {
@@ -227,6 +233,9 @@ export default {
     }
   },
   methods: {
+    getIconColor(data, fixed) {
+      return data.fixed === fixed ? data.color : '';
+    },
     handleDrop(draggingNode, dropNode, type) {
       return type !== 'inner';
     },
@@ -245,7 +254,14 @@ export default {
     },
     // 固定表格列
     toFixedPosition(str, node, table) {
-      node.data.fixed = str;
+      let { fixed } = node.data;
+      if (fixed && fixed === str) {
+        node.data.fixed = false;
+        node.data.color = '';
+      } else {
+        node.data.fixed = str;
+        node.data.color = '#409eff';
+      }
       this.changeStatus(table);
     },
     // 标注异常处理情况(待处理)、获取状态(失败)和最新轨迹停留时长(>5天)
