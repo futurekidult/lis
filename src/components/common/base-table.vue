@@ -75,6 +75,7 @@
           :fixed="item.fixed"
           :width="getWidth(item.width)"
           align="center"
+          :show-overflow-tooltip="item.show_overflow_tooltip"
         >
           <template
             v-if="item.prop === 'label'"
