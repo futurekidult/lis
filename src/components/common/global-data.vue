@@ -137,7 +137,7 @@ const logisticsTableFields = [
     prop: 'logistic_supplier',
     show: true,
     fixed: 'left',
-    color: '#409eff'
+    color: '#409eff',
     width: '85px',
     show_overflow_tooltip: true
   },
