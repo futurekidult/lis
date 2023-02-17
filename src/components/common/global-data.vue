@@ -120,19 +120,25 @@ const logisticsTableFields = [
   {
     label: 'ID',
     prop: 'id',
-    width: '85px',
-    show: true
+    show: true,
+    fixed: 'left',
+    color: '#409eff',
+    width: '85px'
   },
   {
     label: '运单号',
     prop: 'waybill_no',
-    show: true
+    show: true,
+    fixed: 'left',
+    color: '#409eff'
   },
   {
     label: '物流商',
     prop: 'logistic_supplier',
-    width: '85px',
     show: true,
+    fixed: 'left',
+    color: '#409eff',
+    width: '85px',
     show_overflow_tooltip: true
   },
   {
@@ -263,6 +269,8 @@ const logisticsTableFields = [
     label: '运输状态',
     prop: 'transit_state_desc',
     show: true,
+    fixed: 'right',
+    color: '#409eff',
     width: '85px'
   }
 ];

@@ -19,4 +19,11 @@ app.component('BaseConfirm', BaseConfirm);
 app.config.globalProperties.$global = GlobalData;
 app.config.globalProperties.$message = ElMessage;
 
+let version = process.env.VERSION;
+let localVersion = localStorage.getItem('lis-project-version');
+if (!localVersion || version !== localVersion) {
+  localStorage.removeItem('logistics-column');
+  localStorage.setItem('lis-project-version', version);
+}
+
 app.mount('#app');
