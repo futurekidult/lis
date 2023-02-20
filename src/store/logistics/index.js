@@ -204,7 +204,7 @@ export default {
     },
     async exportTemplate(_, payload) {
       await axios({
-        url: 'waybill/export-template',
+        url: 'waybill/template-export',
         method: 'post',
         responseType: 'blob',
         data: payload
