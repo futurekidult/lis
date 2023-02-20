@@ -202,11 +202,12 @@ export default {
         }
       });
     },
-    async exportTemplate() {
+    async exportTemplate(_, payload) {
       await axios({
         url: 'waybill/export-template',
         method: 'post',
-        responseType: 'blob'
+        responseType: 'blob',
+        data: payload
       }).then((res) => {
         download(
           res,
@@ -249,6 +250,5 @@ export default {
         download(res, 'text/csv', '物流运单列表', 'csv');
       });
     }
-  },
-  getters: {}
+  }
 };
