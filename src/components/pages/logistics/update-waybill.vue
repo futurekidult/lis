@@ -358,8 +358,8 @@ export default {
           },
           {
             min: 1,
-            max: 50,
-            message: '最多只允许输入50位'
+            max: 100,
+            message: '最多只允许输入100位'
           }
         ],
         name: [
