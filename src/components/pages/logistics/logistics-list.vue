@@ -128,7 +128,9 @@
                 type="primary"
                 size="small"
                 style="width: 40px"
-                @click="updateWaybill(slotProps.row.id)"
+                @click="
+                  updateWaybill(slotProps.row.id, slotProps.row.parcel_type)
+                "
               >
                 修改运单
               </el-button>
@@ -234,6 +236,7 @@
     >
       <update-waybill
         ref="updateWaybillForm"
+        :parcel-type="parcelType"
         :form="updateWaybillForm"
         :city-option="cityOption"
         :state-option="stateOption"
@@ -389,6 +392,7 @@ export default {
       viewWaybillVisible: false,
       waybillDetail: {},
       waybillId: 0,
+      parcelType: 0,
       importWaybillVisible: false,
       waybillType: '',
       error: {},
@@ -644,8 +648,9 @@ export default {
       this.updateWaybillVisible = false;
       this.$refs.updateWaybillForm.$refs.form.resetFields();
     },
-    async updateWaybill(id) {
+    async updateWaybill(id, type) {
       this.waybillId = id;
+      this.parcelType = type;
       if (cache('warehouse')) {
         this.warehouseOption = JSON.parse(cache('warehouse'));
         if (cache('logistics-country')) {
@@ -696,6 +701,7 @@ export default {
     async updateWaybillInfo() {
       let body = JSON.parse(JSON.stringify(this.updateWaybillForm));
       body.id = this.waybillId;
+      body.parcel_type = this.parcelType;
       try {
         await this.$store.dispatch('logistics/updateWaybill', body);
         this.updateWaybillVisible = false;
@@ -748,7 +754,9 @@ export default {
     },
     async downloadImportTemplate() {
       try {
-        await this.$store.dispatch('logistics/exportTemplate');
+        await this.$store.dispatch('logistics/exportTemplate', {
+          parcel_type: +this.waybillType
+        });
       } catch (err) {
         return;
       }
@@ -757,7 +765,7 @@ export default {
       let file = e.file;
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('type', this.waybillType);
+      formData.append('parcel_type', this.waybillType);
       try {
         await this.$store.dispatch('logistics/importWaybill', formData);
         this.error = this.$store.state.logistics.error;

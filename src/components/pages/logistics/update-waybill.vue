@@ -290,6 +290,10 @@ export default {
     warehouseOption: {
       type: Array,
       default: null
+    },
+    parcelType: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -302,6 +306,7 @@ export default {
       state: this.stateOption,
       waybillForm: this.form,
       country: this.countryOption,
+      waybillType: this.parcelType,
       warehouse: this.warehouseOption,
       waybillRules: {
         waybill_no: [
@@ -427,9 +432,24 @@ export default {
     },
     'form.country_id'() {
       this.checkPostcode(this.waybillForm.postcode);
+    },
+    parcelType: {
+      handler(val) {
+        this.waybillType = val;
+        if (val) {
+          this.setFormRequired(false);
+        } else {
+          this.setFormRequired(true);
+        }
+      },
+      immediate: true
     }
   },
   methods: {
+    setFormRequired(val) {
+      this.waybillRules.address[0].required = val;
+      this.waybillRules.name[0].required = val;
+    },
     checkPostcodeValid(val) {
       if (val) {
         this.checkPostcode(val);
