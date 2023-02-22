@@ -41,7 +41,8 @@
             <template #reference>
               <el-icon
                 class="search-btn"
-                @click="popoverVisible = true"
+                :color="operationIconColor"
+                @click="changePopoverState(true, '#409eff')"
               >
                 <Operation />
               </el-icon>
@@ -64,7 +65,7 @@
                 <div>
                   <el-button
                     size="small"
-                    @click="closePopover"
+                    @click="changePopoverState(false, 'inherit')"
                   >
                     关闭
                   </el-button>
@@ -283,7 +284,8 @@ export default {
       option: null,
       date: new Date(),
       showYear: false,
-      popoverVisible: false
+      popoverVisible: false,
+      operationIconColor: 'inherit'
     };
   },
   watch: {
@@ -511,8 +513,9 @@ export default {
     clearMultipleWaybillNo() {
       this.form.multiple_waybill_no = '';
     },
-    closePopover() {
-      this.popoverVisible = false;
+    changePopoverState(visible, color) {
+      this.popoverVisible = visible;
+      this.operationIconColor = color;
     }
   }
 };
