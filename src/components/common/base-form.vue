@@ -13,11 +13,73 @@
       :label-width="item.label === '最新轨迹停留时长(天)' ? '150px' : width"
     >
       <el-input
-        v-if="item.type === 'input' && !item.range"
+        v-if="
+          item.type === 'input' && !item.range && item.prop !== 'waybill_no'
+        "
         v-model="form[item.prop]"
         placeholder="请输入内容"
         clearable
       />
+      <el-input
+        v-if="item.type === 'input' && item.prop === 'waybill_no'"
+        v-model="form[item.prop]"
+        placeholder="请输入内容"
+        clearable
+        style="width: 242px !important"
+      >
+        <template #append>
+          <el-icon
+            class="search-single-btn"
+            @click="searchWaybillNo(1, item.prop)"
+          >
+            <Search />
+          </el-icon>
+          <el-popover
+            :width="400"
+            :visible="popoverVisible"
+          >
+            <template #reference>
+              <el-icon
+                class="search-btn"
+                @click="popoverVisible = true"
+              >
+                <Operation />
+              </el-icon>
+            </template>
+            <template #default>
+              <el-input
+                v-model="form['multiple_waybill_no']"
+                placeholder="请输入内容"
+                type="textarea"
+                :rows="10"
+              />
+              <el-divider />
+              <div style="display: flex; justify-content: space-between">
+                <el-button
+                  size="small"
+                  @click="clear"
+                >
+                  清空
+                </el-button>
+                <div>
+                  <el-button
+                    size="small"
+                    @click="close"
+                  >
+                    关闭
+                  </el-button>
+                  <el-button
+                    size="small"
+                    @click="searchWaybillNo(2, 'multiple_waybill_no')"
+                  >
+                    搜索
+                  </el-button>
+                </div>
+              </div>
+            </template>
+          </el-popover>
+        </template>
+      </el-input>
       <el-select
         v-if="(item.type === 'select' || item.type === 'remote') && !item.range"
         v-model="form[item.prop]"
@@ -181,8 +243,13 @@ import {
   getWeek,
   checkStayTime
 } from '../../utils/index.js';
+import { Search, Operation } from '@element-plus/icons-vue';
 
 export default {
+  components: {
+    Search,
+    Operation
+  },
   props: {
     properties: {
       type: Array,
@@ -205,7 +272,7 @@ export default {
       default: null
     }
   },
-  emits: ['get-info', 'get-warehouse', 'get-date'],
+  emits: ['get-info', 'get-warehouse', 'get-date', 'search-waybill-no'],
   data() {
     return {
       timeout: null,
@@ -215,7 +282,8 @@ export default {
       warehouse: [],
       option: null,
       date: new Date(),
-      showYear: false
+      showYear: false,
+      popoverVisible: false
     };
   },
   watch: {
@@ -238,6 +306,24 @@ export default {
           this.form.year = this.date.getFullYear();
           this.getCurrentMonth();
           this.showYear = false;
+        }
+      },
+      immediate: true,
+      deep: true
+    },
+    'form.waybill_no': {
+      handler(val) {
+        if (val) {
+          this.form.multiple_waybill_no = '';
+        }
+      },
+      immediate: true,
+      deep: true
+    },
+    'form.multiple_waybill_no': {
+      handler(val) {
+        if (val) {
+          this.form.waybill_no = '';
         }
       },
       immediate: true,
@@ -415,7 +501,48 @@ export default {
       ) {
         return true;
       }
+    },
+    searchWaybillNo(type, prop) {
+      this.$emit('search-waybill-no', {
+        [prop]: this.form[prop],
+        waybill_no_query_type: type
+      });
+    },
+    clear() {
+      this.form.multiple_waybill_no = '';
+    },
+    close() {
+      this.popoverVisible = false;
     }
   }
 };
 </script>
+
+<style scoped>
+.search-btn {
+  cursor: pointer;
+}
+
+.search-single-btn {
+  cursor: pointer;
+  margin: 0 5px;
+}
+.search-single-btn:hover,
+.search-btn:hover,
+.search-single-btn:focus,
+.search-btn:focus {
+  color: #409eff;
+}
+
+.el-input-group >>> .el-input-group__append {
+  background-color: #ffffff00 !important;
+  padding: 0 8px 0 0px;
+}
+
+.el-input-group >>> .el-input__wrapper {
+  box-shadow: 0 1px 0 0 var(--el-input-border-color) inset,
+    0 -1px 0 0 var(--el-input-border-color) inset,
+    0px 0 1px 0 var(--el-input-border-color) inset,
+    1px 0px 0px 0px var(--el-input-border-color) inset;
+}
+</style>

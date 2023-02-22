@@ -58,6 +58,10 @@ export default {
       // 删除多传的参数
       delete listParams.params.create_time;
       delete listParams.params.shipping_time;
+      delete listParams.params.multiple_waybill_no;
+      if (!listParams.params.waybill_no) {
+        delete listParams.params.waybill_no_query_type;
+      }
       await axios.get('waybill/waybill-list', listParams).then((res) => {
         if (res.code === 200) {
           res.data.list.forEach((item) => {
