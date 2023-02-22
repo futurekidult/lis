@@ -527,6 +527,7 @@ export default {
   cursor: pointer;
   margin: 0 5px;
 }
+
 .search-single-btn:hover,
 .search-btn:hover,
 .search-single-btn:focus,
