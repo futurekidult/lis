@@ -29,7 +29,7 @@
       >
         <template #append>
           <el-icon
-            class="search-single-btn"
+            class="el-icon-search search-btn"
             @click="searchWaybillNo(1, item.prop)"
           >
             <Search />
@@ -54,17 +54,17 @@
                 :rows="10"
               />
               <el-divider />
-              <div style="display: flex; justify-content: space-between">
+              <div class="flex-between">
                 <el-button
                   size="small"
-                  @click="clear"
+                  @click="clearMultipleWaybillNo"
                 >
                   清空
                 </el-button>
                 <div>
                   <el-button
                     size="small"
-                    @click="close"
+                    @click="closePopover"
                   >
                     关闭
                   </el-button>
@@ -508,10 +508,10 @@ export default {
         waybill_no_query_type: type
       });
     },
-    clear() {
+    clearMultipleWaybillNo() {
       this.form.multiple_waybill_no = '';
     },
-    close() {
+    closePopover() {
       this.popoverVisible = false;
     }
   }
@@ -523,14 +523,11 @@ export default {
   cursor: pointer;
 }
 
-.search-single-btn {
-  cursor: pointer;
+.el-icon-search {
   margin: 0 5px;
 }
 
-.search-single-btn:hover,
 .search-btn:hover,
-.search-single-btn:focus,
 .search-btn:focus {
   color: #409eff;
 }
