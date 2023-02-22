@@ -11,6 +11,7 @@
         width="130px"
         @get-warehouse="getWarehouse"
         @get-date="getDate"
+        @search-waybill-no="searchWaybillNo"
       >
         <el-button
           type="primary"
@@ -431,6 +432,12 @@ export default {
       handleDateRange(this.chooseForm, 'shipping_time');
       handleDateRange(this.chooseForm, 'create_time');
       let params = JSON.parse(JSON.stringify(this.chooseForm));
+      if (params.multiple_waybill_no) {
+        params.waybill_no_query_type = 2;
+        params.waybill_no = params.multiple_waybill_no.replace(/\n/g, ',');
+      } else {
+        params.waybill_no_query_type = 1;
+      }
       params.current_page = this.pagination.current_page;
       params.page_size = this.pagination.page_size;
       params.transit_state = transitState;
@@ -779,6 +786,10 @@ export default {
     },
     backStep() {
       this.$store.commit('logistics/setStepActive', 1);
+    },
+    searchWaybillNo(val) {
+      this.chooseForm = Object.assign(this.chooseForm, val);
+      this.queryList();
     },
     async exportWaybill() {
       let body = this.handleChoose(this.activeTabKey);
