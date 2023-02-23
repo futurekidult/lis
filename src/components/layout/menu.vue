@@ -47,7 +47,7 @@
           >
         </div>
         <div class="container-project_name">
-          物流管理系统 0.0.1
+          物流管理系统 0.0.2
         </div>
       </section>
       <section>
