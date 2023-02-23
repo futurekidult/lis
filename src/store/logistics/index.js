@@ -58,6 +58,10 @@ export default {
       // 删除多传的参数
       delete listParams.params.create_time;
       delete listParams.params.shipping_time;
+      delete listParams.params.multiple_waybill_no;
+      if (!listParams.params.waybill_no) {
+        delete listParams.params.waybill_no_query_type;
+      }
       await axios.get('waybill/waybill-list', listParams).then((res) => {
         if (res.code === 200) {
           res.data.list.forEach((item) => {
@@ -202,11 +206,12 @@ export default {
         }
       });
     },
-    async exportTemplate() {
+    async exportTemplate(_, payload) {
       await axios({
-        url: 'waybill/export-template',
+        url: 'waybill/template-export',
         method: 'post',
-        responseType: 'blob'
+        responseType: 'blob',
+        data: payload
       }).then((res) => {
         download(
           res,
@@ -249,6 +254,5 @@ export default {
         download(res, 'text/csv', '物流运单列表', 'csv');
       });
     }
-  },
-  getters: {}
+  }
 };

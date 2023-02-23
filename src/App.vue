@@ -80,6 +80,13 @@ export default defineComponent({
   margin-bottom: 15px;
 }
 
+.table-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #464646;
+  margin: 40px 0 20px 0;
+}
+
 .el-divider--vertical {
   border-left: 4px rgba(0, 102, 183, 1) solid !important;
 }

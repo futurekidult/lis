@@ -3,7 +3,7 @@
 start
 :弹出导入运单弹窗;
 :点击导入模板;
-:请求"/waybill/export-template"接口;
+:请求"/waybill/template-export"接口;
 if(请求 成功?) then (yes)
   :提示下载成功;
 else (no)
