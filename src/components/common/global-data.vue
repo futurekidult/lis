@@ -120,28 +120,39 @@ const logisticsTableFields = [
   {
     label: 'ID',
     prop: 'id',
-    width: '100px',
-    show: true
+    show: true,
+    fixed: 'left',
+    color: '#409eff',
+    width: '85px'
   },
   {
     label: '运单号',
     prop: 'waybill_no',
-    show: true
+    show: true,
+    fixed: 'left',
+    color: '#409eff'
   },
   {
     label: '物流商',
     prop: 'logistic_supplier',
-    show: true
+    width: '130px',
+    show: true,
+    fixed: 'left',
+    color: '#409eff',
+    show_overflow_tooltip: true
   },
   {
     label: '仓库',
     prop: 'warehouse',
-    show: true
+    show: true,
+    width: '130px',
+    show_overflow_tooltip: true
   },
   {
     label: '平台',
     prop: 'platform',
-    show: false
+    show: false,
+    width: '130px'
   },
   {
     label: '店铺',
@@ -151,11 +162,13 @@ const logisticsTableFields = [
   {
     label: '包裹类型',
     prop: 'parcel_type_desc',
-    show: true
+    show: true,
+    width: '85px'
   },
   {
     label: '标签',
     prop: 'label',
+    width: '130px',
     show: true
   },
   {
@@ -176,12 +189,14 @@ const logisticsTableFields = [
   {
     label: '首枪时效',
     prop: 'receipt_days',
-    show: true
+    show: true,
+    width: '85px'
   },
   {
     label: '送达时效',
     prop: 'delivery_days',
-    show: true
+    show: true,
+    width: '85px'
   },
   {
     label: '预计送达时间',
@@ -191,12 +206,14 @@ const logisticsTableFields = [
   {
     label: '最新轨迹停留时长',
     prop: 'stay_time',
-    show: true
+    show: true,
+    width: '140px'
   },
   {
     label: '异常处理情况',
     prop: 'exception_handling_desc',
-    show: true
+    show: true,
+    width: '140px'
   },
   {
     label: '运输子状态',
@@ -218,12 +235,14 @@ const logisticsTableFields = [
     label: '最新轨迹详情',
     prop: 'current_event_detail',
     width: '300px',
-    show: true
+    show: true,
+    show_overflow_tooltip: true
   },
   {
     label: '获取状态',
     prop: 'sync_state_desc',
-    show: true
+    show: true,
+    width: '85px'
   },
   {
     label: '获取时间',
@@ -233,7 +252,8 @@ const logisticsTableFields = [
   {
     label: '创建人',
     prop: 'creator',
-    show: true
+    show: true,
+    width: '85px'
   },
   {
     label: '创建时间',
@@ -243,12 +263,16 @@ const logisticsTableFields = [
   {
     label: '备注',
     prop: 'remark',
-    show: true
+    show: true,
+    show_overflow_tooltip: true
   },
   {
     label: '运输状态',
     prop: 'transit_state_desc',
-    show: true
+    show: true,
+    fixed: 'right',
+    color: '#409eff',
+    width: '85px'
   }
 ];
 
