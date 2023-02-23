@@ -131,7 +131,7 @@ const logisticsTableFields = [
   {
     label: '物流商',
     prop: 'logistic_supplier',
-    width: '85px',
+    width: '130px',
     show: true,
     show_overflow_tooltip: true
   },
@@ -139,14 +139,14 @@ const logisticsTableFields = [
     label: '仓库',
     prop: 'warehouse',
     show: true,
-    width: '85px',
+    width: '130px',
     show_overflow_tooltip: true
   },
   {
     label: '平台',
     prop: 'platform',
     show: false,
-    width: '85px'
+    width: '130px'
   },
   {
     label: '店铺',
@@ -162,6 +162,7 @@ const logisticsTableFields = [
   {
     label: '标签',
     prop: 'label',
+    width: '130px',
     show: true
   },
   {
