@@ -456,9 +456,7 @@ export default {
       return params;
     },
     getWarehouse(val) {
-      if (this.chooseForm.warehouse_id.length === 0) {
-        this.warehouse = val;
-      }
+      this.warehouse = val;
     },
     async getListData(transitState = '') {
       let params = this.handleChoose(transitState);
