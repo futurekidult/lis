@@ -33,6 +33,9 @@ export default {
       dimension: null
     };
   },
+  mounted() {
+    this.$store.commit('statistics/setDailyTableVisible', false);
+  },
   methods: {
     async getForm(obj) {
       this.form = obj.params;
