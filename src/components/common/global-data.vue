@@ -412,13 +412,6 @@ const orderRules = {
       required: true,
       message: '请选择店铺'
     }
-  ],
-  payment_time: [
-    {
-      type: 'date',
-      required: true,
-      message: '请选择支付时间'
-    }
   ]
 };
 
