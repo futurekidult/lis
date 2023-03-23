@@ -374,8 +374,8 @@ export default {
           },
           {
             min: 1,
-            max: 30,
-            message: '最多只允许输入30位'
+            max: 40,
+            message: '最多只允许输入40位'
           }
         ],
         phone: [
@@ -399,6 +399,11 @@ export default {
           {
             pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
             message: '输入的邮箱不合法'
+          },
+          {
+            min: 1,
+            max: 60,
+            message: '最多只允许输入60位'
           }
         ],
         remark: [

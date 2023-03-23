@@ -18,7 +18,7 @@ const patterns = {
   CZ_GR_SE_SK: /^[0-9]{3}\s?[0-9]{2}$/,
   FRO: /^([a-zA-Z]{2}-)?(\d{3})?$/,
   FRA: /^((0[1-9])|([1-8][0-9])|(9[0-8])|(2A)|(2B))[0-9]{3}$/,
-  GBR: /^GIR?0AA|[A-PR-UWYZ]([0-9]{1,2}|([A-HK-Y][0-9]|[A-HK-Y][0-9]([0-9]|[ABEHMNPRV-Y]))|[0-9][A-HJKS-UW])?[0-9][ABD-HJLNP-UW-Z]{2}$/,
+  GBR: /^GIR\s?0AA|[A-PR-UWYZ]([0-9]{1,2}|([A-HK-Y][0-9]|[A-HK-Y][0-9]([0-9]|[ABEHMNPRV-Y]))|[0-9][A-HJKS-UW])\s?[0-9][ABD-HJLNP-UW-Z]{2}$/,
   GEO: /^((\d{4})|(\d{6}))$/,
   IRL: /^(([a-zA-Z]{2}(\s(([a-zA-Z0-9]{1})|(\d{2})))?)|([a-zA-Z]{3}))$/,
   ISL_MDG: /^[0-9]{3}$/,

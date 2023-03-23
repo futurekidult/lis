@@ -458,18 +458,19 @@ export default {
           await this.$store.dispatch('getWarehouse', { params });
           let selectObj = this.getOptionObj('warehouse_id');
           selectObj.options = this.$store.state.warehouse;
-          if (this.form.warehouse_id.length === 0) {
-            this.warehouse = selectObj.options.map((item) => {
-              return item.id;
-            });
-            if (
-              this.form.warehouse_area_id.length === 0 &&
-              this.form.oversea_location_id.length === 0
-            ) {
-              this.warehouse = [];
-            }
-            this.$emit('get-warehouse', this.warehouse);
+          this.warehouse = selectObj.options.map((item) => {
+            return item.id;
+          });
+          if (selectObj.options.length === 0) {
+            this.warehouse = -1;
           }
+          if (
+            this.form.warehouse_area_id.length === 0 &&
+            this.form.oversea_location_id.length === 0
+          ) {
+            this.warehouse = [];
+          }
+          this.$emit('get-warehouse', this.warehouse);
         } catch (err) {
           return;
         }
