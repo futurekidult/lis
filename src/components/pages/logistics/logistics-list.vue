@@ -456,9 +456,7 @@ export default {
       return params;
     },
     getWarehouse(val) {
-      if (this.chooseForm.warehouse_id.length === 0) {
-        this.warehouse = val;
-      }
+      this.warehouse = val;
     },
     async getListData(transitState = '') {
       let params = this.handleChoose(transitState);
@@ -530,7 +528,9 @@ export default {
     },
     async updateOrderInfo(form, type) {
       let orderParams = JSON.parse(JSON.stringify(form));
-      orderParams.payment_time = timeToTimestamp(orderParams.payment_time);
+      orderParams.payment_time = orderParams.payment_time
+        ? timeToTimestamp(orderParams.payment_time)
+        : 0;
       try {
         await this.$store.dispatch(`logistics/${type}Order`, orderParams);
         this.orderFormVisible = false;
