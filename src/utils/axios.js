@@ -118,7 +118,7 @@ const refreshToken = async () => {
 };
 
 const devLogin = async () => {
-  await http.get(`login?id=${process.env.VUE_APP_LOGIN_ID}`).then((res) => {
+  await http.get('login?id=14').then((res) => {
     return res.data;
   });
 };
